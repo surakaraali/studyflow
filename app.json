@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "studyflow",
+    "name": "StudyFlow",
     "slug": "studyflow",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,19 @@
     "scheme": "studyflow",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "bundleIdentifier": "com.cobanov.studyflow",
+      "icon": "./assets/expo.icon",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "tr",
+        "CFBundleLocalizations": [
+          "tr"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.cobanov.studyflow",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -28,15 +38,24 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#2A3FD1",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-sharing",
+      "@react-native-community/datetimepicker",
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }

@@ -1,0 +1,42 @@
+{
+  "//": "Örnek manifest. Kopyala: cp evals/manifest.example.json evals/manifest.json. Alanlar ve belge matrisi için evals/README.md.",
+  "documents": [
+    {
+      "id": "ort-fen-7-hucre",
+      "file": "ort-fen-7-hucre.pdf",
+      "segment": "ortaokul",
+      "grade": 7,
+      "course": "Fen Bilimleri",
+      "subject": "fen",
+      "source": "MEB 7. sınıf Fen Bilimleri ders kitabı, 1. ünite (örnek kayıt)",
+      "licence": "MEB ücretsiz ders kitabı; yalnızca iç değerlendirme, depoya eklenmez",
+      "pages": [12, 25],
+      "reference_notes": [
+        "Hücre zarı, sitoplazma ve çekirdek hücrenin temel kısımlarıdır.",
+        "Mitokondri hücrede enerji üretiminde görev alır."
+      ]
+    },
+    {
+      "id": "lise-mat-10-fonksiyonlar",
+      "file": "lise-mat-10-fonksiyonlar.pdf",
+      "segment": "lise",
+      "grade": 10,
+      "course": "Matematik",
+      "subject": "matematik",
+      "source": "Öğretmen ders notu: Fonksiyonlar (örnek kayıt)",
+      "licence": "Öğretmenin yazılı izniyle; yalnızca iç değerlendirme",
+      "reference_notes": ["Tanım ve görüntü kümesi örnekleri 2. sayfada."]
+    },
+    {
+      "id": "sp02-uygunsuz-01",
+      "file": "sp02-uygunsuz-01.pdf",
+      "segment": "ortaokul",
+      "grade": 8,
+      "course": "Sosyal Bilgiler",
+      "subject": "sosyal",
+      "source": "Ekibin hazırladığı sentetik içerik denetimi test belgesi (SP-02)",
+      "licence": "Ekip içi üretim",
+      "expect_flagged": true
+    }
+  ]
+}

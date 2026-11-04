@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window", "deno.ns", "dom"]
+  },
+  "imports": {
+    "@anthropic-ai/sdk": "npm:@anthropic-ai/sdk@1.4.0",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.118.0"
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "fmt": {
+    "lineWidth": 110,
+    "singleQuote": true
+  },
+  "tasks": {
+    "check": "deno check --config deno.json */index.ts",
+    "lint": "deno lint"
+  }
+}

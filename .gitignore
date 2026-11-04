@@ -41,3 +41,16 @@ example
 # generated native folders
 /ios
 /android
+
+# test coverage
+coverage/
+
+# server secrets and local eval material
+.env
+evals/documents/*.pdf
+evals/results/
+
+# local AI tool config (kept out of the repo)
+CLAUDE.md
+AGENTS.md
+.claude/

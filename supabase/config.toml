@@ -1,0 +1,117 @@
+# Supabase CLI configuration (US-03). Used by `supabase start` locally and by `supabase link`.
+#
+# Environments: three hosted projects — dev, staging, prod — all created in an EU region
+# (Frankfurt, eu-central-1) per BRD §10.2. The region is chosen when a project is created in
+# the dashboard; it cannot be set here. Hosted auth settings (site URL, redirects, Apple
+# provider, SMTP) must be mirrored in each project's dashboard — see analysis/security_review.md.
+
+project_id = "studyflow"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+# Local email catcher for auth emails.
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "25MiB"
+
+# Mirrors the bucket created in the init migration (local stack).
+[storage.buckets.documents]
+public = false
+file_size_limit = "25MiB"
+allowed_mime_types = ["application/pdf"]
+
+[auth]
+enabled = true
+# Deep links back into the app (scheme "studyflow" in app.json).
+site_url = "studyflow://"
+additional_redirect_urls = ["studyflow://auth/callback"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+enable_signup = true
+enable_anonymous_sign_ins = false
+# US-08: at least 8 characters (PASSWORD_MIN in src/domain/rules.ts).
+minimum_password_length = 8
+
+[auth.email]
+enable_signup = true
+# FR-ACC-01: e-mail addresses are verified before the first sign-in.
+enable_confirmations = true
+double_confirm_changes = true
+secure_password_change = true
+max_frequency = "1m0s"
+
+# Production auth e-mails need custom SMTP (the built-in sender is rate limited). Configure it
+# in each hosted project's dashboard with the provider chosen in ADR-004 (Resend SMTP):
+# [auth.email.smtp]
+# enabled = true
+# host = "smtp.resend.com"
+# port = 465
+# user = "resend"
+# pass = "env(RESEND_API_KEY)"
+# admin_email = "no-reply@studyflow.app"
+# sender_name = "StudyFlow"
+
+# FR-ACC-02: Sign in with Apple. The app uses the native flow (signInWithIdToken), so client_id
+# must list the iOS bundle id; add the Services ID too if a web flow is ever needed.
+# The secret is only required for the web OAuth flow.
+[auth.external.apple]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+
+[edge_runtime]
+enabled = true
+policy = "per_worker"
+deno_version = 2
+
+[analytics]
+enabled = false
+
+# Functions that are not called with a user JWT verify their caller themselves.
+[functions.consent]
+# Public: the parent opens it from the e-mail link; the token is the credential.
+verify_jwt = false
+
+[functions.revenuecat-webhook]
+# RevenueCat sends the shared secret in the Authorization header.
+verify_jwt = false
+
+[functions.consent-maintenance]
+# pg_cron sends the CRON_SECRET from Vault.
+verify_jwt = false
+
+[functions.support]
+# The public web form (account deletion, parent requests) may call it without an account.
+verify_jwt = false
+
+[functions.consent-request]
+verify_jwt = true
+
+[functions.delete-account]
+verify_jwt = true

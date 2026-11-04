@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- The link token is in the address: never send it to other sites. -->
+  <meta name="referrer" content="no-referrer">
+  <!-- Hosting: also send "Content-Security-Policy: frame-ancestors 'none'" and HSTS as HTTP headers
+       (a meta tag cannot set them). Drop the 127.0.0.1/localhost entries in production. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; img-src data:; base-uri 'none'; form-action 'none'">
+  <meta name="theme-color" content="#F4F6FB" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E1226" media="(prefers-color-scheme: dark)">
+  <title>Veli onayı · StudyFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Literata for headings, like the app. Privacy: Google sees the visitor's IP; self-host the
+       font files next to this page before launch (open item in analysis/security_review.md). -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&display=swap">
+
+  <!--
+    Parent consent page (US-16, FR-CON-02, FR-CON-04). Static: host it anywhere over HTTPS and
+    set EXPO_PUBLIC_CONSENT_WEB_URL / CONSENT_WEB_URL to its address.
+    Only the block below changes per environment (staging / prod).
+  -->
+  <script>
+    window.STUDYFLOW_CONSENT_CONFIG = {
+      // https://<project-ref>.supabase.co/functions/v1 (local: http://127.0.0.1:54321/functions/v1)
+      functionsUrl: 'https://YOUR-PROJECT-REF.supabase.co/functions/v1',
+      // Optional: the project's public anon key. The consent function does not need it.
+      anonKey: '',
+      privacyUrl: 'https://studyflow.app/aydinlatma-metni',
+      supportEmail: 'destek@studyflow.app'
+    };
+  </script>
+
+  <style>
+    :root {
+      --paper: #F4F6FB;
+      --surface: #FFFFFF;
+      --sunken: #E9EDF6;
+      --line: #D9DFEC;
+      --ink: #161C3A;
+      --ink-soft: #5A6282;
+      --pen: #2A3FD1;
+      --on-pen: #FFFFFF;
+      --exam: #C92A63;
+      --success: #1F7A55;
+      --highlight: #FFE650;
+      --radius: 16px;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0E1226;
+        --surface: #171C36;
+        --sunken: #1F2545;
+        --line: #2A3157;
+        --ink: #EDF0FA;
+        --ink-soft: #A3AACB;
+        --pen: #8C9BFF;
+        --on-pen: #0E1226;
+        --exam: #FF6B98;
+        --success: #3CCB8F;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    main {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom));
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: var(--pen);
+    }
+    /* Optik form bubbles: the app's signature motif. */
+    .bubbles { display: inline-flex; gap: 4px; }
+    .bubbles span {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 1.5px solid var(--exam);
+    }
+    .bubbles span.filled { background: var(--exam); }
+    h1, h2 {
+      font-family: "Literata", Georgia, "Times New Roman", serif;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin: 0 0 12px;
+    }
+    h1 { font-size: 30px; }
+    h2 { font-size: 21px; margin-top: 28px; }
+    h1:focus, h2:focus { outline: none; }
+    p { margin: 0 0 14px; }
+    .lead { font-size: 18px; }
+    .muted { color: var(--ink-soft); font-size: 15px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 18px;
+      margin: 18px 0;
+    }
+    .card.exam { border-top: 4px solid var(--exam); }
+    ul.facts { margin: 0; padding-left: 20px; }
+    ul.facts li { margin-bottom: 8px; }
+    details { margin-top: 8px; }
+    summary {
+      cursor: pointer;
+      color: var(--pen);
+      font-weight: 600;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    fieldset { border: 0; padding: 0; margin: 0; }
+    legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+    .purpose {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .purpose:hover { background: var(--sunken); }
+    .purpose input {
+      width: 24px; height: 24px; margin: 2px 0 0;
+      accent-color: var(--pen);
+    }
+    .purpose strong { display: block; font-size: 17px; }
+    .purpose span { display: block; color: var(--ink-soft); font-size: 15px; margin-top: 2px; }
+    .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    button, .button {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      min-height: 52px;
+      padding: 14px 20px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    button.primary { background: var(--pen); color: var(--on-pen); }
+    button.secondary { background: var(--sunken); color: var(--ink); }
+    button.destructive { background: transparent; color: var(--exam); border: 1.5px solid var(--exam); }
+    button.link { background: transparent; color: var(--pen); min-height: 44px; padding: 8px; }
+    button:disabled { opacity: 0.6; cursor: progress; }
+    :focus-visible { outline: 3px solid var(--pen); outline-offset: 3px; }
+    .status {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 14px 16px; border-radius: 12px; margin: 16px 0;
+      background: var(--sunken);
+    }
+    .status .icon { font-size: 20px; line-height: 1.3; flex: none; }
+    .status.success { border-left: 4px solid var(--success); }
+    .status.warning { border-left: 4px solid var(--exam); }
+    .version { font-size: 13px; color: var(--ink-soft); margin-top: 28px; }
+    [hidden] { display: none !important; }
+    @media (min-width: 560px) {
+      .actions { flex-direction: row; flex-wrap: wrap; }
+      .actions button { flex: 1 1 auto; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .view { animation: fade 160ms ease-out; }
+      @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand" aria-hidden="true">
+    <span class="bubbles"><span class="filled"></span><span class="filled"></span><span></span><span></span><span></span></span>
+    StudyFlow
+  </div>
+
+  <!-- Screen readers hear every state change here. -->
+  <div id="live" class="visually-hidden" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></div>
+
+  <section id="view-loading" class="view">
+    <h1 tabindex="-1">Bağlantı kontrol ediliyor…</h1>
+    <p class="muted">Bu birkaç saniye sürer.</p>
+  </section>
+
+  <section id="view-invalid" class="view" hidden>
+    <h1 tabindex="-1">Bu bağlantı geçerli değil</h1>
+    <p class="lead">Bağlantı eksik kopyalanmış ya da yerine daha yeni bir bağlantı gönderilmiş olabilir.</p>
+    <p>Size gelen en son StudyFlow e-postasındaki bağlantıyı açın. Bulamazsanız çocuğunuzdan uygulamadaki <strong>Bağlantıyı yeniden gönder</strong> düğmesine dokunmasını isteyin.</p>
+  </section>
+
+  <section id="view-expired" class="view" hidden>
+    <h1 tabindex="-1">Bu bağlantının süresi doldu</h1>
+    <p class="lead">Onay bağlantıları güvenliğiniz için 7 gün geçerlidir.</p>
+    <p>Çocuğunuzdan uygulamadaki <strong>Bağlantıyı yeniden gönder</strong> düğmesine dokunmasını isteyin; yeni bağlantı birkaç dakika içinde e-postanıza gelir.</p>
+  </section>
+
+  <section id="view-error" class="view" hidden>
+    <h1 tabindex="-1">Sayfa yüklenemedi</h1>
+    <p class="lead">İnternet bağlantınızı kontrol edip tekrar deneyin.</p>
+    <div class="actions"><button type="button" class="primary" id="retry">Tekrar dene</button></div>
+  </section>
+
+  <section id="view-form" class="view" hidden>
+    <h1 tabindex="-1" id="form-title">Veli onayı</h1>
+    <p class="lead" id="form-intro"></p>
+
+    <div class="status success" id="already-granted" hidden>
+      <span class="icon" aria-hidden="true">✓</span>
+      <div><strong>Onayınız kayıtlı.</strong> Aşağıdan tercihlerinizi değiştirebilir ya da onayınızı geri alabilirsiniz.</div>
+    </div>
+    <div class="status warning" id="already-revoked" hidden>
+      <span class="icon" aria-hidden="true">!</span>
+      <div><strong>Onayınızı geri almıştınız.</strong> Hesap kısıtlı modda. İsterseniz yeniden onay verebilirsiniz.</div>
+    </div>
+
+    <div class="card exam">
+      <h2 style="margin-top:0">Kısaca neleri işliyoruz?</h2>
+      <ul class="facts">
+        <li><strong>Hesap bilgileri:</strong> rumuz, e-posta, doğum yılı ve sınıf. Ad-soyad, okul, telefon ve konum istemiyoruz.</li>
+        <li><strong>Çalışma bilgileri:</strong> dersler, sınav ve ödev tarihleri, çalışma planı, süreler, quiz ve kart sonuçları. Yalnızca plan ve ilerleme için kullanılır.</li>
+        <li><strong>Yüklenen belgeler:</strong> çocuğunuzun yüklediği ders notları (PDF) ve bunlardan üretilen özet, quiz ve kartlar. Başkasıyla paylaşılmaz.</li>
+        <li><strong>Nerede:</strong> Avrupa Birliği'ndeki sunucularda. Reklam yok, veri satışı yok.</li>
+        <li><strong>Ne kadar süre:</strong> hesap silinince belgeler hemen, diğer veriler en geç 30 gün içinde silinir. Onay kayıtları yasal süre boyunca saklanır.</li>
+      </ul>
+      <details>
+        <summary>Haklarınız ve iletişim</summary>
+        <p>6698 sayılı KVKK'nın 11. maddesi kapsamında verilere erişme, düzeltme, silme ve itiraz haklarınız vardır. Başvuru için <a id="support-link" href="#">destek adresimize</a> yazabilirsiniz.</p>
+        <p><a id="privacy-link" href="#" rel="noopener">Aydınlatma metninin tamamını okuyun</a></p>
+      </details>
+    </div>
+
+    <form id="consent-form" novalidate>
+      <fieldset>
+        <legend>Aşağıdaki iki amaç için ayrı ayrı izin verebilirsiniz:</legend>
+        <label class="purpose" for="purpose-ai">
+          <input type="checkbox" id="purpose-ai" name="purposes" value="ai" aria-describedby="purpose-ai-desc">
+          <div>
+            <strong>Yapay zekâ ile içerik üretimi</strong>
+            <span id="purpose-ai-desc">Yüklenen ders notlarından özet, quiz ve bilgi kartı hazırlanır. Bunun için belgenin içeriği, sınıf seviyesi ve ders adı yapay zekâ hizmet sağlayıcısına gönderilir; ad, e-posta ve doğum yılı gönderilmez. Üretilen içerik hata içerebilir ve öyle etiketlenir.</span>
+          </div>
+        </label>
+        <label class="purpose" for="purpose-notifications">
+          <input type="checkbox" id="purpose-notifications" name="purposes" value="notifications" aria-describedby="purpose-notifications-desc">
+          <div>
+            <strong>Bildirimler</strong>
+            <span id="purpose-notifications-desc">Çalışma planı, sınav ve ödev hatırlatmaları. 13 yaşından küçükler için 20:30–08:00 arasında bildirim gönderilmez.</span>
+          </div>
+        </label>
+      </fieldset>
+      <p class="muted">Kutuları işaretlemeden onay verirseniz çocuğunuz hesabını kullanabilir; bu iki özellik kapalı kalır. Kararınızı istediğiniz zaman değiştirebilirsiniz.</p>
+      <div class="actions">
+        <button type="submit" class="primary" id="grant-button">Onaylıyorum</button>
+      </div>
+      <div class="status warning" id="form-error" role="alert" hidden>
+        <span class="icon" aria-hidden="true">!</span>
+        <div>Kaydedilemedi. İnternet bağlantınızı kontrol edip tekrar deneyin.</div>
+      </div>
+      <div class="actions" id="revoke-entry" hidden>
+        <button type="button" class="destructive" id="show-revoke">Onayımı geri al</button>
+      </div>
+    </form>
+    <p class="version" id="version"></p>
+  </section>
+
+  <section id="view-revoke" class="view" hidden>
+    <h1 tabindex="-1">Onayınızı geri almak istiyor musunuz?</h1>
+    <p class="lead">Onayınızı geri alırsanız çocuğunuzun hesabında yapay zekâ ve bildirim özellikleri kapanır ve hesap kısıtlı moda geçer.</p>
+    <p>Bu işlem yeni bir kayıt olarak saklanır. Daha sonra aynı bağlantıdan yeniden onay verebilirsiniz.</p>
+    <div class="status warning" id="revoke-error" role="alert" hidden>
+      <span class="icon" aria-hidden="true">!</span>
+      <div>Kaydedilemedi. İnternet bağlantınızı kontrol edip tekrar deneyin.</div>
+    </div>
+    <div class="actions">
+      <button type="button" class="destructive" id="revoke-button">Onayımı geri al</button>
+      <button type="button" class="secondary" id="cancel-revoke">Vazgeç</button>
+    </div>
+  </section>
+
+  <section id="view-done" class="view" hidden>
+    <h1 tabindex="-1" id="done-title"></h1>
+    <div class="status success">
+      <span class="icon" aria-hidden="true">✓</span>
+      <div id="done-text"></div>
+    </div>
+    <p>Size bir onay e-postası gönderdik. O e-postadaki bağlantıyla tercihlerinizi istediğiniz zaman değiştirebilirsiniz.</p>
+    <p class="muted">Bu sayfayı kapatabilirsiniz.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var config = window.STUDYFLOW_CONSENT_CONFIG || {};
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('token') || '';
+  var wantsRevoke = params.get('action') === 'revoke';
+  var LABELS = { ai: 'Yapay zekâ ile içerik üretimi', notifications: 'Bildirimler' };
+  var state = null;
+
+  function $(id) { return document.getElementById(id); }
+
+  function show(name, announce) {
+    var views = document.querySelectorAll('.view');
+    for (var i = 0; i < views.length; i++) views[i].hidden = views[i].id !== 'view-' + name;
+    var heading = document.querySelector('#view-' + name + ' h1');
+    if (heading) {
+      heading.focus();
+      $('live').textContent = announce || heading.textContent;
+    }
+    window.scrollTo(0, 0);
+  }
+
+  function headers(withBody) {
+    var h = {};
+    if (withBody) h['Content-Type'] = 'application/json';
+    if (config.anonKey) {
+      h.apikey = config.anonKey;
+      h.Authorization = 'Bearer ' + config.anonKey;
+    }
+    return h;
+  }
+
+  function endpoint(query) {
+    return String(config.functionsUrl || '').replace(/\/$/, '') + '/consent' + (query || '');
+  }
+
+  function childLabel(capital) {
+    var name = state && state.nickname;
+    if (name) return name;
+    return capital ? 'Çocuğunuz' : 'çocuğunuz';
+  }
+
+  function fillForm() {
+    var granted = state.state === 'granted';
+    var revoked = state.state === 'revoked';
+    $('form-title').textContent = granted ? 'Onay tercihleriniz' : 'Veli onayı';
+    // textContent: the nickname is typed by the student and is never treated as HTML.
+    $('form-intro').textContent = granted
+      ? childLabel(true) + ' StudyFlow’u sizin onayınızla kullanıyor.'
+      : childLabel(true) + ', ders çalışmasını planlamak için StudyFlow uygulamasını kullanmak istiyor. 18 yaşından küçükler için sizin onayınız gerekiyor.';
+    $('already-granted').hidden = !granted;
+    $('already-revoked').hidden = !revoked;
+    $('revoke-entry').hidden = !granted;
+    $('grant-button').textContent = granted ? 'Tercihlerimi kaydet' : 'Onaylıyorum';
+    var current = state.grantedPurposes || [];
+    $('purpose-ai').checked = current.indexOf('ai') >= 0;
+    $('purpose-notifications').checked = current.indexOf('notifications') >= 0;
+    $('version').textContent = 'Metin sürümü ' + (state.textVersion || '') + (state.expiresAt ? ' · Bağlantı ' + formatDate(state.expiresAt) + ' tarihine kadar geçerli' : '');
+  }
+
+  function formatDate(iso) {
+    try {
+      return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
+    } catch (e) {
+      return iso.slice(0, 10);
+    }
+  }
+
+  function load() {
+    show('loading');
+    if (!/^[A-Za-z0-9_-]{32,128}$/.test(token)) {
+      show('invalid');
+      return;
+    }
+    fetch(endpoint('?token=' + encodeURIComponent(token)), { method: 'GET', headers: headers(false), cache: 'no-store' })
+      .then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (body) {
+          return { status: response.status, body: body };
+        });
+      })
+      .then(function (result) {
+        var body = result.body || {};
+        if (body.state === 'expired') return show('expired');
+        if (body.state === 'invalid' || result.status === 404) return show('invalid');
+        if (result.status >= 400 || !body.state) return show('error');
+        state = body;
+        fillForm();
+        if (wantsRevoke && state.state === 'granted') return show('revoke');
+        show('form');
+      })
+      .catch(function () { show('error'); });
+  }
+
+  function submit(action, purposes, button) {
+    var errorBox = $(action === 'grant' ? 'form-error' : 'revoke-error');
+    errorBox.hidden = true;
+    button.disabled = true;
+    var label = button.textContent;
+    button.textContent = 'Kaydediliyor…';
+    fetch(endpoint(''), {
+      method: 'POST',
+      headers: headers(true),
+      body: JSON.stringify({ token: token, action: action, purposes: purposes })
+    })
+      .then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (body) {
+          return { status: response.status, body: body };
+        });
+      })
+      .then(function (result) {
+        if (result.status === 410) return show('expired');
+        if (result.status === 404) return show('invalid');
+        if (result.status >= 400) throw new Error('failed');
+        if (action === 'grant') {
+          $('done-title').textContent = 'Teşekkürler, onayınız kaydedildi';
+          var names = purposes.map(function (p) { return LABELS[p]; });
+          $('done-text').textContent = names.length
+            ? childLabel(true) + ' artık StudyFlow’u kullanabilir. İzin verdiğiniz amaçlar: ' + names.join(', ') + '.'
+            : childLabel(true) + ' artık StudyFlow’u kullanabilir. Yapay zekâ ve bildirim özellikleri kapalı kalacak.';
+        } else {
+          $('done-title').textContent = 'Onayınız geri alındı';
+          $('done-text').textContent = childLabel(true) + ' için yapay zekâ ve bildirim özellikleri kapatıldı; hesap kısıtlı moda geçti.';
+        }
+        show('done');
+      })
+      .catch(function () {
+        // role="alert" reads it out; the choices stay as they were.
+        errorBox.hidden = false;
+      })
+      .then(function () {
+        button.disabled = false;
+        button.textContent = label;
+      });
+  }
+
+  $('consent-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var purposes = [];
+    if ($('purpose-ai').checked) purposes.push('ai');
+    if ($('purpose-notifications').checked) purposes.push('notifications');
+    submit('grant', purposes, $('grant-button'));
+  });
+  $('show-revoke').addEventListener('click', function () { show('revoke'); });
+  $('cancel-revoke').addEventListener('click', function () { show('form'); });
+  $('revoke-button').addEventListener('click', function () { submit('revoke', [], $('revoke-button')); });
+  $('retry').addEventListener('click', load);
+
+  if (config.privacyUrl) $('privacy-link').href = config.privacyUrl;
+  if (config.supportEmail) $('support-link').href = 'mailto:' + config.supportEmail;
+
+  load();
+})();
+</script>
+</body>
+</html>
