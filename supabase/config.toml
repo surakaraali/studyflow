@@ -56,7 +56,7 @@ enable_anonymous_sign_ins = false
 minimum_password_length = 8
 
 [auth.email]
-enable_signup = true
+enabled = true
 # FR-ACC-01: e-mail addresses are verified before the first sign-in.
 enable_confirmations = true
 double_confirm_changes = true

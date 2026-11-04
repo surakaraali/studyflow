@@ -14,7 +14,7 @@
  * 200 { ok: true, id }   422 { error: 'invalid_email' | 'invalid_message' }   429 { error: 'rate_limited' }
  */
 
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
+import 'jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts';
 
 import { adminClient } from '../_shared/admin.ts';
 import { optionalUser } from '../_shared/auth.ts';

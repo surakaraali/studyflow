@@ -54,3 +54,7 @@ evals/results/
 CLAUDE.md
 AGENTS.md
 .claude/
+
+# Supabase CLI local state
+supabase/.branches/
+supabase/.temp/

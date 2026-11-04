@@ -67,7 +67,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "ai:dev": "tsx server/dev-ai.ts",
-    "ai:mock": "tsx server/dev-ai.ts --mock"
+    "ai:mock": "tsx server/dev-ai.ts --mock",
+    "test:sync-roundtrip": "tsx scripts/integration/sync-roundtrip.ts",
+    "test:functions": "tsx scripts/integration/functions-smoke.ts"
   },
   "private": true,
   "jest": {

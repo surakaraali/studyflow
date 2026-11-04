@@ -58,6 +58,8 @@ const resendProvider: EmailProvider = {
 const consoleProvider: EmailProvider = {
   send(message) {
     console.log(`[email:console] ${message.tag ?? 'email'} → ${maskEmail(message.to)} · ${message.subject}`);
+    // Local testing only: EMAIL_CONSOLE_BODY=1 also prints the text (it holds one-time links).
+    if (Deno.env.get('EMAIL_CONSOLE_BODY') === '1') console.log(message.text);
     return Promise.resolve({ id: null });
   },
 };
@@ -68,6 +70,6 @@ export function emailProvider(): EmailProvider {
   return resendProvider;
 }
 
-export async function sendEmail(message: EmailMessage): Promise<{ id: string | null }> {
+export function sendEmail(message: EmailMessage): Promise<{ id: string | null }> {
   return emailProvider().send(message);
 }

@@ -1,5 +1,5 @@
 # US-02 / MAIN-01 / SEC-07: every pull request and every push to main must pass these checks.
-# Make the "checks", "secrets" and "database" jobs required in the branch protection of main.
+# Make the "checks", "secrets", "database" and "functions" jobs required in the branch protection of main.
 name: CI
 
 on:
@@ -67,9 +67,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Pinned: a new CLI release once broke config.toml parsing. Bump on purpose.
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 3.0.0
 
       # Local stack in Docker: applies supabase/migrations and seed.sql.
       - name: Start Supabase
@@ -80,3 +81,23 @@ jobs:
 
       - name: Lint SQL
         run: supabase db lint --level warning --fail-on error
+
+  functions:
+    name: Edge Functions (Deno)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: supabase/functions
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check
+        run: deno check */index.ts
+
+      - name: Lint
+        run: deno lint

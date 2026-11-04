@@ -1,0 +1,16 @@
+{
+  "//": "Type-checks the local-stack integration scripts: npx tsc -p scripts/integration",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "types": ["node"],
+    "paths": { "@/*": ["../../src/*"] }
+  },
+  "include": ["./*.ts"]
+}

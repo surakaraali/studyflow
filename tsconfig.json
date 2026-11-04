@@ -21,6 +21,7 @@
     "node_modules",
     "supabase/functions",
     "server",
-    "evals"
+    "evals",
+    "scripts/integration"
   ]
 }

@@ -38,7 +38,10 @@ begin
         return null;
       end if;
     else
-      new.updated_at := greatest(new.updated_at, old.updated_at + interval '1 millisecond', now());
+      -- Server writes only move the version one step past the last one. Jumping to now() would
+      -- make a device whose clock runs a little behind lose its next edits to this row. Devices
+      -- still see the change: pulls follow synced_at, and server-owned columns always win.
+      new.updated_at := greatest(new.updated_at, old.updated_at + interval '1 millisecond');
     end if;
   end if;
   new.synced_at := clock_timestamp();
@@ -530,11 +533,14 @@ do $$
 declare
   t text;
 begin
-  foreach t in array array[
-    'courses', 'timetable_slots', 'availability', 'topics', 'exams', 'homework', 'documents',
-    'summaries', 'quizzes', 'questions', 'quiz_attempts', 'decks', 'cards', 'content_reports',
-    'plan_items', 'study_sessions', 'streak_freezes', 'feedback'
-  ] loop
+  -- A query loop (not FOREACH over a literal) so `supabase db lint` checks one table at a time.
+  for t in
+    select unnest(array[
+      'courses', 'timetable_slots', 'availability', 'topics', 'exams', 'homework', 'documents',
+      'summaries', 'quizzes', 'questions', 'quiz_attempts', 'decks', 'cards', 'content_reports',
+      'plan_items', 'study_sessions', 'streak_freezes', 'feedback'
+    ]::text[])
+  loop
     execute format('create trigger b_sync before insert or update on public.%I
       for each row execute function private.sync_row()', t);
     execute format('create index %I on public.%I (user_id, synced_at)', t || '_synced_idx', t);
@@ -1142,11 +1148,14 @@ declare
   n integer;
   result jsonb := '{}'::jsonb;
 begin
-  foreach t in array array[
-    'courses', 'timetable_slots', 'availability', 'topics', 'exams', 'homework', 'documents',
-    'summaries', 'quizzes', 'questions', 'quiz_attempts', 'decks', 'cards', 'content_reports',
-    'plan_items', 'study_sessions', 'streak_freezes', 'feedback'
-  ] loop
+  -- A query loop (not FOREACH over a literal) so `supabase db lint` checks one table at a time.
+  for t in
+    select unnest(array[
+      'courses', 'timetable_slots', 'availability', 'topics', 'exams', 'homework', 'documents',
+      'summaries', 'quizzes', 'questions', 'quiz_attempts', 'decks', 'cards', 'content_reports',
+      'plan_items', 'study_sessions', 'streak_freezes', 'feedback'
+    ]::text[])
+  loop
     execute format('delete from public.%I where deleted_at < now() - interval ''90 days''', t);
     get diagnostics n = row_count;
     if n > 0 then result := result || jsonb_build_object(t, n); end if;

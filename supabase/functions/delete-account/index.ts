@@ -13,7 +13,7 @@
  * 200 { ok: true }   401 { error: 'unauthorized' }   500 { error: 'internal' }
  */
 
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
+import 'jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts';
 
 import { deleteAccountCompletely } from '../_shared/account.ts';
 import { adminClient } from '../_shared/admin.ts';

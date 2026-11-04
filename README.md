@@ -43,7 +43,7 @@ Bilinen hata: [BUG-01](agile/backlog.md#9-bilinen-hatalar) (ilk açılışta sek
 
 ## Çalıştırma
 
-Gerekenler: Node.js 22.13+, Xcode ve iOS simülatörü.
+Gerekenler: Node.js 22.13+ (Homebrew: `node@22`), Xcode ve iOS simülatörü.
 
 ```bash
 npm install
@@ -97,6 +97,40 @@ npx eslint .
 ```bash
 npm test
 ```
+
+### Yerel Supabase ile entegrasyon testleri
+
+Docker (ör. Colima), Supabase CLI ve Deno kuruluyken:
+
+```bash
+supabase start -x studio,imgproxy,realtime,logflare,vector,supavisor
+```
+
+```bash
+supabase test db
+```
+
+```bash
+supabase functions serve --env-file <dosya>
+```
+
+Fonksiyon sunucusu için dosyada `EMAIL_PROVIDER=console`, `EMAIL_CONSOLE_BODY=1`,
+`CONSENT_WEB_URL=http://localhost:8099/consent/` ve `CRON_SECRET=<herhangi>` olmalı. Sunucunun
+çıktısını bir dosyaya yönlendirip o dosyayla testi çalıştırın:
+
+```bash
+npm run test:functions -- <functions-serve-çıktısı.log>
+```
+
+Bir cihaz veritabanının (ör. demo hesabın SQLite dosyası) sunucuya gidip geri gelişini denemek için:
+
+```bash
+npm run test:sync-roundtrip -- <cihaz.db>
+```
+
+`supabase test db` satır güvenliği (RLS) kurallarını, `test:functions` veli onayı ve hesap silme
+akışlarını, `test:sync-roundtrip` eşitleme servisini gerçek Postgres'e karşı dener. Edge Functions
+tip denetimi: `cd supabase/functions && deno check */index.ts && deno lint`.
 
 ## Klasör yapısı
 

@@ -710,14 +710,15 @@ S0–S8'in bütün "Must" hikâyeleri kodlandı. Doğrulama düzeyleri:
 | **Test** | Saf iş mantığı Jest ile test edildi (iş kuralları, plan motoru, FSRS, seri, quiz puanlama, kota, kişisel veri testi, eşitleme, veli kapısı, SUS…). |
 | **Simülatör** | iPhone 17 Pro / iOS 26 simülatöründe, Expo Go'da, yerel modda ekranda denendi. |
 | **Hazır, hesap bekliyor** | Kod yazıldı; çalışması için Supabase, Apple, RevenueCat, e-posta ya da EAS hesabı gerekiyor. |
+| **Yerel Supabase** | Docker'daki yerel Supabase'e karşı denendi (4 Kasım 2026): migration'lar, 197 RLS testi, SQL denetimi, Edge Functions tip denetimi, veli onayı ve hesap silme akışı (16 kontrol), eşitlemede 195 kaydın gidiş-dönüşü. |
 
 | Sprint | Hikâyeler | Durum |
 |---|---|---|
 | S0 | US-01, US-02, US-03, SP-01 | US-01 simülatör. US-02/US-03: CI iş akışları, EAS profilleri, Supabase projesi ve migration'lar hazır, hesap bekliyor. SP-01: değerlendirme iskeleti ve ADR-002 yazıldı; 30 belgelik set ekipçe toplanacak. |
-| S1 | US-04, US-08, US-09, US-11, US-15 | Yerel veri modeli test + simülatör. Kayıt, doğrulama, giriş ve onboarding simülatörde denendi. Postgres şeması ve RLS testleri hazır, hesap bekliyor. Apple ile giriş geliştirme derlemesinde denenecek. |
-| S2 | US-16, US-17, US-20, US-21, US-22, US-23, SP-02 | Yerel modda veli onay sayfası, kısıtlı ve kilitli mod, yasal metinler (taslak, hukuk onayı bekliyor), ders önerisi ve ders programı. Veli e-postası ve web onay sayfası hazır, hesap bekliyor. SP-02 kararı ADR-003. |
+| S1 | US-04, US-08, US-09, US-11, US-15 | Yerel veri modeli test + simülatör. Kayıt, doğrulama, giriş ve onboarding simülatörde denendi. Postgres şeması ve RLS testleri yerel Supabase'te geçti; canlı proje hesap bekliyor. Apple ile giriş geliştirme derlemesinde denenecek. |
+| S2 | US-16, US-17, US-20, US-21, US-22, US-23, SP-02 | Yerel modda veli onay sayfası, kısıtlı ve kilitli mod, yasal metinler (taslak, hukuk onayı bekliyor), ders önerisi ve ders programı. Veli onayı sunucu akışı yerel Supabase'te uçtan uca denendi; gerçek e-posta gönderimi Resend hesabı bekliyor. SP-02 kararı ADR-003. |
 | S3 | US-06, US-26, US-27, US-31, US-32 | Sınavlar ve resmi sınav tarihleri (tahmini) simülatörde. PDF yükleme ve işleme kuyruğu yazıldı; geliştirme sunucusu örnek içerikle denendi. Gerçek model ve Supabase Storage hesap bekliyor. Analitik sözlüğü: `analysis/analytics_events.md`. |
-| S4 | US-05, US-18, US-33, US-34, US-35, US-36, US-41, US-42, US-62 | Özet, quiz çözme, geri bildirim ve düzenleme simülatörde. Eşitleme testleri geçiyor; sunucuyla eşitleme hesap bekliyor. |
+| S4 | US-05, US-18, US-33, US-34, US-35, US-36, US-41, US-42, US-62 | Özet, quiz çözme, geri bildirim ve düzenleme simülatörde. Eşitleme yerel Supabase'e karşı gidiş-dönüş testinden geçti; canlı proje hesap bekliyor. |
 | S5 | US-37, US-44, US-45, US-46, US-47, US-48 | Plan motoru testte (%97,9 satır kapsamı, US-48 senaryoları birebir), Bugün/Takvim simülatörde. Desteler ve FSRS tekrar test + simülatör. Bildirme ve inceleme kuyruğu yazıldı. |
 | S6 | US-28, US-29, US-49, US-50, US-54, US-55, US-56, US-60, US-61 | Bugün, Takvim, sınav ve ödev kutuları, seri simülatörde. Zamanlayıcı ve hatırlatmalar yazıldı; bildirimlerin gerçek teslimi ve kilit ekranı sayacı (Live Activity) geliştirme derlemesinde denenecek. |
 | S7 | US-12, US-13, US-19, US-38, US-57, US-63, US-64, US-70 | İlerleme ekranı simülatörde. Profil, hesap silme, veli kapısı, kota ve abonelik ekranları yazıldı; gerçek satın alma RevenueCat ve App Store Connect hesabı bekliyor. |

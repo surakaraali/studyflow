@@ -12,7 +12,7 @@
  * (RevenueCat retries those).
  */
 
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
+import 'jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts';
 
 import { adminClient, type SupabaseClient } from '../_shared/admin.ts';
 import { requireSecret } from '../_shared/auth.ts';
