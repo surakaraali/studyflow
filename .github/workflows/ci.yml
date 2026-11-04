@@ -1,0 +1,82 @@
+# US-02 / MAIN-01 / SEC-07: every pull request and every push to main must pass these checks.
+# Make the "checks", "secrets" and "database" jobs required in the branch protection of main.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, types, tests, audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npx eslint .
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npx jest --ci
+
+      - name: Dependency audit (high and critical)
+        run: npm audit --audit-level=high
+
+      - name: App secret scan
+        run: node scripts/check-secrets.mjs
+
+  secrets:
+    name: Secret scan (history)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Only needed when the repository belongs to a GitHub organization.
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  database:
+    name: RLS tests (pgTAP)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # Local stack in Docker: applies supabase/migrations and seed.sql.
+      - name: Start Supabase
+        run: supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor
+
+      - name: Run database tests
+        run: supabase test db
+
+      - name: Lint SQL
+        run: supabase db lint --level warning --fail-on error
