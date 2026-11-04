@@ -84,6 +84,13 @@ girin. Anahtarlar girilince uygulama yerel moddan çıkar; girişler, veriler ve
 Supabase üzerinden yürür. Supabase kurulumu, gizli anahtarlar ve mağaza adımları
 [analysis/adr/](analysis/adr/) altındaki kararlarda ve [store/](store/) klasöründe anlatılır.
 
+### GitHub Actions
+
+`CI` her push'ta çalışır. `Supabase` (staging/production dağıtımı) ve `Preview` (EAS güncellemesi)
+hesaplar kurulana kadar atlanır. Açmak için GitHub'da Settings → Secrets and variables → Actions →
+Variables altına `SUPABASE_DEPLOY=true` ve `EAS_PREVIEW=true` ekleyin (gereken anahtarlar
+iş akışı dosyalarının başında yazılı).
+
 ## Kontroller
 
 ```bash

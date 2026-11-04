@@ -19,6 +19,9 @@ permissions:
 
 jobs:
   preview:
+    # Skipped (not failed) until EAS is set up (`eas init`, EXPO_TOKEN): then set the repository
+    # variable EAS_PREVIEW=true under Settings → Secrets and variables → Actions → Variables.
+    if: vars.EAS_PREVIEW == 'true'
     runs-on: ubuntu-latest
     environment: staging
     timeout-minutes: 30

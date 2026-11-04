@@ -22,6 +22,9 @@ permissions:
 jobs:
   staging:
     name: Deploy to staging
+    # Skipped (not failed) until the Supabase projects exist: set the repository variable
+    # SUPABASE_DEPLOY=true under Settings → Secrets and variables → Actions → Variables.
+    if: vars.SUPABASE_DEPLOY == 'true'
     runs-on: ubuntu-latest
     environment: staging
     timeout-minutes: 20
