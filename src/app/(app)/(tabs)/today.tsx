@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BubbleRow } from '@/components/bubble-row';
 import { Banner } from '@/components/ui/banner';
 import { Button } from '@/components/ui/button';
+import { TopEdge, useScrolled } from '@/components/ui/top-edge';
 import { Card } from '@/components/ui/card';
 import { IconButton } from '@/components/ui/icon-button';
 import { AppText } from '@/components/ui/text';
@@ -36,6 +37,7 @@ export default function TodayScreen() {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const { scrolled, onScroll } = useScrolled();
   const { profile } = useProfile();
   const now = useNow(60_000);
   const today = formatDate(now);
@@ -60,8 +62,11 @@ export default function TodayScreen() {
   const courseOf = (id: string | null) => (id ? data?.courses.get(id) : undefined);
 
   return (
+    <View style={{ flex: 1, backgroundColor: colors.paper }}>
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.paper }}
+      onScroll={onScroll}
+      scrollEventThrottle={32}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         styles.content,
@@ -188,6 +193,8 @@ export default function TodayScreen() {
       <UpcomingExams />
       <HomeworkDue />
     </ScrollView>
+    <TopEdge scrolled={scrolled} />
+    </View>
   );
 }
 

@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HighlightMark } from '@/components/highlight-mark';
 import { Banner } from '@/components/ui/banner';
 import { Button } from '@/components/ui/button';
+import { TopEdge, useScrolled } from '@/components/ui/top-edge';
 import { AppText } from '@/components/ui/text';
 import { Gutter, Radius, Space } from '@/constants/theme';
 import { setAccountNotice, useAccountNotice } from '@/features/account/account-notice';
@@ -22,6 +23,7 @@ export default function WelcomeScreen() {
   const { t } = useTranslation();
   const { colors, scheme } = useTheme();
   const insets = useSafeAreaInsets();
+  const { scrolled, onScroll } = useScrolled();
   const notice = useAccountNotice((s) => s.notice);
   const [appleAvailable, setAppleAvailable] = useState(false);
   const [appleBusy, setAppleBusy] = useState(false);
@@ -58,8 +60,11 @@ export default function WelcomeScreen() {
   };
 
   return (
+    <View style={{ flex: 1, backgroundColor: colors.paper }}>
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.paper }}
+      onScroll={onScroll}
+      scrollEventThrottle={32}
       contentContainerStyle={[
         styles.content,
         { paddingTop: insets.top + Space.xl, paddingBottom: insets.bottom + Space.lg },
@@ -120,6 +125,8 @@ export default function WelcomeScreen() {
         <LegalLinks />
       </View>
     </ScrollView>
+    <TopEdge scrolled={scrolled} />
+    </View>
   );
 }
 

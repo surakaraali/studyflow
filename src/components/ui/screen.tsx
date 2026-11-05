@@ -3,6 +3,7 @@ import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from '@/components/ui/text';
+import { TopEdge, useScrolled } from '@/components/ui/top-edge';
 import { BottomTabInset, Gutter, Space } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -20,11 +21,15 @@ export function Screen({ title, subtitle, children }: ScreenProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const isIOS = Platform.OS === 'ios';
+  const { scrolled, onScroll } = useScrolled();
 
   return (
+    <View style={[styles.root, { backgroundColor: colors.paper }]}>
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.paper }}
       contentInsetAdjustmentBehavior="automatic"
+      onScroll={onScroll}
+      scrollEventThrottle={32}
       contentContainerStyle={[
         styles.content,
         isIOS
@@ -46,10 +51,15 @@ export function Screen({ title, subtitle, children }: ScreenProps) {
       </View>
       {children}
     </ScrollView>
+    <TopEdge scrolled={scrolled} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   content: {
     paddingHorizontal: Gutter,
     gap: Space.xxl,
