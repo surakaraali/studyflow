@@ -72,6 +72,7 @@
     "test:functions": "tsx scripts/integration/functions-smoke.ts"
   },
   "private": true,
+  "license": "UNLICENSED",
   "jest": {
     "preset": "jest-expo",
     "testPathIgnorePatterns": [

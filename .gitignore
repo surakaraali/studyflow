@@ -50,11 +50,6 @@ coverage/
 evals/documents/*.pdf
 evals/results/
 
-# local AI tool config (kept out of the repo)
-CLAUDE.md
-AGENTS.md
-.claude/
-
 # Supabase CLI local state
 supabase/.branches/
 supabase/.temp/

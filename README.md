@@ -12,14 +12,18 @@ kurar. Ders notlarından (PDF) özet, quiz ve kart üretir; kart tekrarlarını 
 
 ## Durum
 
-R1'in (Sprint 0–8) bütün "Must" hikâyeleri kodlandı. Uygulama **yerel modda** uçtan uca
+R1'in (Sprint 0–8) bütün "Must" hikâyeleri kodlandı. Ardından yeni bir kullanıcının uygulamayı
+indirdiği andan ilk günlerine kadarki yolculuğu tamamlandı (E19, US-71–US-80:
+[agile/backlog.md](agile/backlog.md)). Uygulama **yerel modda** uçtan uca
 çalışır: hesap, veri ve veli onayı cihazda tutulur, yapay zekâ işleri geliştirme sunucusuna
 gider. Supabase, App Store, RevenueCat ve e-posta hesapları açılınca aynı kod sunucuya bağlanır
 (adımlar: [analysis/adr/](analysis/adr/) ve [store/app-store.md](store/app-store.md)).
 
 | Alan | İçerik |
 |---|---|
-| Hesap | E-posta ve Apple ile giriş, onboarding (sınıf, doğum yılı, hedef sınav, alan), veli onayı ve kısıtlı mod, veli kapısı, yasal metinler, profil, hesap silme |
+| Hesap | E-posta ve Apple ile giriş, e-posta bağlantıları (doğrulama, şifre sıfırlama), onboarding (sınıf, doğum yılı, hedef sınav, alan), veli onayı ve kısıtlı mod, veli kapısı, yasal metinler, profil, şifre ve e-posta değiştirme, doğum yılını bir kez düzeltme, oturum süresi dolunca yeniden giriş, hesap silme |
+| İlk kurulum | Onboarding'e kaldığı yerden devam, ilk açılışta ders seçimi, Bugün'de kurulum listesi ve kısayollar, yeni okul yılı kartı, Pro bitince uyarı |
+| Ayarlar | Görünüm (Sistem/Açık/Koyu), veli onayına göre açılan bildirimler, eşitleme durumu, Hakkında, veri kopyası talebi |
 | Dersler | Sınıfa göre MEB ders önerisi, özel ders, arşiv, okul ders programı, müsait saatler, konular, sınavlar (LGS/YKS tahmini tarihleri dahil), ödevler |
 | Çalış | PDF yükleme (sayfa aralığı, şifreli PDF kontrolü), kota, işleme kuyruğu, özet, quiz üretimi ve çözme, yanlışları tekrar, içerik düzenleme ve bildirme, desteler ve FSRS tekrar |
 | Plan | Kural tabanlı plan motoru (sınav önceliği, günlük üst sınır, okul ve uyku saatleri, kaçırılan blokların dağıtılması), Bugün ve Takvim, odak zamanlayıcı, elle oturum, seri, hatırlatmalar |
@@ -43,7 +47,8 @@ Bilinen hata: [BUG-01](agile/backlog.md#9-bilinen-hatalar) (ilk açılışta sek
 
 ## Çalıştırma
 
-Gerekenler: Node.js 22.13+ (Homebrew: `node@22`), Xcode ve iOS simülatörü.
+Gerekenler: Node.js 22.13+ (Homebrew: `node@22`), Xcode ve iOS simülatörü. Hesap ya da anahtar
+gerekmez: Supabase anahtarları girilmediği sürece uygulama yerel modda açılır.
 
 ```bash
 npm install
@@ -158,3 +163,8 @@ web/            Veli onay sayfası
 evals/          Model değerlendirme seti iskeleti
 store/          App Store ve Google Play metinleri
 ```
+
+## Lisans
+
+Tüm hakları saklıdır. Repo, kodu ve belgeleri portföy olarak incelenebilsin diye herkese açık;
+herhangi bir bölümünü kullanmak için yazılı izin gerekir. Ayrıntılar: [LICENSE](LICENSE).
