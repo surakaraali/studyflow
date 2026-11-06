@@ -17,6 +17,7 @@ import { listDocuments } from '@/features/documents/repo';
 import { displayStatus } from '@/features/documents/status';
 import { DueCardsSummary } from '@/features/flashcards/components/due-cards-summary';
 import { QuotaMeter } from '@/features/quota/quota-meter';
+import { PlanChangeBanner } from '@/features/setup/components/plan-change-banner';
 import { useQuota } from '@/features/quota/use-quota';
 import { track } from '@/services/analytics';
 import { useAiAllowed } from '@/features/consent/ai-allowed';
@@ -50,6 +51,7 @@ export default function StudyScreen() {
 
   return (
     <Screen title={t('tabs.study')}>
+      <PlanChangeBanner />
       {gate.kind === 'consent' ? <AiGateNotice gate={gate} /> : null}
 
       {documents && documents.length === 0 ? (

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
-export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
+/** 'auth': the server refused the session; sync waits for a refreshed token or a new sign-in. */
+export type SyncState = 'idle' | 'syncing' | 'offline' | 'error' | 'auth';
 
 export type SyncStatus = {
   state: SyncState;

@@ -26,6 +26,10 @@ import { nextBlock, profileSegment } from '@/features/plan/repo';
 import { loadToday, TODAY_TABLES } from '@/features/plan/today';
 import { useNow } from '@/features/plan/use-now';
 import { ReminderPermissionCard } from '@/features/reminders/components/reminder-permission-card';
+import { NewYearCard } from '@/features/setup/components/new-year-card';
+import { PlanChangeBanner } from '@/features/setup/components/plan-change-banner';
+import { SetupChecklist } from '@/features/setup/components/setup-checklist';
+import { useFirstRunSetup } from '@/features/setup/use-first-run-setup';
 import { GoalStreak } from '@/features/streak/components/goal-streak';
 import { loadStreak, STREAK_TABLES } from '@/features/streak/repo';
 import { loadTimer } from '@/features/timer/timer-store';
@@ -51,6 +55,9 @@ export default function TodayScreen() {
     schedulePlanRegeneration('today-open');
   }, []);
 
+  // US-74: a brand-new student without courses gets the course picker once.
+  useFirstRunSetup(data?.hasCourses);
+
   const segment = profileSegment(profile) ?? 'ortaokul';
   const goal = profile?.daily_goal_min ?? defaultDailyGoal(segment);
   const items = data?.items ?? [];
@@ -60,6 +67,15 @@ export default function TodayScreen() {
   const isIOS = Platform.OS === 'ios';
 
   const courseOf = (id: string | null) => (id ? data?.courses.get(id) : undefined);
+
+  const availabilityButton = (
+    <Button
+      variant="secondary"
+      label={t('setup.shortcuts.availability')}
+      icon={{ ios: 'clock', android: 'schedule', web: 'schedule' }}
+      onPress={() => router.push('/availability')}
+    />
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.paper }}>
@@ -94,7 +110,9 @@ export default function TodayScreen() {
       </View>
 
       <ConsentBanner />
+      <PlanChangeBanner />
       <PlanWarningBanner />
+      <NewYearCard today={today} />
 
       {timerActive ? (
         <Banner
@@ -123,7 +141,7 @@ export default function TodayScreen() {
               <Button
                 label={t('actions.addCourse')}
                 icon={{ ios: 'plus', android: 'add' }}
-                onPress={() => router.navigate('/courses')}
+                onPress={() => router.push('/course/new')}
               />
               <Button
                 variant="secondary"
@@ -131,6 +149,7 @@ export default function TodayScreen() {
                 icon={{ ios: 'doc.badge.plus', android: 'upload_file' }}
                 onPress={() => router.navigate('/study')}
               />
+              {availabilityButton}
             </View>
           </>
         ) : (
@@ -172,6 +191,7 @@ export default function TodayScreen() {
               </AppText>
             )}
             <View style={styles.actions}>
+              {items.length === 0 ? availabilityButton : null}
               <Button
                 variant="secondary"
                 label={t('today.addManual')}
@@ -182,6 +202,31 @@ export default function TodayScreen() {
           </>
         )}
       </Card>
+
+      {data?.hasCourses ? (
+        <View style={styles.quickAdd}>
+          <View style={styles.quickAddItem}>
+            <Button
+              variant="secondary"
+              label={t('setup.shortcuts.addExam')}
+              icon={{ ios: 'pencil.and.list.clipboard', android: 'assignment', web: 'assignment' }}
+              onPress={() => router.push('/exam/new')}
+              block
+            />
+          </View>
+          <View style={styles.quickAddItem}>
+            <Button
+              variant="secondary"
+              label={t('setup.shortcuts.addHomework')}
+              icon={{ ios: 'checklist', android: 'task', web: 'task' }}
+              onPress={() => router.push('/homework/new')}
+              block
+            />
+          </View>
+        </View>
+      ) : null}
+
+      <SetupChecklist />
 
       {data?.hasCourses ? (
         <Card>
@@ -223,5 +268,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Space.md,
+  },
+  // Exam and homework shortcuts under the plan card (US-74).
+  quickAdd: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Space.md,
+    marginTop: -Space.md,
+  },
+  quickAddItem: {
+    flexGrow: 1,
+    flexBasis: 140,
   },
 });

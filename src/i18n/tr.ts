@@ -5,6 +5,7 @@ import plan from './tr/plan';
 import progress from './tr/progress';
 import quiz from './tr/quiz';
 import settings from './tr/settings';
+import setup from './tr/setup';
 import study from './tr/study';
 
 /**
@@ -20,6 +21,7 @@ const tr = {
   ...plan,
   ...progress,
   ...settings,
+  ...setup,
 };
 
 export type Translation = typeof tr;

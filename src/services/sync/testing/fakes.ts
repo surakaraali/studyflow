@@ -150,6 +150,8 @@ export class FakeServer implements Remote {
   tables = new Map<string, Map<string, Record<string, unknown>>>();
   /** Every call fails like a dropped connection. */
   offline = false;
+  /** Every call fails with 401 like an expired or revoked session. */
+  sessionExpired = false;
   /** The next N calls fail with 503. */
   failNext = 0;
   /** Apply the next write, then lose the response (the device sees a network error). */
@@ -184,6 +186,7 @@ export class FakeServer implements Remote {
 
   private gate(): RemoteResult | null {
     if (this.offline) return { ok: false, retryable: true, message: '0 TypeError: Network request failed' };
+    if (this.sessionExpired) return { ok: false, retryable: false, auth: true, message: '401 PGRST303 JWT expired' };
     if (this.failNext > 0) {
       this.failNext -= 1;
       return { ok: false, retryable: true, message: '503 Service Unavailable' };

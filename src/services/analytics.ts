@@ -15,7 +15,6 @@
  * Documentation: analysis/analytics_events.md.
  */
 
-import * as Application from 'expo-application';
 import { AppState, Platform } from 'react-native';
 
 import { hasDb } from '@/db/client';
@@ -23,6 +22,7 @@ import { kvGet, kvSet } from '@/db/write';
 import { todayString } from '@/lib/dates';
 import { registerAppService } from '@/services/app-services';
 import { onSignedIn, useSession } from '@/stores/session';
+import { appVersionLabel } from '@/lib/app-version';
 
 export type Kpi = 'G-01' | 'G-02' | 'G-03' | 'G-04' | 'G-05';
 
@@ -220,7 +220,7 @@ export function scrubStack(stack: string | undefined, maxFrames = 25): string {
 }
 
 function appVersion(): string {
-  return `${Application.nativeApplicationVersion ?? '?'} (${Application.nativeBuildVersion ?? '?'})`;
+  return appVersionLabel();
 }
 
 export function buildCrashReport(error: unknown, fatal: boolean): CrashReport {

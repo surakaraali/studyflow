@@ -1,9 +1,10 @@
 import * as Notifications from 'expo-notifications';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AppState, Linking, StyleSheet, View } from 'react-native';
 
+import { Banner } from '@/components/ui/banner';
 import { Button } from '@/components/ui/button';
 import { ListRow } from '@/components/ui/list-row';
 import { Page } from '@/components/ui/page';
@@ -12,6 +13,7 @@ import { AppText } from '@/components/ui/text';
 import { Space } from '@/constants/theme';
 import { patch } from '@/db/write';
 import { quietHours } from '@/domain/rules';
+import { useNotificationsAllowed } from '@/features/permissions/notifications-allowed';
 import { examMorningTime } from '@/features/reminders/build';
 import { SwitchRow } from '@/features/reminders/components/switch-row';
 import { rescheduleReminders } from '@/features/reminders/schedule';
@@ -26,10 +28,16 @@ async function readPermission(): Promise<PermissionState> {
   return { granted: current.granted, canAskAgain: current.canAskAgain };
 }
 
-/** US-60: system permission, a switch per reminder type and the quiet hours (BR-16). */
+/**
+ * US-60: system permission, a switch per reminder type and the quiet hours (BR-16).
+ * US-76: while the parent's consent doesn't cover notifications the switches stay off and
+ * locked, the reason is shown and the system prompt is never offered.
+ */
 export default function NotificationSettingsScreen() {
   const { t } = useTranslation();
   const { profile, age } = useProfile();
+  const consent = useNotificationsAllowed();
+  const blocked = !consent.allowed;
   const [permission, setPermission] = useState<PermissionState | null>(null);
   const [asking, setAsking] = useState(false);
 
@@ -63,7 +71,7 @@ export default function NotificationSettingsScreen() {
   };
 
   const toggle = async (key: SwitchKey, value: boolean) => {
-    if (!profile) return;
+    if (!profile || blocked) return;
     try {
       await patch('profile', profile.id, { [key]: value ? 1 : 0 });
       if (key !== 'notif_ai') await rescheduleReminders();
@@ -88,6 +96,24 @@ export default function NotificationSettingsScreen() {
     <Page>
       <Stack.Screen options={{ title: t('notificationSettings.title') }} />
 
+      {consent.reason ? (
+        <Banner
+          tone="info"
+          title={
+            consent.reason === 'purpose'
+              ? t('notificationSettings.purposeTitle')
+              : t('notificationSettings.consentTitle')
+          }
+          message={
+            consent.reason === 'purpose'
+              ? t('notificationSettings.purposeBlocked')
+              : t('notificationSettings.consentBlocked')
+          }
+          actionLabel={t('notificationSettings.consentLink')}
+          onAction={() => router.push('/consent')}
+        />
+      ) : null}
+
       <View style={styles.group}>
         <Section title={t('notificationSettings.permissionTitle')}>
           <ListRow
@@ -103,7 +129,7 @@ export default function NotificationSettingsScreen() {
             }
           />
         </Section>
-        {permission && !permission.granted ? (
+        {permission && !permission.granted && !blocked ? (
           <>
             <AppText variant="footnote" color="inkSoft">
               {t('notificationSettings.permissionOffBody')}
@@ -128,14 +154,16 @@ export default function NotificationSettingsScreen() {
         ) : null}
       </View>
 
-      <Section title={t('notificationSettings.typesTitle')}>
+      <Section
+        title={t('notificationSettings.typesTitle')}
+        footer={consent.reason ? t('notificationSettings.switchesOff') : undefined}>
         {switches.map((item) => (
           <SwitchRow
             key={item.key}
             title={item.title}
             hint={item.hint}
-            value={profile ? profile[item.key] === 1 : true}
-            disabled={!profile}
+            value={profile && !consent.reason ? profile[item.key] === 1 : false}
+            disabled={!profile || blocked}
             onChange={(value) => void toggle(item.key, value)}
           />
         ))}

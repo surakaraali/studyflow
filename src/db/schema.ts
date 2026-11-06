@@ -356,6 +356,9 @@ export const MIGRATIONS: string[] = [
   CREATE INDEX IF NOT EXISTS idx_exams_date ON exams(date);
   CREATE INDEX IF NOT EXISTS idx_homework_due ON homework(due_date);
   `,
+  /* 2: first-run journey (US-75) */ `
+  ALTER TABLE profile ADD COLUMN birth_year_corrected_at TEXT;
+  `,
 ];
 
 /** Tables that are synced to Supabase. Order matters: parents before children. */

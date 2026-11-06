@@ -35,6 +35,8 @@ import {
   targetExamChoices,
   TRACKS,
 } from '@/features/account/onboarding-logic';
+import { canCorrectBirthYear } from '@/features/account/birth-year-correction';
+import { BirthYearCorrection } from '@/features/account/components/birth-year-correction';
 import { syncOfficialExams } from '@/features/exams/official';
 import { schedulePlanRegeneration } from '@/features/plan/regenerate';
 import { useProfile } from '@/stores/session';
@@ -43,7 +45,10 @@ const SUPPORTED_GRADES = [5, 6, 7, 8, 9, 10, 11, 12];
 /** Changes to these columns rebuild the plan. */
 const PLAN_COLUMNS = ['grade', 'bedtime', 'wake_time', 'block_min', 'break_min', 'daily_goal_min'];
 
-/** US-12: nickname, grade, sleep, daily goal, block length, target exam and track. */
+/**
+ * US-12: nickname, grade, sleep, daily goal, block length, target exam and track.
+ * US-75: the birth year can be corrected once.
+ */
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { profile, age } = useProfile();
@@ -70,6 +75,8 @@ function ProfileForm({ profile, age }: { profile: Profile; age: number | null })
   const [dailyGoal, setDailyGoal] = useState(profile.daily_goal_min ?? defaults.dailyGoal);
   const [blockMin, setBlockMin] = useState(profile.block_min ?? defaults.blockMin);
   const [segmentNotice, setSegmentNotice] = useState(false);
+  const [correctingYear, setCorrectingYear] = useState(false);
+  const canCorrect = canCorrectBirthYear(profile);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -149,6 +156,26 @@ function ProfileForm({ profile, age }: { profile: Profile; age: number | null })
           textContentType="nickname"
         />
       </View>
+
+      {profile.birth_year != null ? (
+        <View style={styles.group}>
+          <AppText variant="title" accessibilityRole="header">
+            {t('profile.birthYear.title')}
+          </AppText>
+          <AppText variant="body">{t('profile.birthYear.current', { year: profile.birth_year })}</AppText>
+          {correctingYear || !canCorrect ? (
+            <BirthYearCorrection onCancel={canCorrect ? () => setCorrectingYear(false) : undefined} />
+          ) : (
+            <View style={styles.start}>
+              <Button
+                label={t('profile.birthYear.wrong')}
+                variant="secondary"
+                onPress={() => setCorrectingYear(true)}
+              />
+            </View>
+          )}
+        </View>
+      ) : null}
 
       <View style={styles.group}>
         <AppText variant="title" accessibilityRole="header">
@@ -239,5 +266,8 @@ function ProfileForm({ profile, age }: { profile: Profile; age: number | null })
 const styles = StyleSheet.create({
   group: {
     gap: Space.md,
+  },
+  start: {
+    alignSelf: 'flex-start',
   },
 });

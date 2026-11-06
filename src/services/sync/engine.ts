@@ -6,7 +6,8 @@
  * use upsert by id, append-only tables insert-or-ignore, so a retried batch never duplicates.
  * A batch the server rejects is retried row by row so one bad row cannot block the rest; the
  * bad row stays in the outbox with attempts + 1. A network/server failure stops the push and
- * keeps everything for the next run.
+ * keeps everything for the next run; so does a refused session (401), without counting it
+ * against any row.
  *
  * Pull: per table, rows with synced_at > cursor (server write time, so device clocks don't
  * matter), oldest first, in pages. Last write wins by updated_at; rows with local changes still
@@ -115,6 +116,12 @@ export async function pushChanges(deps: SyncDeps, options: { includeStuck?: bool
       report.pushed += batch.length;
       return true;
     }
+    if (result.auth) {
+      // The session is the problem, not the rows: keep everything as it is.
+      report.authFailed = true;
+      report.error = result.message;
+      return false;
+    }
     if (result.retryable) {
       report.retryLater = true;
       report.error = result.message;
@@ -177,6 +184,7 @@ export async function pullChanges(deps: SyncDeps, tables: readonly SyncedTable[]
         const result = await remote.pull(remoteTable(table), since, PULL_PAGE);
         if (!result.ok) {
           report.retryLater = result.retryable;
+          if (result.auth) report.authFailed = true;
           report.error = result.message;
           return report;
         }
@@ -230,7 +238,7 @@ export async function pullChanges(deps: SyncDeps, tables: readonly SyncedTable[]
 /** One full run: push first (so the pull never overwrites unsent edits), then pull. */
 export async function syncOnce(deps: SyncDeps, options: { includeStuck?: boolean } = {}): Promise<SyncReport> {
   const push = await pushChanges(deps, options);
-  if (push.retryLater) return { push, pull: null };
+  if (push.retryLater || push.authFailed) return { push, pull: null };
   const pull = await pullChanges(deps);
   return { push, pull };
 }

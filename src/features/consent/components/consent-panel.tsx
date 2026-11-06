@@ -11,6 +11,7 @@ import { Space } from '@/constants/theme';
 import { formatDateTime, formatFullDate } from '@/features/account/format';
 import { useTheme } from '@/hooks/use-theme';
 import { isLocalMode } from '@/services/config';
+import { profileAccess } from '@/stores/session';
 
 import { openParentPage, useConsentActions, useConsentState } from '../use-consent';
 import { ParentEmailForm } from './parent-email-form';
@@ -43,8 +44,11 @@ export function ConsentPanel({ showAccessSummary = false }: ConsentPanelProps) {
     p === 'ai' ? t('consent.purpose.ai') : t('consent.purpose.notifications'),
   );
 
-  const body =
-    status === 'granted'
+  // Under 13 nothing opens before the parent says yes, so the "already open" text would mislead.
+  const locked = profileAccess(state.profile ?? null) === 'locked';
+  const body = locked
+    ? t('consent.lockedBody')
+    : status === 'granted'
       ? t('consent.grantedBody')
       : status === 'revoked'
         ? t('consent.revokedBody')

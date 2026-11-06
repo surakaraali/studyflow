@@ -29,6 +29,7 @@ const profile: Profile = {
   notif_ai: 1,
   notif_permission_asked: 1,
   waitlist_parent_email: 'bekleme@example.com',
+  birth_year_corrected_at: null,
   created_at: '2026-10-01T10:00:00.000Z',
   updated_at: '2026-10-01T10:00:00.000Z',
 };

@@ -4,7 +4,7 @@
 -- and its "row untouched" check, and update plan(n).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(197);
+select plan(203);
 
 -- Users (the on_auth_user_created trigger creates their profiles).
 insert into auth.users (id, email) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a@test.studyflow.app'), ('bbbbbbbb-0000-4000-8000-000000000002', 'b@test.studyflow.app');
@@ -280,8 +280,15 @@ select results_eq($$ select plan, consent_status, nickname from public.profiles 
 update public.profiles set birth_year = extract(year from now())::int - 12 where id = 'aaaaaaaa-0000-4000-8000-000000000001';
 select results_eq($$ select consent_status from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001' $$, $$ values ('pending'::text) $$, 'profiles: a minor waits for consent whatever the device says');
 update public.profiles set onboarding_done = 1 where id = 'aaaaaaaa-0000-4000-8000-000000000001';
+-- US-75: after onboarding the birth year changes once, within the app's 5–25 age range.
 update public.profiles set birth_year = extract(year from now())::int - 30 where id = 'aaaaaaaa-0000-4000-8000-000000000001';
-select results_eq($$ select consent_status from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001' $$, $$ values ('pending'::text) $$, 'profiles: after onboarding a waiting account cannot become adult by editing the birth year');
+select results_eq($$ select extract(year from now())::int - birth_year, birth_year_corrected_at is null, consent_status from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001' $$, $$ values (12, true, 'pending'::text) $$, 'profiles: after onboarding an impossible year is ignored and does not use the correction');
+update public.profiles set birth_year = extract(year from now())::int - 14, consent_status = 'granted' where id = 'aaaaaaaa-0000-4000-8000-000000000001';
+select results_eq($$ select extract(year from now())::int - birth_year, birth_year_corrected_at is not null, consent_status from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001' $$, $$ values (14, true, 'pending'::text) $$, 'profiles: one birth-year correction is allowed; a minor still waits for a parent and is never granted by it');
+update public.profiles set birth_year = extract(year from now())::int - 19 where id = 'aaaaaaaa-0000-4000-8000-000000000001';
+select results_eq($$ select extract(year from now())::int - birth_year, consent_status from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001' $$, $$ values (14, 'pending'::text) $$, 'profiles: a second birth-year correction is refused');
+update public.profiles set birth_year_corrected_at = null where id = 'aaaaaaaa-0000-4000-8000-000000000001';
+select results_eq($$ select birth_year_corrected_at is not null from public.profiles where id = 'aaaaaaaa-0000-4000-8000-000000000001' $$, $$ values (true) $$, 'profiles: a device cannot clear the correction mark');
 update public.courses set name = 'Eski', updated_at = '2000-01-01' where id = 'a0000000-0000-4000-8000-000000000003';
 select results_eq($$ select name from public.courses where id = 'a0000000-0000-4000-8000-000000000003' $$, $$ values ('Matematik'::text) $$, 'courses: an older edit never overwrites a newer one');
 update public.content_reports set status = 'removed' where id = 'a0000000-0000-4000-8000-000000000017';
@@ -300,6 +307,22 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 update public.documents set status = 'queued', counted = 0, updated_at = now() + interval '1 day' where id = 'a0000000-0000-4000-8000-000000000101';
 select results_eq($$ select status, counted::int from public.documents where id = 'a0000000-0000-4000-8000-000000000101' $$, $$ values ('ready'::text, 1) $$, 'documents: a stale device copy cannot undo ready or refund it');
+reset role;
+
+-- 5b. US-75: consent follows the (corrected) age. C is a waiting 12-year-old who tries an adult year;
+-- D was a waiting 17-year-old who has turned 18 since.
+insert into auth.users (id, email) values ('cccccccc-0000-4000-8000-000000000003', 'c@test.studyflow.app'), ('dddddddd-0000-4000-8000-000000000004', 'd@test.studyflow.app');
+update public.profiles set birth_year = extract(year from now())::int - 12, consent_status = 'pending', onboarding_done = 1 where id = 'cccccccc-0000-4000-8000-000000000003';
+update public.profiles set birth_year = extract(year from now())::int - 18, consent_status = 'pending', onboarding_done = 1 where id = 'dddddddd-0000-4000-8000-000000000004';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "cccccccc-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+update public.profiles set birth_year = extract(year from now())::int - 19 where id = 'cccccccc-0000-4000-8000-000000000003';
+select results_eq($$ select extract(year from now())::int - birth_year, consent_status, birth_year_corrected_at is null from public.profiles where id = 'cccccccc-0000-4000-8000-000000000003' $$, $$ values (12, 'pending'::text, true) $$, 'profiles: a waiting student cannot correct to an adult year (age gate)');
+update public.profiles set birth_year = extract(year from now())::int - 15 where id = 'cccccccc-0000-4000-8000-000000000003';
+select results_eq($$ select extract(year from now())::int - birth_year, consent_status, birth_year_corrected_at is not null from public.profiles where id = 'cccccccc-0000-4000-8000-000000000003' $$, $$ values (15, 'pending'::text, true) $$, 'profiles: a waiting student can still correct to another minor year');
+select set_config('request.jwt.claims', '{"sub": "dddddddd-0000-4000-8000-000000000004", "role": "authenticated"}', true);
+update public.profiles set nickname = 'Deniz' where id = 'dddddddd-0000-4000-8000-000000000004';
+select results_eq($$ select consent_status, birth_year_corrected_at is null from public.profiles where id = 'dddddddd-0000-4000-8000-000000000004' $$, $$ values ('not_required'::text, true) $$, 'profiles: a waiting student who turned 18 no longer needs consent');
 reset role;
 
 -- 6. BR-18: deleting the account keeps consent and payment records outside the user tables.

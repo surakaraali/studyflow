@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { EmptyState } from '@/components/empty-state';
 import { Banner } from '@/components/ui/banner';
 import { Button } from '@/components/ui/button';
 import { Page } from '@/components/ui/page';
@@ -11,6 +12,10 @@ import { authErrorMessage } from '@/features/account/auth-errors';
 import { auth } from '@/services/auth';
 import { isLocalMode } from '@/services/config';
 
+/**
+ * US-08 / US-71: sends the reset link; the link opens /auth/callback and then /new-password.
+ * Local mode has no mailbox, so it explains how to start over instead.
+ */
 export default function ResetPasswordScreen() {
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ email?: string }>();
@@ -21,6 +26,24 @@ export default function ResetPasswordScreen() {
 
   const emailError = showErrors && !isValidEmail(email) ? t('auth.errors.invalidEmail') : null;
   const normalized = email.trim().toLowerCase();
+
+  if (isLocalMode) {
+    return (
+      <Page>
+        <EmptyState
+          title={t('auth.reset.localTitle')}
+          body={t('auth.reset.localStartOver')}
+          actions={[
+            { label: t('auth.reset.localSignUp'), onPress: () => router.replace('/sign-up') },
+            {
+              label: t('auth.reset.backToSignIn'),
+              onPress: () => router.replace({ pathname: '/sign-in', params: { email: normalized } }),
+            },
+          ]}
+        />
+      </Page>
+    );
+  }
 
   const submit = async () => {
     setShowErrors(true);
@@ -52,10 +75,9 @@ export default function ResetPasswordScreen() {
             block
           />
         ) : (
-          <Button label={t('auth.reset.submit')} onPress={submit} loading={busy} disabled={isLocalMode} block />
+          <Button label={t('auth.reset.submit')} onPress={submit} loading={busy} block />
         )
       }>
-      {isLocalMode ? <Banner tone="info" message={t('auth.reset.localNote')} /> : null}
       <TextField
         label={t('auth.fields.email')}
         placeholder={t('auth.fields.emailPlaceholder')}

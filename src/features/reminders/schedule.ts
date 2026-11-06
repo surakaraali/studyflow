@@ -3,6 +3,7 @@
  * regeneration and after a notification setting changes: it cancels the old ones first,
  * then schedules the nearest ones while staying under iOS's 64 pending notifications.
  * `scheduleAt` applies the per-type switches and the quiet hours again (BR-16).
+ * Without the parent's notification consent nothing is built (US-76).
  */
 
 import * as Notifications from 'expo-notifications';
@@ -10,6 +11,7 @@ import type { Href } from 'expo-router';
 
 import { getDb, hasDb } from '@/db/client';
 import type { PlanItem } from '@/db/types';
+import { notificationsAllowedNow } from '@/features/permissions/notifications-allowed';
 import i18n from '@/i18n';
 import { addDays, formatDate } from '@/lib/dates';
 import {
@@ -86,6 +88,7 @@ async function reschedule(): Promise<void> {
   if (!profile) return;
 
   await cancelKinds(OUR_KINDS);
+  if (!(await notificationsAllowedNow())) return;
   if (!(await hasNotificationPermission())) return;
 
   const now = new Date();

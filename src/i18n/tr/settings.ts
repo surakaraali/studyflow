@@ -7,7 +7,9 @@ const settings = {
       profile: 'Profil',
       profileHint: 'Rumuz, sınıf, uyku saatleri, günlük hedef',
       account: 'Hesap ve silme',
-      accountHint: 'E-posta, veri kopyası, hesabı silme',
+      accountHint: 'E-posta, şifre, hesabı silme',
+      dataCopy: 'Verilerimin kopyası',
+      dataCopyHint: 'Hazır bir talep gönder, kopyan e-postayla gelsin',
     },
     plan: {
       title: 'Plan',
@@ -30,6 +32,7 @@ const settings = {
     app: {
       title: 'Uygulama',
       notifications: 'Bildirimler',
+      appearance: 'Görünüm',
       aiNotice: 'Yapay zekâ bilgilendirmesi',
       consent: 'Veli onayı',
       consentStatus: {
@@ -48,6 +51,61 @@ const settings = {
       supportHint: 'Ekibe yaz, e-postayla cevap verelim',
       feedback: 'Geri bildirim',
       feedbackHint: 'Görüşünü yaz ya da kısa anketi doldur',
+      about: 'Hakkında',
+    },
+    sync: {
+      title: 'Eşitleme',
+      row: 'Verilerin',
+      local: 'Bu cihazda saklanıyor',
+      localFooter: 'Geliştirme modundasın: verilerin sunucuya gönderilmez, yalnızca bu cihazda durur.',
+      last: 'Son eşitleme: {{time}}',
+      never: 'Henüz eşitlenmedi',
+      today: 'bugün {{time}}',
+      yesterday: 'dün {{time}}',
+      pending_one: '{{count}} değişiklik gönderilmeyi bekliyor',
+      pending_other: '{{count}} değişiklik gönderilmeyi bekliyor',
+      upToDate: 'Bütün değişikliklerin gönderildi',
+      state: {
+        idle: 'Güncel',
+        waiting: 'Bekliyor',
+        syncing: 'Eşitleniyor',
+        offline: 'Çevrimdışı',
+        error: 'Sorun var',
+        auth: 'Durdu',
+      },
+      now: 'Şimdi eşitle',
+      offline: 'İnternet gelince değişikliklerin kendiliğinden gönderilir.',
+      stuck_one:
+        '{{count}} değişiklik sunucuya kabul edilmedi. Bu cihazda saklanıyor; sorun sürerse Destek’ten bize yaz.',
+      stuck_other:
+        '{{count}} değişiklik sunucuya kabul edilmedi. Bu cihazda saklanıyor; sorun sürerse Destek’ten bize yaz.',
+      auth: 'Oturumun yenilenemediği için eşitleme durdu. Çıkış yapıp tekrar giriş yap; bekleyen değişikliklerin silinmez.',
+    },
+    appearance: {
+      title: 'Görünüm',
+      intro: 'Uygulamanın açık mı koyu mu görüneceğini seç. Seçimin bu cihazda saklanır.',
+      label: 'Tema',
+      options: {
+        system: 'Sistem',
+        light: 'Açık',
+        dark: 'Koyu',
+      },
+      systemHint: 'Telefonunun ayarına uyar. Şu an: {{current}}.',
+      fixedHint: 'Telefonunun ayarı ne olursa olsun bu tema kullanılır.',
+    },
+    about: {
+      title: 'Hakkında',
+      tagline: 'Dersler, sınavlar ve ödevler için çalışma planlayıcın.',
+      version: 'Sürüm',
+      build: 'Derleme',
+      data: 'Verilerin',
+      dataLocal: 'Yalnızca bu cihazda',
+      dataServer: 'Cihazda ve sunucuda',
+      legalTitle: 'Yasal metinler',
+      contact: 'Bize yaz',
+      licensesTitle: 'Açık kaynak lisanslar',
+      licensesFooter:
+        'StudyFlow bu açık kaynak yazılımlarla yapıldı. Her birinin lisans metni kendi paketinde yer alır. Emeği geçen herkese teşekkürler!',
     },
     signOut: 'Çıkış yap',
     signOutTitle: 'Çıkış yapılsın mı?',
@@ -185,7 +243,7 @@ const settings = {
       },
       notifications: {
         q: 'Bildirimler ne zaman gelir?',
-        a: 'Plan bloğun başlarken, sınavına 7, 3 ve 1 gün kala, ödev tesliminden 1 gün önce ve belgen hazır olunca. Gece saatlerinde bildirim gönderilmez. Hangi bildirimleri alacağını Ayarlar > Bildirimler’den seçebilirsin.',
+        a: 'Plan bloğun başlarken, sınavına 7, 3 ve 1 gün kala, ödev tesliminden 1 gün önce ve belgen hazır olunca. Gece saatlerinde bildirim gönderilmez. Hangi bildirimleri alacağını Ayarlar > Bildirimler’den seçebilirsin. 18 yaşından küçüksen bildirimler, velin onay verirken bildirimlere de izin verdiyse açılır.',
       },
       subscription: {
         q: 'Pro aboneliğimi nasıl iptal ederim?',
@@ -229,6 +287,14 @@ const settings = {
     sentLocal: 'Geliştirme modundasın: mesaj yalnızca bu cihaza kaydedildi.',
     back: 'Ayarlara dön',
     error: 'Mesajın kaydedilemedi. Tekrar dene.',
+    dataCopy: {
+      title: 'Verilerimin kopyası',
+      intro:
+        'Hesabındaki verilerin bir kopyasını istemek için bu talebi gönder. Kopyan en geç 30 gün içinde, indirilebilir bir dosya olarak e-posta adresine gelir.',
+      message:
+        'Merhaba, hesabımdaki verilerin bir kopyasını istiyorum. Kopyayı bu e-posta adresine gönderebilir misiniz? Teşekkürler.',
+      sentBody: 'Talebin alındı. Verilerinin kopyası en geç 30 gün içinde {{email}} adresine gelecek.',
+    },
   },
 
   feedback: {

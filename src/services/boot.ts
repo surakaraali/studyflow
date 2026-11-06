@@ -5,7 +5,10 @@
 import '@/services/analytics';
 import '@/services/notifications';
 import '@/services/sync';
+import '@/features/consent/service';
 import '@/services/ai/runner';
 import '@/services/purchases';
 import '@/features/plan/regenerate';
 import '@/features/plan/runner';
+import '@/services/auth-watch';
+import '@/features/reminders/consent-reminders';

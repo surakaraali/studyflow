@@ -72,7 +72,8 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={navigationTheme(scheme)}>
-      <StatusBar style="auto" />
+      {/* Follows the app's own theme (Ayarlar > Görünüm), not only the system's. */}
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ ...stackOptions, headerShown: false }}>
         <Stack.Protected guard={!signedIn} redirectTo={home}>
           <Stack.Screen name="(auth)" />

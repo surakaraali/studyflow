@@ -7,7 +7,9 @@ import { addDays, todayString } from '@/lib/dates';
 /** US-26: add a school exam, optionally for a given course (?courseId=). */
 export default function NewExamScreen() {
   const { t } = useTranslation();
-  const { courseId } = useLocalSearchParams<{ courseId?: string }>();
+  const { courseId, date } = useLocalSearchParams<{ courseId?: string; date?: string }>();
+  // Calendar passes the selected day; only a day from today on makes sense for a new exam.
+  const startDate = date && date >= todayString() ? date : addDays(todayString(), 7);
 
   return (
     <>
@@ -17,7 +19,7 @@ export default function NewExamScreen() {
           courseId: courseId ?? null,
           kind: 'yazili',
           title: '',
-          date: addDays(todayString(), 7),
+          date: startDate,
           time: null,
           topicIds: [],
         }}

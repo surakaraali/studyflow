@@ -4,6 +4,7 @@ import {
   buildOnboardingProfile,
   clampDailyGoal,
   consentStatusForAge,
+  goalExamFor,
   gradeAgeMismatch,
   isDeleteConfirmation,
   needsTrack,
@@ -71,11 +72,20 @@ describe('steps', () => {
     expect(nextStep('preferences', 12, age)).toBe('parent');
   });
 
-  it('skips the goal step when no exam is suggested and the parent step for adults', () => {
-    expect(onboardingSteps(10, 19)).toEqual(['grade', 'birth-year', 'nickname', 'preferences']);
-    expect(nextStep('preferences', 10, 19)).toBeNull();
+  it('skips the goal step when no exam fits and the parent step for adults', () => {
+    expect(onboardingSteps(7, 19)).toEqual(['grade', 'birth-year', 'nickname', 'preferences']);
+    expect(nextStep('preferences', 7, 19)).toBeNull();
     expect(nextStep('birth-year', 8, 14)).toBe('goal');
     expect(nextStep('birth-year', 7, 13)).toBe('nickname');
+  });
+
+  it('US-73: grades 9–10 get an optional YKS goal step', () => {
+    expect(onboardingSteps(10, 19)).toEqual(['grade', 'birth-year', 'goal', 'nickname', 'preferences']);
+    expect(goalExamFor(9)).toEqual({ exam: 'YKS', suggested: false });
+    expect(goalExamFor(11)).toEqual({ exam: 'YKS', suggested: true });
+    expect(goalExamFor(8)).toEqual({ exam: 'LGS', suggested: true });
+    expect(goalExamFor(6)).toBeNull();
+    expect(goalExamFor(null)).toBeNull();
   });
 
   it('assumes a parent step until the age is known', () => {

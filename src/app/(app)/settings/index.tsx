@@ -1,24 +1,117 @@
-import * as Application from 'expo-application';
 import { router, Stack } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, StyleSheet } from 'react-native';
+import { Alert } from 'react-native';
 
-import { ListRow } from '@/components/ui/list-row';
+import { ListRow, type ListRowProps } from '@/components/ui/list-row';
 import { Page } from '@/components/ui/page';
 import { Section } from '@/components/ui/section';
-import { AppText } from '@/components/ui/text';
 import { canPurchase } from '@/domain/rules';
+import { signOut } from '@/features/account/service';
+import { useAppearance } from '@/features/appearance/store';
 import { usePlanActions } from '@/features/subscription/use-plan-actions';
+import { formatDate, formatShortDate, isSameDay, localeTag } from '@/lib/dates';
 import { track } from '@/services/analytics';
 import { isLocalMode } from '@/services/config';
 import { purchaseMode, restore } from '@/services/purchases';
-import { endSession, useProfile } from '@/stores/session';
+import { syncNow, useSyncStatus, type SyncStatus } from '@/services/sync';
+import { useProfile } from '@/stores/session';
+import { appVersion } from '@/lib/app-version';
 
-/** Settings hub: account, plan, app settings, help, sign-out and version. */
+/** Pieces for "bugün 14:32", "dün 09:05" or "3 Kas 18:40". */
+function syncTime(iso: string, tag: string): { day: 'today' | 'yesterday' | null; date: string; time: string } {
+  const date = new Date(iso);
+  const now = new Date();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  return {
+    day: isSameDay(date, now) ? 'today' : isSameDay(date, yesterday) ? 'yesterday' : null,
+    date: formatShortDate(formatDate(date), tag),
+    time: new Intl.DateTimeFormat(tag, { hour: '2-digit', minute: '2-digit' }).format(date),
+  };
+}
+
+type SyncLabel = keyof typeof SYNC_COLORS;
+
+const SYNC_COLORS = {
+  idle: 'success',
+  waiting: 'inkSoft',
+  syncing: 'inkSoft',
+  offline: 'inkSoft',
+  error: 'exam',
+  auth: 'exam',
+} as const satisfies Record<string, NonNullable<ListRowProps['detailColor']>>;
+
+function syncLabel({ state, pending, stuck }: SyncStatus): SyncLabel {
+  if (state === 'syncing' || state === 'offline' || state === 'auth') return state;
+  if (state === 'error' || stuck > 0) return 'error';
+  return pending > stuck ? 'waiting' : 'idle';
+}
+
+/** US-77: last successful sync, changes still waiting and a manual sync (OFF-03). */
+function SyncSection() {
+  const { t, i18n } = useTranslation();
+  const status = useSyncStatus();
+
+  if (isLocalMode) {
+    return (
+      <Section title={t('settings.sync.title')} footer={t('settings.sync.localFooter')}>
+        <ListRow
+          title={t('settings.sync.row')}
+          subtitle={t('settings.sync.local')}
+          icon={{ ios: 'iphone', android: 'smartphone', web: 'smartphone' }}
+        />
+      </Section>
+    );
+  }
+
+  const waiting = Math.max(0, status.pending - status.stuck);
+  const label = syncLabel(status);
+  let last: string = t('settings.sync.never');
+  if (status.lastSyncedAt) {
+    const { day, date, time } = syncTime(status.lastSyncedAt, localeTag(i18n.language));
+    const when =
+      day === 'today'
+        ? t('settings.sync.today', { time })
+        : day === 'yesterday'
+          ? t('settings.sync.yesterday', { time })
+          : `${date} ${time}`;
+    last = t('settings.sync.last', { time: when });
+  }
+  const queue = waiting > 0 ? t('settings.sync.pending', { count: waiting }) : t('settings.sync.upToDate');
+  const footer =
+    status.state === 'auth'
+      ? t('settings.sync.auth')
+      : status.stuck > 0
+        ? t('settings.sync.stuck', { count: status.stuck })
+        : status.state === 'offline'
+          ? t('settings.sync.offline')
+          : undefined;
+
+  return (
+    <Section title={t('settings.sync.title')} footer={footer}>
+      <ListRow
+        title={t('settings.sync.row')}
+        subtitle={`${last}\n${queue}`}
+        detail={t(`settings.sync.state.${label}`)}
+        detailColor={SYNC_COLORS[label]}
+        icon={{ ios: 'arrow.triangle.2.circlepath.icloud', android: 'cloud_sync', web: 'cloud_sync' }}
+      />
+      <ListRow
+        title={t('settings.sync.now')}
+        icon={{ ios: 'arrow.clockwise', android: 'sync', web: 'sync' }}
+        onPress={syncNow}
+        chevron={false}
+      />
+    </Section>
+  );
+}
+
+/** Settings hub: account, plan, app settings, sync, help and sign-out. */
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const { profile, access, age } = useProfile();
+  const appearance = useAppearance((s) => s.preference);
   const { manage, gateElement } = usePlanActions();
   const [restoring, setRestoring] = useState(false);
 
@@ -48,7 +141,7 @@ export default function SettingsScreen() {
         text: t('settings.signOut'),
         style: 'destructive',
         onPress: () => {
-          endSession().catch(() => Alert.alert(t('common.genericError')));
+          signOut().catch(() => Alert.alert(t('common.genericError')));
         },
       },
     ]);
@@ -70,6 +163,12 @@ export default function SettingsScreen() {
             subtitle={t('settings.account.accountHint')}
             icon={{ ios: 'key', android: 'manage_accounts', web: 'manage_accounts' }}
             onPress={() => router.push('/settings/account')}
+          />
+          <ListRow
+            title={t('settings.account.dataCopy')}
+            subtitle={t('settings.account.dataCopyHint')}
+            icon={{ ios: 'square.and.arrow.down', android: 'download', web: 'download' }}
+            onPress={() => router.push({ pathname: '/settings/support', params: { preset: 'dataCopy' } })}
           />
         </Section>
 
@@ -113,6 +212,12 @@ export default function SettingsScreen() {
             onPress={() => router.push('/settings/notifications')}
           />
           <ListRow
+            title={t('settings.app.appearance')}
+            detail={t(`settings.appearance.options.${appearance}`)}
+            icon={{ ios: 'circle.lefthalf.filled', android: 'contrast', web: 'contrast' }}
+            onPress={() => router.push('/settings/appearance')}
+          />
+          <ListRow
             title={t('settings.app.aiNotice')}
             icon={{ ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' }}
             onPress={() => router.push('/ai-notice')}
@@ -134,6 +239,8 @@ export default function SettingsScreen() {
           />
         </Section>
 
+        <SyncSection />
+
         <Section title={t('settings.help.title')}>
           <ListRow
             title={t('settings.help.faq')}
@@ -151,6 +258,12 @@ export default function SettingsScreen() {
             subtitle={t('settings.help.feedbackHint')}
             icon={{ ios: 'bubble.left', android: 'chat_bubble', web: 'chat_bubble' }}
             onPress={() => router.push('/settings/feedback')}
+          />
+          <ListRow
+            title={t('settings.help.about')}
+            detail={appVersion().version ?? undefined}
+            icon={{ ios: 'info.circle', android: 'info', web: 'info' }}
+            onPress={() => router.push('/settings/about')}
           />
         </Section>
 
@@ -177,21 +290,8 @@ export default function SettingsScreen() {
             onPress={confirmSignOut}
           />
         </Section>
-
-        <AppText variant="footnote" color="inkSoft" style={styles.version}>
-          {t('settings.version', {
-            version: Application.nativeApplicationVersion ?? '—',
-            build: Application.nativeBuildVersion ?? '—',
-          })}
-        </AppText>
       </Page>
       {gateElement}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  version: {
-    textAlign: 'center',
-  },
-});

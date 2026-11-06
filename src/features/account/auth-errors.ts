@@ -15,6 +15,8 @@ export function authErrorMessage(t: TFunction, error: AuthError): string {
       return t('auth.errors.invalidEmail');
     case 'weak_password':
       return t('auth.errors.weakPassword');
+    case 'same_password':
+      return t('auth.errors.samePassword');
     case 'network':
       return t('auth.errors.network');
     default:

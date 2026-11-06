@@ -16,6 +16,9 @@ export function supabase(): SupabaseClient | null {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
+        // E-mail links come back through studyflow://auth/callback; PKCE keeps the code useless
+        // without the verifier stored on this device.
+        flowType: 'pkce',
       },
     });
   }

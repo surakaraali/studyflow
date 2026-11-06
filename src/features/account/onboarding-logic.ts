@@ -70,6 +70,18 @@ export function needsTrack(grade: number, target: TargetExam | null): boolean {
   return grade >= 11 && target === 'YKS';
 }
 
+/**
+ * The exam the goal step asks about. LGS (grade 8) and YKS (grades 11–12) are suggested;
+ * grades 9–10 may opt in to YKS early (US-73), but nothing is preselected for them.
+ */
+export function goalExamFor(grade: number | null): { exam: TargetExam; suggested: boolean } | null {
+  if (grade == null) return null;
+  const suggested = suggestedTargetExam(grade);
+  if (suggested) return { exam: suggested, suggested: true };
+  if (grade === 9 || grade === 10) return { exam: 'YKS', suggested: false };
+  return null;
+}
+
 export type OnboardingStep = 'grade' | 'birth-year' | 'goal' | 'nickname' | 'preferences' | 'parent';
 
 /**
@@ -78,7 +90,7 @@ export type OnboardingStep = 'grade' | 'birth-year' | 'goal' | 'nickname' | 'pre
  */
 export function onboardingSteps(grade: number | null, age: number | null): OnboardingStep[] {
   const steps: OnboardingStep[] = ['grade', 'birth-year'];
-  if (grade != null && suggestedTargetExam(grade) != null) steps.push('goal');
+  if (goalExamFor(grade) != null) steps.push('goal');
   steps.push('nickname', 'preferences');
   if (age == null || needsParentConsent(age)) steps.push('parent');
   return steps;

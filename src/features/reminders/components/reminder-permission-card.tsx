@@ -7,16 +7,19 @@ import { Card } from '@/components/ui/card';
 import { AppText } from '@/components/ui/text';
 import { Space } from '@/constants/theme';
 import { patch } from '@/db/write';
+import { useNotificationsAllowed } from '@/features/permissions/notifications-allowed';
 import { rescheduleReminders } from '@/features/reminders/schedule';
 import { requestNotificationPermission } from '@/services/notifications';
 
 /**
  * US-60: once the first plan exists, explain what reminders do, then ask the system once.
  * Either answer sets `notif_permission_asked`, so the card does not come back.
+ * Hidden while the parent's consent doesn't cover notifications (US-76).
  */
 export function ReminderPermissionCard({ profileId }: { profileId: string }) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
+  const { allowed } = useNotificationsAllowed();
 
   const allow = async () => {
     setBusy(true);
@@ -30,6 +33,8 @@ export function ReminderPermissionCard({ profileId }: { profileId: string }) {
   };
 
   const later = () => patch('profile', profileId, { notif_permission_asked: 1 });
+
+  if (!allowed) return null;
 
   return (
     <Card>

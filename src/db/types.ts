@@ -37,6 +37,8 @@ export type Profile = {
   notif_ai: Bool;
   notif_permission_asked: Bool;
   waitlist_parent_email: string | null;
+  /** US-75: set once the student has used their one birth-year correction. */
+  birth_year_corrected_at: string | null;
   created_at: string;
   updated_at: string;
 };

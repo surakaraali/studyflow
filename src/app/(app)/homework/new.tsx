@@ -7,13 +7,14 @@ import { addDays, todayString } from '@/lib/dates';
 /** US-29: add homework, optionally for a given course (?courseId=). */
 export default function NewHomeworkScreen() {
   const { t } = useTranslation();
-  const { courseId } = useLocalSearchParams<{ courseId?: string }>();
+  const { courseId, date } = useLocalSearchParams<{ courseId?: string; date?: string }>();
+  const dueDate = date && date >= todayString() ? date : addDays(todayString(), 1);
 
   return (
     <>
       <Stack.Screen options={{ title: t('homework.newTitle') }} />
       <HomeworkForm
-        initial={{ courseId: courseId ?? null, description: '', dueDate: addDays(todayString(), 1) }}
+        initial={{ courseId: courseId ?? null, description: '', dueDate }}
         onSaved={() => router.back()}
       />
     </>

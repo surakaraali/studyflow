@@ -7,7 +7,13 @@
  * Quiet hours (BR-16) drop a reminder instead of moving it.
  */
 
-import { EXAM_DAY_EARLIEST, isQuietTime, quietHours, toMinutes } from '@/domain/rules';
+import {
+  CONSENT_REMINDER_DAYS,
+  EXAM_DAY_EARLIEST,
+  isQuietTime,
+  quietHours,
+  toMinutes,
+} from '@/domain/rules';
 import { addDays, formatDate, parseDate } from '@/lib/dates';
 
 export const EXAM_REMINDER_DAYS = [7, 3, 1] as const;
@@ -17,6 +23,8 @@ export const HOMEWORK_REMINDER_TIME = '17:00';
 export const BLOCK_REMINDER_DAYS = 2;
 /** iOS keeps at most 64 pending local notifications per app. */
 export const IOS_PENDING_LIMIT = 64;
+/** Consent reminders (BR-04): early evening, outside every age group's quiet hours. */
+export const CONSENT_REMINDER_TIME = '18:00';
 
 export type ReminderBlock = {
   id: string;
@@ -81,4 +89,18 @@ export function buildReminders(input: {
     .filter((r) => r.date.getTime() > now.getTime())
     .filter((r) => age == null || !isQuietTime(r.date, age))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+/**
+ * Local mode (US-76, US-17): the consent reminders still ahead, on day 7 and day 25 after
+ * sign-up at CONSENT_REMINDER_TIME. With a server the parent gets these by e-mail instead.
+ */
+export function consentReminderDates(accountCreatedAt: string, now: Date): { day: number; date: Date }[] {
+  const created = new Date(accountCreatedAt);
+  if (Number.isNaN(created.getTime())) return [];
+  const signUpDay = formatDate(created);
+  return CONSENT_REMINDER_DAYS.map((day) => ({
+    day,
+    date: atTime(addDays(signUpDay, day), CONSENT_REMINDER_TIME),
+  })).filter((reminder) => reminder.date.getTime() > now.getTime());
 }

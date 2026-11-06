@@ -95,6 +95,16 @@ export default function WelcomeScreen() {
             message={t('auth.welcome.accountClosed')}
           />
         ) : null}
+        {notice === 'session_expired' ? (
+          <Banner
+            tone="info"
+            title={t('auth.welcome.sessionExpiredTitle')}
+            message={t('auth.welcome.sessionExpired')}
+          />
+        ) : null}
+        {notice === 'link_other_account' ? (
+          <Banner tone="info" message={t('auth.welcome.linkOtherAccount')} />
+        ) : null}
         {error ? <Banner tone="warning" message={error} /> : null}
 
         {appleAvailable ? (

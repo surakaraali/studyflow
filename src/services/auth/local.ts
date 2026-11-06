@@ -53,6 +53,13 @@ function toUser(account: Account): AuthUser {
   return { id: account.id, email: account.email };
 }
 
+async function sessionAccount(): Promise<Account | null> {
+  const id = await SecureStore.getItemAsync(SESSION_KEY);
+  if (!id) return null;
+  const db = await accountsDb();
+  return db.getFirstAsync<Account>('SELECT * FROM accounts WHERE id = ?', id);
+}
+
 async function startSession(account: Account): Promise<AuthResult> {
   await SecureStore.setItemAsync(SESSION_KEY, account.id);
   return { ok: true, user: toUser(account) };
@@ -66,10 +73,7 @@ export async function markEmailVerifiedLocally(email: string) {
 
 export const localAuth: AuthAdapter = {
   async restore() {
-    const id = await SecureStore.getItemAsync(SESSION_KEY);
-    if (!id) return null;
-    const db = await accountsDb();
-    const account = await db.getFirstAsync<Account>('SELECT * FROM accounts WHERE id = ?', id);
+    const account = await sessionAccount();
     return account ? toUser(account) : null;
   },
 
@@ -147,5 +151,46 @@ export const localAuth: AuthAdapter = {
     }
     await SecureStore.deleteItemAsync(SESSION_KEY);
     return { ok: true };
+  },
+
+  async signInMethods() {
+    const account = await sessionAccount();
+    return { password: account?.password_hash != null, apple: account?.apple_user != null };
+  },
+
+  async updatePassword(newPassword, currentPassword) {
+    const account = await sessionAccount();
+    if (!account) return { ok: false, error: 'unknown' };
+    if (currentPassword != null) {
+      if (!account.salt || account.password_hash !== (await hash(currentPassword, account.salt))) {
+        return { ok: false, error: 'invalid_credentials' };
+      }
+      if (currentPassword === newPassword) return { ok: false, error: 'same_password' };
+    }
+    const salt = newId();
+    const db = await accountsDb();
+    await db.runAsync(
+      'UPDATE accounts SET password_hash = ?, salt = ? WHERE id = ?',
+      await hash(newPassword, salt),
+      salt,
+      account.id,
+    );
+    return { ok: true };
+  },
+
+  async updateEmail(newEmail) {
+    const account = await sessionAccount();
+    if (!account) return { ok: false, error: 'unknown' };
+    const normalized = newEmail.trim().toLowerCase();
+    const db = await accountsDb();
+    const taken = await db.getFirstAsync<{ id: string }>(
+      'SELECT id FROM accounts WHERE email = ? AND id != ?',
+      normalized,
+      account.id,
+    );
+    if (taken) return { ok: false, error: 'email_exists' };
+    // No mailbox on the device: the new address counts as verified right away.
+    await db.runAsync('UPDATE accounts SET email = ?, verified = 1 WHERE id = ?', normalized, account.id);
+    return { ok: true, needsVerification: false };
   },
 };

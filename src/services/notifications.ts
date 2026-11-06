@@ -2,12 +2,14 @@ import * as Notifications from 'expo-notifications';
 import { router, type Href } from 'expo-router';
 
 import { isQuietTime } from '@/domain/rules';
+import { notificationsAllowedNow } from '@/features/permissions/notifications-allowed';
 import { registerAppService } from '@/services/app-services';
 import { profileAge, useSession } from '@/stores/session';
 
 /**
  * Local notifications core (FR-NT). Features build their reminders on top of these helpers.
- * Every helper respects the student's per-type switches and the quiet hours (BR-16).
+ * Every helper respects the parent's consent (US-76), the student's per-type switches and the
+ * quiet hours (BR-16).
  */
 
 export type NotificationKind = 'plan' | 'exam' | 'homework' | 'ai' | 'timer' | 'consent';
@@ -47,6 +49,14 @@ function kindEnabled(kind: NotificationKind): boolean {
   }
 }
 
+/**
+ * US-76: under 18, only consent messages ("Velin onayladı", consent reminders) go out until
+ * the parent approves notifications.
+ */
+async function consentAllows(kind: NotificationKind): Promise<boolean> {
+  return kind === 'consent' || notificationsAllowedNow();
+}
+
 function inQuietHours(date: Date): boolean {
   const age = profileAge(useSession.getState().profile);
   return age != null && isQuietTime(date, age);
@@ -57,18 +67,26 @@ export async function hasNotificationPermission(): Promise<boolean> {
   return settings.granted;
 }
 
-/** Asks once. Call it after the student has seen why notifications help (US-60). */
+/**
+ * Asks once. Call it after the student has seen why notifications help (US-60).
+ * Never asks while the parent's consent doesn't cover notifications (US-76).
+ */
 export async function requestNotificationPermission(): Promise<boolean> {
   const current = await Notifications.getPermissionsAsync();
   if (current.granted) return true;
   if (!current.canAskAgain) return false;
+  if (!(await notificationsAllowedNow())) return false;
   const next = await Notifications.requestPermissionsAsync();
   return next.granted;
 }
 
-/** Shows a notification now (e.g. "Belgen hazır"). Skipped in quiet hours or when switched off. */
+/**
+ * Shows a notification now (e.g. "Belgen hazır"). Skipped in quiet hours, when switched off or
+ * without the parent's consent.
+ */
 export async function notifyNow(payload: Payload): Promise<void> {
   if (!kindEnabled(payload.kind) || inQuietHours(new Date())) return;
+  if (!(await consentAllows(payload.kind))) return;
   if (!(await hasNotificationPermission())) return;
   await Notifications.scheduleNotificationAsync({
     content: { title: payload.title, body: payload.body, data: { kind: payload.kind, url: payload.url } },
@@ -78,7 +96,7 @@ export async function notifyNow(payload: Payload): Promise<void> {
 
 /**
  * Schedules a notification. Returns its id, or null when it was skipped
- * (in the past, in quiet hours, type switched off, no permission).
+ * (in the past, in quiet hours, type switched off, no parent consent, no permission).
  */
 export async function scheduleAt(
   payload: Payload & { date: Date },
@@ -87,6 +105,7 @@ export async function scheduleAt(
   if (payload.date.getTime() <= Date.now()) return null;
   if (!kindEnabled(payload.kind)) return null;
   if (!options.ignoreQuietHours && inQuietHours(payload.date)) return null;
+  if (!(await consentAllows(payload.kind))) return null;
   if (!(await hasNotificationPermission())) return null;
   return Notifications.scheduleNotificationAsync({
     content: { title: payload.title, body: payload.body, data: { kind: payload.kind, url: payload.url } },

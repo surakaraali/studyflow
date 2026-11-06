@@ -1,4 +1,4 @@
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -22,13 +22,19 @@ import {
 } from '@/features/support/send';
 import { useProfile } from '@/stores/session';
 
-/** US-66: support form. The reply email is the only personal data asked for. */
+/**
+ * US-66: support form. The reply email is the only personal data asked for.
+ * `?preset=dataCopy` (US-14, US-80) opens it as a ready data-copy request.
+ */
 export default function SupportScreen() {
   const { t } = useTranslation();
   const { profile } = useProfile();
+  const { preset } = useLocalSearchParams<{ preset?: string }>();
+  const dataCopy = preset === 'dataCopy';
   const [email, setEmail] = useState(profile?.email ?? '');
-  const [topic, setTopic] = useState<SupportTopic | null>(null);
-  const [message, setMessage] = useState('');
+  const [topic, setTopic] = useState<SupportTopic | null>(dataCopy ? 'account' : null);
+  const [message, setMessage] = useState(dataCopy ? t('support.dataCopy.message') : '');
+  const title = dataCopy ? t('support.dataCopy.title') : t('support.title');
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -55,14 +61,18 @@ export default function SupportScreen() {
   if (result) {
     return (
       <>
-        <Stack.Screen options={{ title: t('support.title') }} />
+        <Stack.Screen options={{ title }} />
         <Page
           footer={<Button label={t('support.back')} onPress={() => router.back()} block />}>
           <View style={styles.done} accessibilityLiveRegion="polite">
             <AppText variant="display" accessibilityRole="header">
               {t('support.sentTitle')}
             </AppText>
-            <AppText variant="body">{t('support.sentBody', { email: email.trim() })}</AppText>
+            <AppText variant="body">
+              {dataCopy
+                ? t('support.dataCopy.sentBody', { email: email.trim() })
+                : t('support.sentBody', { email: email.trim() })}
+            </AppText>
             {result === 'queued' ? <Banner tone="info" message={t('support.sentQueued')} /> : null}
             {result === 'local' ? <Banner tone="info" message={t('support.sentLocal')} /> : null}
           </View>
@@ -73,9 +83,9 @@ export default function SupportScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: t('support.title') }} />
+      <Stack.Screen options={{ title }} />
       <Page
-        intro={t('support.intro')}
+        intro={dataCopy ? t('support.dataCopy.intro') : t('support.intro')}
         footer={
           <Button label={t('support.send')} onPress={send} loading={sending} block />
         }>

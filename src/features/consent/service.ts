@@ -14,14 +14,15 @@ import { notifyTables } from '@/db/events';
 import { newId } from '@/db/ids';
 import type { ConsentPurpose, ConsentRecord, ConsentRequest } from '@/db/types';
 import { patch, upsert } from '@/db/write';
-import type { ConsentStatus } from '@/domain/rules';
+import { ageFromBirthYear, type ConsentStatus } from '@/domain/rules';
+import { consentStatusForAge } from '@/features/account/onboarding-logic';
 import { LEGAL_VERSION } from '@/features/legal/texts';
 import i18n from '@/i18n';
 import { registerAppService } from '@/services/app-services';
 import { backendMode, isLocalMode } from '@/services/config';
 import { notifyNow } from '@/services/notifications';
 import { supabase } from '@/services/supabase';
-import { useSession } from '@/stores/session';
+import { onSignedIn, useSession } from '@/stores/session';
 
 import { linkExpiresAt, resendsLeft } from './logic';
 
@@ -167,18 +168,42 @@ export async function revokeConsent(parentEmail: string): Promise<void> {
 
 const STATUSES: readonly ConsentStatus[] = ['not_required', 'pending', 'granted', 'revoked'];
 
+function profileAgeNow(birthYear: number | null, now: Date): number | null {
+  return birthYear ? ageFromBirthYear(birthYear, now) : null;
+}
+
 /** Supabase mode: the parent decides on the web, so pull the status from the server. */
-export async function refreshConsentFromServer(): Promise<void> {
+export async function refreshConsentFromServer(now: Date = new Date()): Promise<void> {
   const sb = supabase();
   const profile = useSession.getState().profile;
   if (!sb || !profile || !hasDb()) return;
   const { data, error } = await sb.from('profiles').select('consent_status').single();
   if (error || !data) return;
-  const status = (data as { consent_status?: string }).consent_status as ConsentStatus | undefined;
-  if (!status || !STATUSES.includes(status) || status === profile.consent_status) return;
+  const remote = (data as { consent_status?: string }).consent_status as ConsentStatus | undefined;
+  if (!remote || !STATUSES.includes(remote)) return;
+  // A student who just turned 18 may still read 'pending' until the server sees the next
+  // profile write; don't flip the device back to waiting for that.
+  const status = consentStatusForAge(profileAgeNow(profile.birth_year, now), remote);
+  if (status === profile.consent_status) return;
   await patch('profile', profile.id, { consent_status: status });
   if (status === 'granted') await notifyGranted();
 }
+
+/**
+ * US-75: a student who turned 18 while waiting needs no parent any more (FR-CON-01). Runs at
+ * every sign-in and app start. The profile write also reaches the server, whose guard derives
+ * the same 'not_required' from the birth year.
+ */
+export async function refreshConsentForAge(now: Date = new Date()): Promise<void> {
+  const profile = useSession.getState().profile;
+  if (!profile || !hasDb() || profile.onboarding_done !== 1) return;
+  const next = consentStatusForAge(profileAgeNow(profile.birth_year, now), profile.consent_status);
+  if (next !== profile.consent_status) await patch('profile', profile.id, { consent_status: next });
+}
+
+onSignedIn(() => refreshConsentForAge().catch((error) => console.warn('Consent age refresh failed', error)));
+// This module can load after the session was restored; catch up once.
+if (useSession.getState().status === 'signedIn') void refreshConsentForAge().catch(() => undefined);
 
 registerAppService(() => {
   if (backendMode !== 'supabase') return;

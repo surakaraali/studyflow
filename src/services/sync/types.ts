@@ -55,7 +55,11 @@ export interface LocalStore {
 
 export type RemoteRow = Record<string, unknown> & { id: string; synced_at: string };
 
-export type RemoteResult = { ok: true } | { ok: false; retryable: boolean; message: string };
+/**
+ * `auth`: the server refused the session itself (expired or revoked token). Not the data's fault
+ * and not worth retrying until the session is fixed, so the whole run stops.
+ */
+export type RemoteResult = { ok: true } | { ok: false; retryable: boolean; auth?: boolean; message: string };
 
 /** The server (Supabase/PostgREST in the app). */
 export interface Remote {
@@ -82,6 +86,8 @@ export type PushReport = {
   rejected: number;
   /** True when the network/server failed and the whole push should be retried later. */
   retryLater: boolean;
+  /** True when the server refused the session; nothing was marked rejected. */
+  authFailed?: boolean;
   error?: string;
 };
 
@@ -89,6 +95,7 @@ export type PullReport = {
   received: number;
   written: number;
   retryLater: boolean;
+  authFailed?: boolean;
   error?: string;
 };
 

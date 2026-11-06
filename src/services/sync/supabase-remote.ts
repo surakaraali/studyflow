@@ -5,14 +5,29 @@ import type { Remote, RemoteResult, RemoteRow } from './types';
 type PostgrestLike = { error: { message: string; code?: string } | null; status: number };
 
 /**
- * Network errors come back with status 0. Those, auth (401, session refresh), timeouts, rate
- * limits and 5xx are retried later; any other 4xx means the server refuses this data.
+ * PostgREST answers 401 when the JWT is missing, expired or invalid (PGRST301–PGRST303) and
+ * 403 for a JWT it can't use; plain 403 (42501) is a row-level refusal of the data.
+ */
+export function isAuthFailure(response: PostgrestLike): boolean {
+  if (!response.error) return false;
+  if (response.status === 401) return true;
+  if (response.status !== 403) return false;
+  const { code = '', message } = response.error;
+  return code.startsWith('PGRST30') || /\bjwt\b/i.test(message);
+}
+
+/**
+ * Network errors come back with status 0. Those, timeouts, rate limits and 5xx are retried
+ * later. Auth failures stop the run until the session is fixed (US-77); any other 4xx means
+ * the server refuses this data.
  */
 export function classify(response: PostgrestLike): RemoteResult {
   if (!response.error) return { ok: true };
   const { status } = response;
-  const retryable = status === 0 || status === 401 || status === 408 || status === 429 || status >= 500;
-  return { ok: false, retryable, message: `${status} ${response.error.code ?? ''} ${response.error.message}`.trim() };
+  const message = `${status} ${response.error.code ?? ''} ${response.error.message}`.trim();
+  if (isAuthFailure(response)) return { ok: false, retryable: false, auth: true, message };
+  const retryable = status === 0 || status === 408 || status === 429 || status >= 500;
+  return { ok: false, retryable, message };
 }
 
 export function supabaseRemote(client: SupabaseClient): Remote {

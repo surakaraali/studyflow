@@ -34,6 +34,7 @@
 | E11 | Bildirimler | R1 | US-60–US-62 | 9 | — |
 | E12 | Abonelik | R1 | US-63–US-65 | 11 | 1 |
 | E13 | Destek ve yayın hazırlığı | R1 | US-66–US-70 | 20 | — |
+| E19 | İlk kullanım yolculuğu | R1 eki | US-71–US-80 | 14 | 14 |
 | **R1 toplam** | | | **70 + 2 spike** | **246** | **37** |
 | E14 | Android ve R1.1 iyileştirmeleri | R2a | §5 | — | — |
 | E15 | Deneme sınavı takibi | R2a | §5 | — | — |
@@ -596,6 +597,71 @@ Senaryo: Aboneliğin başka cihazda görünmesi
 - [ ] TestFlight dış test grubu (hedef 40 öğrenci, 15 veli), veli onaylı katılım.
 - [ ] Uygulama içi geri bildirim, SUS anketi, haftalık beta raporu.
 
+### E19 · İlk kullanım yolculuğu (R1 eki)
+
+> 5 Kasım 2026: yeni bir öğrencinin uygulamayı indirdiği andan itibaren izlediği yol baştan sona
+> denetlendi; bulunan boşluklar aşağıdaki hikâyelere dönüştürüldü.
+
+#### US-71 · E-posta bağlantısıyla uygulamaya dönüş ve yeni şifre
+Bir **öğrenci** olarak e-postadaki doğrulama ya da şifre sıfırlama bağlantısına dokunduğumda uygulamada doğru ekrana gelmek istiyorum, böylece şifremi unutsam da hesabıma dönebilirim.
+`Must · 3 SP · FR-ACC-01`
+- [x] `studyflow://auth/callback` kodu oturuma çevirir; doğrulamada "E-postan doğrulandı" görünür.
+- [x] Sıfırlama bağlantısı "Yeni şifre belirle" ekranını açar (en az 8 karakter); kaydedince Bugün'e geçilir.
+- [x] Süresi dolmuş ya da geçersiz bağlantıda açıklama ve "Yeni bağlantı iste" gösterilir; bilinmeyen bağlantılar için "bulunamadı" ekranı vardır.
+
+#### US-72 · Şifre ve e-posta değiştirme
+Bir **öğrenci** olarak şifremi ve e-posta adresimi Ayarlar'dan değiştirmek istiyorum, böylece hesabımı güvende tutarım.
+`Should · 3 SP · FR-ACC-05 · NFR: STORE-03`
+- [x] Şifre değişimi mevcut şifreyi ister; yeni e-posta doğrulanana kadar eski adres geçerli kalır.
+- [x] Apple ile girişte bu satırlar gizlenir; hesap silinirken Apple belirteci iptal edilir.
+
+#### US-73 · Yarım kalan onboarding'e devam
+Bir **öğrenci** olarak uygulama kapansa da onboarding'e kaldığım yerden devam etmek istiyorum, böylece cevapları baştan girmem.
+`Should · 2 SP · FR-ACC-04`
+- [x] Cevaplar her adımda cihaza, kullanıcıya bağlı kaydedilir; yeniden açılışta ilk cevaplanmamış adıma gidilir.
+- [x] Çıkış yapınca taslak silinir. 9–10. sınıfa isteğe bağlı YKS hedefi önerilir.
+
+#### US-74 · İlk gün kurulum rehberi
+Bir **öğrenci** olarak onboarding biter bitmez derslerimi seçmek ve planım için gerekenleri sırayla tamamlamak istiyorum, böylece boş bir ekranla kalmam.
+`Must · 5 SP · FR-CRS-01, FR-PL-01`
+- [x] Onboarding sonunda sınıfa göre önerilen dersler çoklu seçimle sunulur (atlanabilir).
+- [x] Bugün'de "Dersler · Ders programı · Müsait saatler · İlk sınav · Bildirimler" kontrol listesi kartı vardır; tamamlanan adım işaretlenir, kart kapatılabilir.
+- [x] Bugün ve Takvim'de müsait saat, ödev ve sınav ekleme kısayolları bulunur.
+
+#### US-75 · Yanlış doğum yılını düzeltme ve kilitli ekrandan çıkış
+Bir **öğrenci** olarak yanlış girdiğim doğum yılını düzeltmek ya da hesabımı silmek istiyorum, böylece yanlışlıkla kilitli kalmam.
+`Must · 3 SP · BR-02, BR-03`
+- [x] Doğum yılı bir kez düzeltilebilir; erişim düzeyi yeniden hesaplanır ve düzeltme kayda geçer.
+- [x] Kilitli ekranda "Doğum yılım yanlış" ve "Hesabı sil" seçenekleri vardır.
+- [x] 18 yaşına giren öğrencide onay durumu açılışta "gerekmiyor" olur.
+- [x] Veli onayı bekleyen hesap kendini 18 yaş ve üstüne düzeltemez (yaş kapısı); bu durumda destek adresi gösterilir. Kural hem uygulamada hem sunucu tetikleyicisinde (`protect_profile`) uygulanır.
+
+#### US-76 · Veli onayına uyan bildirimler
+Bir **veli** olarak bildirim onayı vermediysem çocuğuma bildirim gitmemesini istiyorum, böylece verdiğim karar geçerli olur.
+`Must · 3 SP · FR-CON-02, FR-NT-05 · BR-04`
+- [x] Bildirim amacı onaylanmadıysa ya da onay bekleniyorsa anahtarlar kapalıdır ve nedeni yazar; hatırlatmalar zamanlanmaz, izin kartı gösterilmez.
+- [x] Yerel modda 7. ve 25. gün onay hatırlatmaları yerel bildirimle gönderilir.
+
+#### US-77 · Oturum ve eşitleme durumu
+Bir **öğrenci** olarak oturumum başka cihazda kapandığında ya da verilerim eşitlenemediğinde bunu bilmek istiyorum, böylece çalışmalarım kaybolmaz.
+`Should · 3 SP · NFR: OFF-03, REL-05`
+- [x] Yenilenemeyen oturumda kullanıcı karşılama ekranına "Oturumun sona erdi" notuyla döner; bekleyen değişiklikler korunur.
+- [x] Ayarlar'da son eşitleme zamanı ve bekleyen değişiklik sayısı görünür.
+
+#### US-78 · Yeni eğitim yılına geçiş
+Bir **öğrenci** olarak yeni okul yılında sınıfımı kolayca güncellemek istiyorum, böylece plan ve sınavlar yeni sınıfıma uyar.
+`Should · 3 SP · BR-01`
+- [x] Eylül'de ya da hedef sınav geçtikten sonra "X. sınıfa geçtin mi?" sorulur.
+- [x] Onaylanırsa segment kuralları, hedef sınav ve önerilen dersler güncellenir; eski dersler arşive alınabilir.
+
+#### US-79 · Pro bitiş bildirimi
+`Could · 1 SP · FR-SUB-02` — Bir **öğrenci** olarak aboneliğim bittiğinde bunu görmek istiyorum, böylece kotamın neden düştüğünü anlarım.
+- [x] Pro'dan ücretsize geçişte bir kez bilgi bandı ve yenileme bağlantısı gösterilir.
+
+#### US-80 · Görünüm, veri kopyası ve hakkında
+`Could · 2 SP · FR-ACC-07` — Bir **öğrenci** olarak tema seçmek, verilerimin kopyasını istemek ve uygulama bilgisini görmek istiyorum.
+- [x] Görünüm: Sistem, Açık ya da Koyu. "Verilerimin kopyası" hazır destek talebi oluşturur (US-14). Hakkında ekranında sürüm ve lisanslar yer alır.
+
 ## 5. R2 ve R3 epic'leri (özellik düzeyi)
 
 Bu epic'ler R1 sırasında ayrıntılandırılacak. Büyüklükler tişört ölçüsüyle tahminlenmiştir
@@ -710,7 +776,7 @@ S0–S8'in bütün "Must" hikâyeleri kodlandı. Doğrulama düzeyleri:
 | **Test** | Saf iş mantığı Jest ile test edildi (iş kuralları, plan motoru, FSRS, seri, quiz puanlama, kota, kişisel veri testi, eşitleme, veli kapısı, SUS…). |
 | **Simülatör** | iPhone 17 Pro / iOS 26 simülatöründe, Expo Go'da, yerel modda ekranda denendi. |
 | **Hazır, hesap bekliyor** | Kod yazıldı; çalışması için Supabase, Apple, RevenueCat, e-posta ya da EAS hesabı gerekiyor. |
-| **Yerel Supabase** | Docker'daki yerel Supabase'e karşı denendi (4 Kasım 2026): migration'lar, 197 RLS testi, SQL denetimi, Edge Functions tip denetimi, veli onayı ve hesap silme akışı (16 kontrol), eşitlemede 195 kaydın gidiş-dönüşü. |
+| **Yerel Supabase** | Docker'daki yerel Supabase'e karşı denendi (4 Kasım 2026): migration'lar, 203 RLS testi, SQL denetimi, Edge Functions tip denetimi, veli onayı ve hesap silme akışı (16 kontrol), eşitlemede 195 kaydın gidiş-dönüşü. |
 
 | Sprint | Hikâyeler | Durum |
 |---|---|---|
@@ -723,5 +789,6 @@ S0–S8'in bütün "Must" hikâyeleri kodlandı. Doğrulama düzeyleri:
 | S6 | US-28, US-29, US-49, US-50, US-54, US-55, US-56, US-60, US-61 | Bugün, Takvim, sınav ve ödev kutuları, seri simülatörde. Zamanlayıcı ve hatırlatmalar yazıldı; bildirimlerin gerçek teslimi ve kilit ekranı sayacı (Live Activity) geliştirme derlemesinde denenecek. |
 | S7 | US-12, US-13, US-19, US-38, US-57, US-63, US-64, US-70 | İlerleme ekranı simülatörde. Profil, hesap silme, veli kapısı, kota ve abonelik ekranları yazıldı; gerçek satın alma RevenueCat ve App Store Connect hesabı bekliyor. |
 | S8 | US-66, US-67, US-68, US-69 | SSS ve destek formu yazıldı. Güvenlik incelemesi `analysis/security_review.md`, mağaza metinleri `store/`. Erişilebilirlik: bileşenler etiketli ve büyük yazıya uygun; VoiceOver ile baştan sona test ve kontrast raporu ekipçe yapılacak. |
+| E19 | US-71 … US-80 | 5 Kasım 2026'da eklendi. Simülatörde yerel modda baştan sona denendi: kayıt → doğrulama → onboarding (yarıda kapatıp kaldığı yerden devam, 10. sınıfa isteğe bağlı YKS adımı) → ders seçimi → Bugün'de kurulum listesi ve kısayollar; veli onayı beklerken bildirimlerin kapalı olması; kilitli ekranda doğum yılı düzeltme (yetişkin yılı reddedilir) ve "Hesabı sil" seçeneği; görünüm (açık/koyu), Hakkında, eşitleme satırı, bulunamadı ekranı. Test: taslak, doğum yılı kuralları, bağlantı ayrıştırma, kontrol listesi, yeni yıl tarihleri, plan geçişi, bildirim izni, 401 sınıflandırması. Yerel Supabase: doğum yılı migration'ı ve 6 yeni RLS testi. E-posta bağlantıları, oturum sona ermesi ve Apple belirteci iptali canlı Supabase/Apple hesabı bekliyor. |
 
 Simülatörde yerel demo verisiyle denemek için: `exp://127.0.0.1:8081/--/dev-seed?mode=full` (README).

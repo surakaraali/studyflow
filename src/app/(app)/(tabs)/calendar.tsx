@@ -58,6 +58,10 @@ export default function CalendarScreen() {
   const dayExams = (data?.exams ?? []).filter((e) => e.date === selected);
   const weekHasBlocks = (data?.items.length ?? 0) > 0;
 
+  // US-74: add an exam or homework from the day you're looking at. The day goes along as
+  // ?date= for the forms to prefill; a past day is left out (exams can't be in the past).
+  const dayParams = selected >= today ? { date: selected } : {};
+
   const changeWeek = (delta: number) => {
     setPicked(null);
     setWeekOffset((w) => w + delta);
@@ -94,7 +98,7 @@ export default function CalendarScreen() {
             {
               label: t('actions.addCourse'),
               icon: { ios: 'plus', android: 'add' },
-              onPress: () => router.navigate('/courses'),
+              onPress: () => router.push('/course/new'),
             },
           ]}
         />
@@ -151,6 +155,21 @@ export default function CalendarScreen() {
               {weekHasBlocks ? t('calendar.dayEmpty') : t('calendar.weekEmpty')}
             </AppText>
           )}
+
+          <Section title={t('setup.shortcuts.calendarTitle')}>
+            <ListRow
+              title={t('setup.shortcuts.addExam')}
+              subtitle={t('setup.shortcuts.examHint')}
+              icon={{ ios: 'pencil.and.list.clipboard', android: 'assignment', web: 'assignment' }}
+              onPress={() => router.push({ pathname: '/exam/new', params: dayParams })}
+            />
+            <ListRow
+              title={t('setup.shortcuts.addHomework')}
+              subtitle={t('setup.shortcuts.homeworkHint')}
+              icon={{ ios: 'checklist', android: 'task', web: 'task' }}
+              onPress={() => router.push({ pathname: '/homework/new', params: dayParams })}
+            />
+          </Section>
 
           <Section title={t('calendar.setupTitle')}>
             <ListRow

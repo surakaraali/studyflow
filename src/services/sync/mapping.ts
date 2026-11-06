@@ -44,7 +44,7 @@ const TIME_COLUMNS: Partial<Record<SyncedTable, readonly string[]>> = {
 const COMMON_TIMESTAMPS = ['created_at', 'updated_at', 'deleted_at'] as const;
 
 const TIMESTAMP_COLUMNS: Partial<Record<SyncedTable, readonly string[]>> = {
-  profile: ['ai_notice_accepted_at'],
+  profile: ['ai_notice_accepted_at', 'birth_year_corrected_at'],
   courses: ['archived_at'],
   homework: ['done_at'],
   documents: ['next_attempt_at'],
@@ -65,7 +65,7 @@ const DEVICE_ONLY_COLUMNS: Partial<Record<SyncedTable, readonly string[]>> = {
  * to them, see private.protect_profile / guard_document / protect_report in the migration).
  */
 export const SERVER_OWNED_COLUMNS: Partial<Record<SyncedTable, readonly string[]>> = {
-  profile: ['plan', 'consent_status', 'email'],
+  profile: ['plan', 'consent_status', 'email', 'birth_year_corrected_at'],
   documents: ['status', 'error_code', 'attempts', 'next_attempt_at', 'counted'],
   content_reports: ['status'],
 };

@@ -1,5 +1,6 @@
-import * as Application from 'expo-application';
 import { Platform } from 'react-native';
+
+import { appVersionLabel } from '@/lib/app-version';
 
 export type DeviceInfo = {
   app_version: string;
@@ -10,7 +11,7 @@ export type DeviceInfo = {
 /** App version and OS that support and feedback messages carry (US-66). No device ids. */
 export function deviceInfo(): DeviceInfo {
   return {
-    app_version: `${Application.nativeApplicationVersion ?? '?'} (${Application.nativeBuildVersion ?? '?'})`,
+    app_version: appVersionLabel(),
     os: Platform.OS,
     os_version: String(Platform.Version),
   };

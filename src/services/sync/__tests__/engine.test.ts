@@ -123,6 +123,25 @@ describe('US-05 Çevrimdışı kayıtların eşitlenmesi', () => {
     expect(device.outbox).toHaveLength(0);
   });
 
+  it('stops on a refused session without blaming any row (US-77)', async () => {
+    const { device, server, deps } = setup();
+    recordOffline(device);
+    server.sessionExpired = true;
+
+    const report = await syncOnce(deps);
+    expect(report.push).toMatchObject({ pushed: 0, rejected: 0, retryLater: false, authFailed: true });
+    expect(report.pull).toBeNull();
+    // Batches are not split row by row and nothing counts toward "stuck".
+    expect(device.outbox).toHaveLength(13);
+    expect(device.outbox.every((e) => e.attempts === 0)).toBe(true);
+
+    // After the next sign-in the same outbox goes through.
+    server.sessionExpired = false;
+    const retried = await syncOnce(deps);
+    expect(retried.push).toMatchObject({ pushed: 13, rejected: 0 });
+    expect(device.outbox).toHaveLength(0);
+  });
+
   it('does not overwrite unsent local edits when it pulls', async () => {
     const { device, server, deps } = setup();
     server.offline = true;
@@ -328,6 +347,13 @@ describe('pull', () => {
     server.offline = true;
     const report = await pullChanges(deps);
     expect(report.retryLater).toBe(true);
+  });
+
+  it('reports a refused session instead of retrying', async () => {
+    const { server, deps } = setup();
+    server.sessionExpired = true;
+    const report = await pullChanges(deps);
+    expect(report).toMatchObject({ retryLater: false, authFailed: true, written: 0 });
   });
 });
 

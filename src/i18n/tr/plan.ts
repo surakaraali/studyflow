@@ -154,6 +154,10 @@ const plan = {
     examDayBody: 'Başarılar! Sakin ol, hazırlandın.',
     homeworkTitle: 'Yarın teslim: {{course}} ödevi',
     homeworkBody: '{{description}}',
+    consentTitle: 'Velinin onayı bekleniyor',
+    consentBody: 'Velin onay verince yapay zekâ özellikleri de açılır. Velinden e-postasına bakmasını iste.',
+    consentBodyLocked:
+      'Velin {{date}} tarihine kadar onay vermezse hesabın silinir. Velinden e-postasına bakmasını iste.',
   },
   notificationSettings: {
     title: 'Bildirimler',
@@ -177,6 +181,14 @@ const plan = {
     quietBody:
       'Her gün {{start}}–{{end}} arasında bildirim gönderilmez. Sınav sabahı hatırlatması en erken {{morning}} saatinde gelir.',
     saveError: 'Ayar kaydedilemedi. Tekrar dene.',
+    consentTitle: 'Bildirimler velinin onayını bekliyor',
+    consentBlocked:
+      'Velin onay verene kadar sana bildirim göndermiyoruz. Onay gelince bildirimleri buradan açabilirsin.',
+    purposeTitle: 'Velin bildirimlere izin vermedi',
+    purposeBlocked:
+      'Bu yüzden sana bildirim göndermiyoruz. Velin bildirimlere izin verirse buradan açabilirsin.',
+    consentLink: 'Veli onayına git',
+    switchesOff: 'Velin bildirimlere izin verene kadar kapalı.',
   },
 };
 
