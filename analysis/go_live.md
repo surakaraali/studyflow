@@ -383,8 +383,10 @@ Not: `react-native-purchases` 10.16.0'a sabitlendi; 11.x, CocoaPods'ta henüz ol
    ```bash
    npx eas-cli@latest submit --platform ios --profile production --latest
    ```
-   App Store Connect → TestFlight'ta derleme işlenince iç test grubuna ekle. Şifreleme sorusu çıkmaz
+   Derleme işlenince TestFlight'ın iç test grubu "Team"e kendiliğinden düşer. Şifreleme sorusu çıkmaz
    (`ITSAppUsesNonExemptEncryption: false`, [app-store.md §9](../store/app-store.md#9-şifreleme-beyanı-export-compliance)).
+   Sonraki TestFlight derlemeleri: GitHub → Actions → **TestFlight** → Run workflow (`testflight.yml`). Derleme
+   kimlik bilgileri ve App Store Connect API anahtarı EAS'te (`@studyflow-app`) durduğu için Apple girişi gerekmez.
 
 Kontrol: TestFlight derlemesinde "Geliştirme modu" şeridi görünmez, kayıt olunca doğrulama e-postası gelir
 (adım 4 SMTP) ve Supabase → Authentication → Users'ta yeni kullanıcı görünür.
@@ -448,8 +450,8 @@ Gönderimden 1–2 gün önce betik yeniden çalıştırılır (tarihler tazelen
 
 | Ad | Tür | Değer | İş akışı |
 |---|---|---|---|
-| `EXPO_TOKEN` | Sır | expo.dev → Access tokens (tercihen robot kullanıcı) | `preview.yml` |
-| `EAS_PROJECT_ID` | Değişken | adım 8.1 | `preview.yml` |
+| `EXPO_TOKEN` | Sır | expo.dev → studyflow-app → Access tokens → robot `github-actions` | `preview.yml`, `testflight.yml` |
+| `EAS_PROJECT_ID` | Değişken | adım 8.1 | `preview.yml`, `testflight.yml` |
 | `WEB_FUNCTIONS_URL`, `WEB_STAGING_FUNCTIONS_URL`, `WEB_BASE_URL`, `EXPO_PUBLIC_SUPPORT_EMAIL`, `WEB_APP_STORE_URL` | Değişken | adım 5 | `web.yml` |
 | `WEB_DEPLOY` | Değişken | `true` | `web.yml` |
 | `EAS_PREVIEW` | Değişken | `true` (EAS kurulunca) | `preview.yml` |

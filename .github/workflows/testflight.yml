@@ -1,0 +1,45 @@
+# TestFlight: a production build, sent to App Store Connect when it finishes (queued, not awaited).
+# Anyone with write access starts it from Actions → TestFlight → Run workflow.
+# Needs the same EXPO_TOKEN secret and EAS_PROJECT_ID variable as preview.yml, the Expo "production"
+# environment values (EXPO_PUBLIC_*), and an App Store Connect API key saved on EAS
+# (`eas credentials` → iOS → production → App Store Connect API Key), so the submission needs no Apple login.
+name: TestFlight
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  testflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install
+        run: npm ci
+
+      - name: Secret scan before publishing
+        run: node scripts/check-secrets.mjs
+
+      # autoIncrement in eas.json raises the build number on EAS, so every run is a new TestFlight build.
+      - name: Production build, then TestFlight
+        run: eas build --profile production --platform ios --auto-submit --non-interactive --no-wait
