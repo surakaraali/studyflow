@@ -38,6 +38,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: 'StudyFlow',
     slug: 'studyflow',
+    // Expo organization shared by the team: builds, credentials and updates live there.
+    owner: 'studyflow-app',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
