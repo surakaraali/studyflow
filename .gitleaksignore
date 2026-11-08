@@ -1,0 +1,4 @@
+# Findings that were checked by hand and are not secrets. Format: commit:file:rule:line
+# A fake multi-line test value ("abc" between PEM markers) in the env parser test; replaced
+# with a neutral label in the next commit.
+16159b6d1848bd4a2861ad3fdccc8db705c9b88e:scripts/go-live/__tests__/env-check.test.ts:private-key:79

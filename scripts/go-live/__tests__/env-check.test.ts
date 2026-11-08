@@ -76,9 +76,10 @@ describe('env file parsing', () => {
         'EMPTY=',
         'FROM="StudyFlow <no-reply@studyflow.app>"',
         "SINGLE='it''s'",
-        'KEY="-----BEGIN PRIVATE KEY-----',
+        // Shaped like a .p8 file, but with a label secret scanners don't flag.
+        'KEY="-----BEGIN TEST BLOCK-----',
         'abc',
-        '-----END PRIVATE KEY-----"',
+        '-----END TEST BLOCK-----"',
         'ESCAPED="line1\\nline2"',
       ].join('\n'),
     );
@@ -86,7 +87,7 @@ describe('env file parsing', () => {
     expect(env.HASH).toBe('a#b');
     expect(env.EMPTY).toBe('');
     expect(env.FROM).toBe('StudyFlow <no-reply@studyflow.app>');
-    expect(env.KEY).toBe('-----BEGIN PRIVATE KEY-----\nabc\n-----END PRIVATE KEY-----');
+    expect(env.KEY).toBe('-----BEGIN TEST BLOCK-----\nabc\n-----END TEST BLOCK-----');
     expect(env.ESCAPED).toBe('line1\nline2');
   });
 });
