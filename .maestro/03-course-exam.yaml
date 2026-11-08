@@ -1,0 +1,33 @@
+# US-21, US-26, US-28: open a course and add a quiz; it shows under upcoming exams.
+appId: host.exp.Exponent
+name: Ders ve sınav ekleme
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      MODE: full
+      LANDING: "Bugünün planı"
+- tapOn:
+    text: "Dersler"
+    retryTapIfNoChange: true
+- tapOn: "Fizik"
+- extendedWaitUntil:
+    visible: "Sınav ekle"
+    timeout: 10000
+- tapOn: "Sınav ekle"
+- extendedWaitUntil:
+    visible: "Yeni sınav"
+    timeout: 10000
+- tapOn: "Quiz"
+- tapOn:
+    text: "Başlık.*"
+    index: 1
+- inputText: "E2E quizi"
+- tapOn: "Sınav türü"
+- scrollUntilVisible:
+    element: "Kaydet"
+    direction: DOWN
+- tapOn: "Kaydet"
+- extendedWaitUntil:
+    visible: "E2E quizi"
+    timeout: 10000

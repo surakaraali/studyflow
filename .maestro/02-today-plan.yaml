@@ -1,0 +1,26 @@
+# US-47..US-50, US-56: the demo student sees today's plan and completes a block.
+appId: host.exp.Exponent
+name: Bugün planı
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      MODE: full
+      LANDING: "Bugünün planı"
+- assertVisible:
+    text: ".*bloktan 0 tanesi tamamlandı"
+- tapOn:
+    text: ".*Planlandı"
+    index: 1
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Tamamlandı"
+    timeout: 10000
+- tapOn: "Tamamlandı"
+- extendedWaitUntil:
+    visible: ".*bloktan 1 tanesi tamamlandı"
+    timeout: 10000
+- tapOn: "Takvim"
+- assertVisible: "Takvim"
+- tapOn: "İlerleme"
+- assertVisible: "İlerleme"

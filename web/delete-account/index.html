@@ -4,93 +4,43 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="referrer" content="no-referrer">
-  <!-- Hosting: also send "Content-Security-Policy: frame-ancestors 'none'" and HSTS as HTTP headers.
-       Drop the 127.0.0.1/localhost entries in production. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; img-src data:; base-uri 'none'; form-action 'none'">
+  <!-- Static hosting (GitHub Pages) cannot send headers: frame-ancestors and HSTS need a host or
+       proxy that can. `npm run web:build` narrows connect-src to the project's functions origin. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <!-- Not shown inside a frame (clickjacking guard, since frame-ancestors needs a header). -->
+  <style id="frame-guard">html { display: none; }</style>
+  <script>if (window.top === window.self) document.getElementById('frame-guard').remove();</script>
   <meta name="theme-color" content="#F4F6FB" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E1226" media="(prefers-color-scheme: dark)">
   <title>Hesap silme · StudyFlow</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600&display=swap">
+  <meta name="description" content="StudyFlow hesabını ve verilerini silme isteği.">
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/site.css">
 
   <!--
     Account deletion request from the web (US-13, STORE-03; the URL Google Play asks for).
+    Published at /hesap-silme/ by `npm run web:build`.
     Sends a support ticket with topic "account_deletion"; the team confirms ownership by e-mail
     and deletes the account (same steps as the delete-account function). The fastest way is
-    still in the app: Ayarlar › Hesap › Hesabı sil.
+    still in the app: Ayarlar › Hesap ve silme › Hesabımı sil.
   -->
   <script>
     window.STUDYFLOW_CONFIG = {
       functionsUrl: 'https://YOUR-PROJECT-REF.supabase.co/functions/v1',
       anonKey: '',
-      privacyUrl: 'https://studyflow.app/aydinlatma-metni'
+      privacyUrl: '../aydinlatma-metni/'
     };
   </script>
-
-  <style>
-    :root {
-      --paper: #F4F6FB; --surface: #FFFFFF; --sunken: #E9EDF6; --line: #D9DFEC;
-      --ink: #161C3A; --ink-soft: #5A6282; --pen: #2A3FD1; --on-pen: #FFFFFF;
-      --exam: #C92A63; --success: #1F7A55;
-      color-scheme: light dark;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --paper: #0E1226; --surface: #171C36; --sunken: #1F2545; --line: #2A3157;
-        --ink: #EDF0FA; --ink-soft: #A3AACB; --pen: #8C9BFF; --on-pen: #0E1226;
-        --exam: #FF6B98; --success: #3CCB8F;
-      }
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--paper); color: var(--ink);
-      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    main { max-width: 620px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 16px 40px; }
-    .brand { color: var(--pen); font-weight: 600; margin-bottom: 20px; }
-    h1 { font-family: "Literata", Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.25; margin: 0 0 12px; }
-    h1:focus { outline: none; }
-    p { margin: 0 0 14px; }
-    .muted { color: var(--ink-soft); font-size: 15px; }
-    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px 18px; margin: 18px 0; }
-    .card.exam { border-top: 4px solid var(--exam); }
-    ul { margin: 0; padding-left: 20px; }
-    li { margin-bottom: 6px; }
-    label.field { display: block; font-weight: 600; margin: 16px 0 6px; }
-    input[type=email], textarea {
-      width: 100%; font: inherit; color: var(--ink); background: var(--surface);
-      border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; min-height: 48px;
-    }
-    textarea { min-height: 96px; resize: vertical; }
-    fieldset { border: 0; padding: 0; margin: 16px 0 0; }
-    legend { font-weight: 600; margin-bottom: 6px; padding: 0; }
-    .choice { display: flex; gap: 10px; align-items: center; min-height: 44px; }
-    .choice input { width: 22px; height: 22px; accent-color: var(--pen); }
-    .hint { color: var(--ink-soft); font-size: 14px; margin-top: 4px; }
-    .error { color: var(--exam); font-size: 15px; margin-top: 6px; }
-    button {
-      appearance: none; border: 0; border-radius: 14px; min-height: 52px; padding: 14px 20px;
-      font: inherit; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px;
-      background: var(--exam); color: #FFFFFF;
-    }
-    button:disabled { opacity: 0.6; cursor: progress; }
-    :focus-visible { outline: 3px solid var(--pen); outline-offset: 3px; }
-    .status { padding: 14px 16px; border-radius: 12px; background: var(--sunken); border-left: 4px solid var(--success); margin: 16px 0; }
-    .status.warning { border-left-color: var(--exam); }
-    [hidden] { display: none !important; }
-  </style>
 </head>
 <body>
-<main>
-  <div class="brand" aria-hidden="true">StudyFlow</div>
-
+<!-- @site-header -->
+<main id="main">
   <section id="view-form">
     <h1 tabindex="-1">Hesabını sil</h1>
-    <p>En hızlı yol uygulamanın içinden: <strong>Ayarlar › Hesap › Hesabı sil</strong>. Uygulamaya giremiyorsan bu formu kullanabilirsin.</p>
+    <p>En hızlı yol uygulamanın içinden: <strong>Ayarlar › Hesap ve silme › Hesabımı sil</strong>. Uygulamaya giremiyorsan bu formu kullanabilirsin.</p>
 
     <div class="card exam">
-      <ul>
+      <ul class="facts">
         <li>Yüklediğin belgeler depodan hemen, diğer verilerin en geç 30 gün içinde silinir.</li>
         <li>Veli onayı ve ödeme kayıtları yasal süre boyunca ayrı ve kapalı bir yerde saklanır, sonra silinir.</li>
         <li>App Store aboneliğin hesapla birlikte kapanmaz; iPhone'da Ayarlar › Apple Kimliği › Abonelikler'den iptal edebilirsin.</li>
@@ -119,7 +69,7 @@
       <p class="error" id="confirm-error" hidden>Devam etmek için kutuyu işaretle.</p>
 
       <div class="status warning" id="send-error" role="alert" hidden>Gönderilemedi. İnternet bağlantını kontrol edip tekrar dene.</div>
-      <button type="submit" id="submit">Silme isteği gönder</button>
+      <button type="submit" id="submit" class="danger wide">Silme isteği gönder</button>
     </form>
     <p class="muted" style="margin-top:20px"><a id="privacy-link" href="#">Aydınlatma metni</a></p>
   </section>
@@ -130,6 +80,7 @@
     <p class="muted">Bu sayfayı kapatabilirsin.</p>
   </section>
 </main>
+<!-- @site-footer -->
 
 <script>
 (function () {

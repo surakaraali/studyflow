@@ -53,3 +53,6 @@ evals/results/
 # Supabase CLI local state
 supabase/.branches/
 supabase/.temp/
+
+# public web pages (npm run web:build)
+/web/dist/

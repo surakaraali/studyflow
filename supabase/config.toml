@@ -115,3 +115,11 @@ verify_jwt = true
 
 [functions.delete-account]
 verify_jwt = true
+
+[functions.ops-alerts]
+# pg_cron sends the CRON_SECRET from Vault (every 5 minutes).
+verify_jwt = false
+
+[functions.telemetry]
+# Signed-in users only; the JWT feeds the rate limit and is never stored (ADR-006).
+verify_jwt = true

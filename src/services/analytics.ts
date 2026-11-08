@@ -1,7 +1,7 @@
 /**
  * Product analytics and crash reporting (US-06, NFR OBS-01, OBS-04, PRIV-04, PRIV-05).
  *
- * Privacy rules (children's app, Q-04 still open):
+ * Privacy rules (children's app, ADR-006):
  * - Every event is in the dictionary below and tied to a KPI (BRD §3, G-01..G-05).
  *   `track()` drops props that are not listed for the event or do not match their type.
  * - No ids of any kind: no user id, no device or install id, no advertising id, no ATT prompt.
@@ -10,8 +10,10 @@
  * - Crash reports keep the error type, a scrubbed message and stack frames with file names
  *   only (no paths, emails, ids or long numbers).
  *
- * The sink is the console in development and silent in release builds until a provider
- * is approved (PostHog/Sentry are planned, PLAN.md §2). Plug one in with `setAnalyticsSink`.
+ * Where events go (ADR-006: no third-party analytics or crash SDK):
+ * - Supabase mode: src/services/telemetry sets its sink at start-up; events and crash reports
+ *   are queued on the device and sent to our own telemetry Edge Function (EU).
+ * - Local mode: the console in development, nothing in release builds.
  * Documentation: analysis/analytics_events.md.
  */
 
@@ -33,7 +35,10 @@ const SEGMENT = ['ilkokul', 'ortaokul', 'lise'] as const;
 const BLOCK_KIND = ['study', 'review', 'homework'] as const;
 const PERIOD = ['monthly', 'annual', 'other'] as const;
 
-/** The event dictionary: event → KPI and allowed props. Keep analysis/analytics_events.md in sync. */
+/**
+ * The event dictionary: event → KPI and allowed props. Keep analysis/analytics_events.md and the
+ * server copy (supabase/functions/_shared/telemetry.ts, checked by a test) in sync.
+ */
 export const EVENTS = {
   // G-01 regular use (D7 retention)
   app_opened: { kpi: 'G-01', props: { days_since_signup: 'number' } },
@@ -143,7 +148,7 @@ const silentSink: AnalyticsSink = {
 
 let sink: AnalyticsSink = __DEV__ ? consoleSink : silentSink;
 
-/** Swaps where events go (e.g. a PostHog adapter once Q-04 is decided). */
+/** Swaps where events go (src/services/telemetry does this in Supabase mode). */
 export function setAnalyticsSink(next: AnalyticsSink) {
   sink = next;
 }

@@ -3,6 +3,7 @@
  * start-up work runs. Order: analytics first so it sees errors from the rest.
  */
 import '@/services/analytics';
+import '@/services/telemetry';
 import '@/services/notifications';
 import '@/services/sync';
 import '@/features/consent/service';

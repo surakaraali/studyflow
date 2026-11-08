@@ -1,0 +1,24 @@
+# US-79, US-80: appearance switch and the About page.
+appId: host.exp.Exponent
+name: Ayarlar
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      MODE: full
+      LANDING: "Bugünün planı"
+- tapOn:
+    text: "Ayarlar"
+    retryTapIfNoChange: true
+- tapOn: "Görünüm.*"
+- tapOn: "Koyu"
+- tapOn: "Açık"
+- tapOn: "Sistem"
+- tapOn:
+    text: "Ayarlar"
+    index: 0
+- scrollUntilVisible:
+    element: "Hakkında.*"
+    direction: DOWN
+- tapOn: "Hakkında.*"
+- assertVisible: "Hakkında"

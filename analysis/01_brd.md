@@ -382,7 +382,7 @@ Teknik veri modeli [PLAN.md §4](../PLAN.md#4-veri-modeli-taslak)'te yer alır. 
 | App Store / Google Play faturalandırma (RevenueCat ile) | Abonelik | Çift yönlü | Sunucu bildirimleriyle durum eşitleme |
 | APNs / FCM (Expo Push ile) | Bildirim | Sunucu → cihaz | — |
 | İşlem e-postası servisi | Veli onayı, haftalık özet, doğrulama | Sunucu → e-posta | Sağlayıcı seçimi açık (Q-06) |
-| Hata ve kullanım izleme | Çökme, performans, ürün analitiği | Uygulama → servis | Çocuk politikaları nedeniyle kişisel veri ve cihaz kimliği gönderilmez (Q-04) |
+| Hata ve kullanım izleme | Çökme, performans, ürün analitiği | Uygulama → servis | Çocuk politikaları nedeniyle kişisel veri ve cihaz kimliği gönderilmez (Q-04 → [ADR-006](adr/ADR-006-birinci-taraf-telemetri.md): kendi Supabase'imiz, üçüncü taraf SDK yok) |
 
 ## 12. Yasal ve platform gereksinimleri
 
@@ -440,7 +440,7 @@ Ayrıntılı risk kaydı ve sahipleri [proje planı §13](../agile/project_plan.
 | Q-01 | İlkokul R2b'ye ertelensin mi? (Öneri: evet. Gerekçe: veli yönetimli ayrı arayüz ve okuma düzeyi gerektiriyor; çocuk verisi kuralları zaten R1'de karşılanıyor.) | Ürün sahibi | Sprint 0 sonu |
 | Q-02 | Veli onayı hangi yaş aralığı için zorunlu? (Taslak: 18 yaş altı tümü; 13–17'de kısıtlı mod.) | Hukuk danışmanı | Sprint 0 sonu |
 | Q-03 | Verilerin AB bölgesinde barındırılması ve yapay zekâ sağlayıcıya aktarım için hangi KVKK mekanizması kullanılacak? | Hukuk danışmanı | Sprint 1 |
-| Q-04 | Hangi hata/analitik araçları çocuk politikalarıyla uyumlu? (Kişisel veri ve cihaz kimliği göndermeyen yapılandırma şart.) | Tech lead | Sprint 1 |
+| Q-04 | Hangi hata/analitik araçları çocuk politikalarıyla uyumlu? (Kişisel veri ve cihaz kimliği göndermeyen yapılandırma şart.) **Kapandı:** [ADR-006](adr/ADR-006-birinci-taraf-telemetri.md) | Tech lead | Sprint 1 |
 | Q-05 | Pro fiyatı ve ücretsiz kota (BR-14) nasıl olacak? | Ürün sahibi | Sprint 3 |
 | Q-06 | İşlem e-postası sağlayıcısı hangisi? | Tech lead | Sprint 1 |
 | Q-07 | Uygulama App Store'da "Kids" kategorisinde mi yer alacak, yoksa genel Eğitim kategorisinde yaş derecelendirmesiyle mi? | Ürün sahibi + hukuk | Sprint 0 sonu |

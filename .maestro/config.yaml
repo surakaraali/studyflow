@@ -1,0 +1,8 @@
+# Maestro end-to-end flows. They run in Expo Go against the dev server in local mode:
+#   npm start            (dev server on 8081, local mode: no Supabase keys)
+#   npm run e2e          (all flows; needs Maestro and Java 17)
+# Flows sign in demo accounts with the dev-only /dev-seed route, so they never touch real data.
+flows:
+  - "*.yaml"
+executionOrder:
+  continueOnFailure: true

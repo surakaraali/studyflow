@@ -13,7 +13,7 @@ export const PURPOSE_LABELS: Record<Purpose, string> = {
   notifications: 'Bildirimler',
 };
 
-const COLORS = { paper: '#F4F6FB', ink: '#161C3A', muted: '#5B6281', pen: '#2A3FD1', exam: '#C92A63' };
+const COLORS = { paper: '#F4F6FB', ink: '#161C3A', muted: '#5B6281', pen: '#2A3FD1', exam: '#C72A62' };
 
 export function escapeHtml(value: string): string {
   return value
@@ -309,5 +309,47 @@ export function supportTicketEmail(input: {
       { kind: 'note', html: 'Yanıtla dediğinde e-posta kullanıcının yazdığı adrese gider. 2 iş günü içinde yanıt ver.' },
     ]),
     text: textBody([...meta, input.message]),
+  };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Ops alerts (to the team, ADR-006). Numbers only, never personal data.
+// ---------------------------------------------------------------------------------------------
+
+export type OpsAlertItem = { action: 'fire' | 'remind' | 'resolve'; title: string; lines: string[] };
+
+const OPS_ACTION_LABELS: Record<OpsAlertItem['action'], string> = {
+  fire: 'Yeni',
+  remind: 'Sürüyor',
+  resolve: 'Düzeldi',
+};
+
+export function opsAlertEmail(input: { to: string; project: string; items: OpsAlertItem[] }): EmailMessage {
+  const open = input.items.filter((item) => item.action !== 'resolve');
+  const first = open[0] ?? input.items[0];
+  const subject =
+    open.length > 0
+      ? `[StudyFlow ops] ${first.title}${open.length > 1 ? ` (+${open.length - 1})` : ''}`
+      : `[StudyFlow ops] Düzeldi: ${first.title}`;
+  const sections = input.items.map((item) => ({
+    heading: `${OPS_ACTION_LABELS[item.action]} · ${item.title}`,
+    lines: item.lines,
+  }));
+  return {
+    to: input.to,
+    subject,
+    tag: 'ops_alert',
+    html: layout('Operasyon uyarısı', [
+      { kind: 'note', html: `Proje: ${escapeHtml(input.project)}` },
+      ...sections.flatMap((section): Block[] => [
+        { kind: 'p', html: `<strong>${escapeHtml(section.heading)}</strong>` },
+        { kind: 'list', items: section.lines.map(escapeHtml) },
+      ]),
+      { kind: 'note', html: 'Durum sürerse 6 saatte bir hatırlatılır. Görünümler: ops şeması (SQL editörü).' },
+    ]),
+    text: textBody([
+      `Proje: ${input.project}`,
+      ...sections.map((section) => [section.heading, ...section.lines.map((line) => `- ${line}`)].join('\n')),
+    ]),
   };
 }

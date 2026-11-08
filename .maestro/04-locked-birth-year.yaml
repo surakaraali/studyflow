@@ -1,0 +1,34 @@
+# US-17, US-75: an 11-year-old waiting for a parent fixes a wrong birth year once.
+# An adult year is refused (age gate); 2012 is accepted and opens limited access.
+appId: host.exp.Exponent
+name: Kilitli hesap ve doğum yılı
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      MODE: locked
+      LANDING: "Velinin onayı gerekiyor"
+- scrollUntilVisible:
+    element: "Doğum yılım yanlış"
+    direction: DOWN
+- tapOn: "Doğum yılım yanlış"
+- extendedWaitUntil:
+    visible: "Doğum yılını düzelt"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "2005 yılı"
+    direction: DOWN
+- tapOn: "2005 yılı"
+- assertVisible: ".*18 yaş ve üstüne düzeltilemez.*"
+- scrollUntilVisible:
+    element: "2012 yılı"
+    direction: UP
+- tapOn: "2012 yılı"
+- scrollUntilVisible:
+    element: "Doğum yılımı düzelt"
+    direction: DOWN
+- tapOn: "Doğum yılımı düzelt"
+# Limited access now: the first-run course picker or Today, depending on what this device saw.
+- extendedWaitUntil:
+    visible: "Derslerini seç|Bugünün planı"
+    timeout: 20000

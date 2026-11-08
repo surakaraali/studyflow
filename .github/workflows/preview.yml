@@ -1,8 +1,10 @@
 # US-02: every change merged to main reaches internal testers on the "preview" channel.
 #   - JavaScript changes: an EAS Update (over the air) on the preview channel.
 #   - Native changes: a new internal build (queued, not awaited).
-# Needs the repository secret EXPO_TOKEN and the "staging" environment variables below
-# (public values only: the anon key is public by design, RLS protects the data).
+# Needs the repository secret EXPO_TOKEN and the repository variable EAS_PROJECT_ID (from
+# `eas init`). The app's EXPO_PUBLIC_* values come from the Expo "preview" environment
+# (`eas env:create --environment preview ...`), not from GitHub: since SDK 55 `eas update`
+# reads them from there when it gets --environment.
 name: Preview
 
 on:
@@ -26,12 +28,8 @@ jobs:
     environment: staging
     timeout-minutes: 30
     env:
-      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
-      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-      EXPO_PUBLIC_REVENUECAT_IOS_KEY: ${{ vars.EXPO_PUBLIC_REVENUECAT_IOS_KEY }}
-      EXPO_PUBLIC_REVENUECAT_ANDROID_KEY: ${{ vars.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY }}
-      EXPO_PUBLIC_CONSENT_WEB_URL: ${{ vars.EXPO_PUBLIC_CONSENT_WEB_URL }}
-      EXPO_PUBLIC_SUPPORT_EMAIL: ${{ vars.EXPO_PUBLIC_SUPPORT_EMAIL }}
+      # app.config.ts reads it for the update URL and the project id.
+      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,7 +53,7 @@ jobs:
         env:
           # Passed through env so a commit message can never run as a command.
           MESSAGE: ${{ github.event.head_commit.message || 'manual preview' }}
-        run: eas update --channel preview --message "$MESSAGE" --non-interactive
+        run: eas update --channel preview --environment preview --message "$MESSAGE" --non-interactive
 
       - name: Internal build (preview profile)
         # iOS first (R1). Use --platform all once Android starts (R2a).

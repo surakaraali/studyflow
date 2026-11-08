@@ -25,6 +25,7 @@ import { adminClient, type SupabaseClient } from '../_shared/admin.ts';
 import { budgetStatus, DEFAULT_MODEL, MONTHLY_AI_BUDGET_USD } from '../_shared/ai/pricing.ts';
 import { processDocument } from '../_shared/ai/process.ts';
 import { AiError, type ProcessInput, type ProcessResult, type Segment, type UsageEntry } from '../_shared/ai/types.ts';
+import { withMetrics } from '../_shared/metrics.ts';
 import { notifyStudent } from '../_shared/push.ts';
 
 declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void };
@@ -355,7 +356,7 @@ async function runJob(job: Job) {
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMetrics('process-document', async (req) => {
   if (req.method !== 'POST') return json(405, { error: 'method_not_allowed' });
 
   const authHeader = req.headers.get('Authorization');
@@ -465,4 +466,4 @@ Deno.serve(async (req) => {
 
   EdgeRuntime.waitUntil(runJob(job));
   return json(202, { status: 'processing' });
-});
+}));

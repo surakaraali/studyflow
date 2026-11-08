@@ -29,6 +29,7 @@ import { handlePreflight } from '../_shared/cors.ts';
 import { sendEmail } from '../_shared/email.ts';
 import { consentDecisionEmail, PURPOSE_LABELS, type Purpose } from '../_shared/email-templates.ts';
 import { clientIp, errorResponse, HttpError, json, readJson } from '../_shared/http.ts';
+import { withMetrics } from '../_shared/metrics.ts';
 import { notifyStudent } from '../_shared/push.ts';
 
 type Profile = {
@@ -209,7 +210,7 @@ async function handlePost(req: Request): Promise<Response> {
   return json({ ok: true, state: status, grantedPurposes: action === 'grant' ? purposes : [] });
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMetrics('consent', async (req) => {
   const preflight = handlePreflight(req);
   if (preflight) return preflight;
   try {
@@ -219,4 +220,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return errorResponse(error);
   }
-});
+}));

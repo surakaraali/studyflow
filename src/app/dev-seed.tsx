@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
@@ -10,11 +10,17 @@ import { useTheme } from '@/hooks/use-theme';
 const MODES: SeedMode[] = ['full', 'limited', 'locked', 'fresh'];
 
 /**
- * Development only: studyflow://dev-seed?mode=full|limited|locked|fresh signs in a demo
- * account with sample data and opens the app. Shows a notice in any other build.
+ * Development only: studyflow://dev-seed?mode=full|limited|locked|fresh[&reset=1] signs in a demo
+ * account with sample data and opens the app. Shows a notice in a development build that
+ * uses Supabase; a release build never reaches it.
  */
-export default function DevSeedScreen() {
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
+export default function DevSeedRoute() {
+  if (!__DEV__) return <Redirect href="/" />;
+  return <DevSeedScreen />;
+}
+
+function DevSeedScreen() {
+  const { mode, reset } = useLocalSearchParams<{ mode?: string; reset?: string }>();
   const { colors } = useTheme();
   const [error, setError] = useState<string | null>(null);
   const available = seedAvailable();
@@ -22,10 +28,10 @@ export default function DevSeedScreen() {
 
   useEffect(() => {
     if (!available) return;
-    runSeed(seedMode)
+    runSeed(seedMode, { reset: reset === '1' })
       .then(() => router.replace('/'))
       .catch((e: Error) => setError(e.message));
-  }, [available, seedMode]);
+  }, [available, seedMode, reset]);
 
   return (
     <View style={[styles.wrap, { backgroundColor: colors.paper }]}>

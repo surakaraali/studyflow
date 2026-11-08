@@ -1,0 +1,68 @@
+# US-08, US-09, US-11, US-15, US-71..US-73: a new 16-year-old signs up, verifies the e-mail
+# (dev stand-in), finishes onboarding with a parent address and picks courses.
+appId: host.exp.Exponent
+name: Kayıt ve onboarding
+---
+- runFlow:
+    file: common/open.yaml
+    env:
+      MODE: full
+      LANDING: "Bugünün planı"
+- runFlow: common/sign-out.yaml
+- tapOn: "E-posta ile kayıt ol"
+- tapOn:
+    text: "E-posta"
+    index: 1
+- inputRandomEmail
+- tapOn:
+    text: "Şifre"
+    index: 1
+- inputText: "e2e-Deneme-2026"
+- tapOn: "Hesap oluştur"
+- tapOn: "Kayıt ol"
+- extendedWaitUntil:
+    visible: "E-postanı doğrula"
+    timeout: 15000
+- tapOn: "E-postayı doğrulanmış say (geliştirme)"
+- tapOn: "Doğruladım, giriş yap"
+- tapOn:
+    text: "Şifre"
+    index: 1
+- inputText: "e2e-Deneme-2026"
+- tapOn: "Tekrar hoş geldin!"
+- tapOn:
+    text: "Giriş yap"
+    index: -1
+- extendedWaitUntil:
+    visible: "Kaçıncı sınıftasın?"
+    timeout: 20000
+- tapOn: "10. sınıf"
+- tapOn: "Devam et"
+- assertVisible: "Hangi yıl doğdun?"
+- scrollUntilVisible:
+    element: "2010 yılı"
+    direction: DOWN
+- tapOn: "2010 yılı"
+- tapOn: "Devam et"
+- assertVisible: "YKS’ye şimdiden hazırlanmak ister misin?"
+- tapOn: "Şimdilik hayır"
+- tapOn: "Devam et"
+- assertVisible: "Sana nasıl seslenelim?"
+- tapOn: "Rumuz istemiyorum"
+- assertVisible: "Çalışma düzenin"
+- tapOn: "Devam et"
+- assertVisible: "Velinin e-postası"
+- tapOn:
+    text: "Velinin e-posta adresi"
+    index: 1
+- inputText: "veli.e2e@ornek.com"
+- tapOn: "Velinin e-postası"
+- tapOn: "Veliye gönder ve bitir"
+- extendedWaitUntil:
+    visible: "Derslerini seç"
+    timeout: 20000
+- tapOn: "Devam et"
+- extendedWaitUntil:
+    visible: "Velinin onayı bekleniyor"
+    timeout: 20000
+- assertVisible: "Bugünün planı"

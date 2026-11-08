@@ -53,7 +53,7 @@ Pomodoro / odak modu · widget · paylaşılan desteler.
 | Çoklu dil | i18next + expo-localization | Arayüz Türkçe; İngilizce eklemeye hazır |
 | Bildirim | expo-notifications | Hatırlatmalar ve "Quiz'in hazır" bildirimleri |
 | Abonelik | RevenueCat | App Store + Google Play aboneliklerini tek yerden yönetir |
-| İzleme | Sentry (hatalar), PostHog (kullanım) | Çökme ve davranış verisi |
+| İzleme | Kendi Supabase'imiz (ürün olayları, JS çökme raporları, uyarılar); yerel çökmeler için Apple'ın raporları | Çocuk uygulaması: üçüncü taraf analitik/çökme SDK'sı yok (Q-04 → [ADR-006](analysis/adr/ADR-006-birinci-taraf-telemetri.md)) |
 | Derleme / yayın | EAS Build + EAS Submit, TestFlight | Bulutta derleme; gerekirse yerelde Xcode |
 
 **Uygulama kimliği:** `com.cobanov.studyflow`
@@ -169,7 +169,7 @@ Pomodoro / odak modu · widget · paylaşılan desteler.
 ### Faz 4 — Yayın hazırlığı
 - [x] RevenueCat ve kota (mağaza ürünleri tanımlanınca canlı)
 - [x] Hesap silme, gizlilik metinleri (taslak), izin ekranları
-- [ ] Sentry ve PostHog (analitik katmanı ve olay sözlüğü hazır; araç seçimi Q-04)
+- [x] Hata ve kullanım izleme (Q-04 → [ADR-006](analysis/adr/ADR-006-birinci-taraf-telemetri.md): kendi sunucumuz, üçüncü taraf SDK yok)
 
 ### Faz 5 — Beta ve yayın
 - [ ] TestFlight
@@ -195,6 +195,7 @@ Ayrıntılı sprint takvimi, tarihler ve sürüm planı: [agile/project_plan.md]
 - Önce iOS; Google Play hesabı R2a öncesi açılacak.
 
 **Açık sorular:** BRD [§17](analysis/01_brd.md#17-açık-sorular) (Q-01–Q-08): ilkokulun R2b'ye ertelenmesi,
-veli onayı yaş eşiği, KVKK yurt dışı aktarım, çocuk politikalarına uygun analitik, fiyat, e-posta
+veli onayı yaş eşiği, KVKK yurt dışı aktarım, çocuk politikalarına uygun analitik (Q-04, kapandı:
+[ADR-006](analysis/adr/ADR-006-birinci-taraf-telemetri.md)), fiyat, e-posta
 sağlayıcısı, App Store kategorisi, ad müsaitliği. Ayrıca: Apple Developer hesabı (ayikla'daki takım)
 ve Supabase hesabı.

@@ -1,4 +1,4 @@
-import { router, Stack } from 'expo-router';
+import { Redirect, router, Stack } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -14,6 +14,7 @@ import { useDbQuery } from '@/db/use-query';
 import { confirmDestructive } from '@/features/quiz/confirm';
 import { HIDDEN_ICON, Tag } from '@/features/quiz/components/tag';
 import { optionLetter, parseOptions } from '@/features/quiz/scoring';
+import { devTools } from '@/features/release/state';
 import type { ReportDecision } from '@/features/reports/logic';
 import { decideReports, listOpenReports, type ReportGroup } from '@/features/reports/repo';
 
@@ -21,7 +22,13 @@ import { decideReports, listOpenReports, type ReportGroup } from '@/features/rep
  * US-37 team review queue. In production this is an internal tool; in local mode it is
  * reachable from settings so the whole report flow can be tried on one device.
  */
-export default function ReportQueueScreen() {
+export default function ReportQueueRoute() {
+  // Development builds in local mode only; a release build never reaches it.
+  if (!devTools) return <Redirect href="/" />;
+  return <ReportQueueScreen />;
+}
+
+function ReportQueueScreen() {
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const { data } = useDbQuery('report-queue', listOpenReports, [

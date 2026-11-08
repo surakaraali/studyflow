@@ -6,22 +6,22 @@
   <meta name="robots" content="noindex, nofollow">
   <!-- The link token is in the address: never send it to other sites. -->
   <meta name="referrer" content="no-referrer">
-  <!-- Hosting: also send "Content-Security-Policy: frame-ancestors 'none'" and HSTS as HTTP headers
-       (a meta tag cannot set them). Drop the 127.0.0.1/localhost entries in production. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; img-src data:; base-uri 'none'; form-action 'none'">
+  <!-- Static hosting (GitHub Pages) cannot send headers: frame-ancestors and HSTS need a host or
+       proxy that can. `npm run web:build` narrows connect-src to the project's functions origin. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <!-- Not shown inside a frame (clickjacking guard, since frame-ancestors needs a header). -->
+  <style id="frame-guard">html { display: none; }</style>
+  <script>if (window.top === window.self) document.getElementById('frame-guard').remove();</script>
   <meta name="theme-color" content="#F4F6FB" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E1226" media="(prefers-color-scheme: dark)">
   <title>Veli onayı · StudyFlow</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Literata for headings, like the app. Privacy: Google sees the visitor's IP; self-host the
-       font files next to this page before launch (open item in analysis/security_review.md). -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&display=swap">
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="stylesheet" href="../assets/site.css">
 
   <!--
-    Parent consent page (US-16, FR-CON-02, FR-CON-04). Static: host it anywhere over HTTPS and
-    set EXPO_PUBLIC_CONSENT_WEB_URL / CONSENT_WEB_URL to its address.
-    Only the block below changes per environment (staging / prod).
+    Parent consent page (US-16, FR-CON-02, FR-CON-04). Published at /veli-onayi/ by
+    `npm run web:build`; set CONSENT_WEB_URL (and EXPO_PUBLIC_CONSENT_WEB_URL) to that address.
+    The build fills the block below per environment (staging / prod).
   -->
   <script>
     window.STUDYFLOW_CONSENT_CONFIG = {
@@ -29,174 +29,16 @@
       functionsUrl: 'https://YOUR-PROJECT-REF.supabase.co/functions/v1',
       // Optional: the project's public anon key. The consent function does not need it.
       anonKey: '',
-      privacyUrl: 'https://studyflow.app/aydinlatma-metni',
+      privacyUrl: '../aydinlatma-metni/',
       supportEmail: 'destek@studyflow.app'
     };
   </script>
-
-  <style>
-    :root {
-      --paper: #F4F6FB;
-      --surface: #FFFFFF;
-      --sunken: #E9EDF6;
-      --line: #D9DFEC;
-      --ink: #161C3A;
-      --ink-soft: #5A6282;
-      --pen: #2A3FD1;
-      --on-pen: #FFFFFF;
-      --exam: #C92A63;
-      --success: #1F7A55;
-      --highlight: #FFE650;
-      --radius: 16px;
-      color-scheme: light dark;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --paper: #0E1226;
-        --surface: #171C36;
-        --sunken: #1F2545;
-        --line: #2A3157;
-        --ink: #EDF0FA;
-        --ink-soft: #A3AACB;
-        --pen: #8C9BFF;
-        --on-pen: #0E1226;
-        --exam: #FF6B98;
-        --success: #3CCB8F;
-      }
-    }
-    * { box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; }
-    body {
-      margin: 0;
-      background: var(--paper);
-      color: var(--ink);
-      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    main {
-      max-width: 620px;
-      margin: 0 auto;
-      padding: max(24px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom));
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      font-weight: 600;
-      color: var(--pen);
-    }
-    /* Optik form bubbles: the app's signature motif. */
-    .bubbles { display: inline-flex; gap: 4px; }
-    .bubbles span {
-      width: 12px; height: 12px; border-radius: 50%;
-      border: 1.5px solid var(--exam);
-    }
-    .bubbles span.filled { background: var(--exam); }
-    h1, h2 {
-      font-family: "Literata", Georgia, "Times New Roman", serif;
-      font-weight: 600;
-      line-height: 1.25;
-      letter-spacing: -0.01em;
-      margin: 0 0 12px;
-    }
-    h1 { font-size: 30px; }
-    h2 { font-size: 21px; margin-top: 28px; }
-    h1:focus, h2:focus { outline: none; }
-    p { margin: 0 0 14px; }
-    .lead { font-size: 18px; }
-    .muted { color: var(--ink-soft); font-size: 15px; }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px 18px;
-      margin: 18px 0;
-    }
-    .card.exam { border-top: 4px solid var(--exam); }
-    ul.facts { margin: 0; padding-left: 20px; }
-    ul.facts li { margin-bottom: 8px; }
-    details { margin-top: 8px; }
-    summary {
-      cursor: pointer;
-      color: var(--pen);
-      font-weight: 600;
-      min-height: 44px;
-      display: flex;
-      align-items: center;
-    }
-    fieldset { border: 0; padding: 0; margin: 0; }
-    legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
-    .purpose {
-      display: grid;
-      grid-template-columns: 28px 1fr;
-      gap: 12px;
-      align-items: start;
-      padding: 14px 12px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      margin-bottom: 10px;
-      background: var(--surface);
-      cursor: pointer;
-    }
-    .purpose:hover { background: var(--sunken); }
-    .purpose input {
-      width: 24px; height: 24px; margin: 2px 0 0;
-      accent-color: var(--pen);
-    }
-    .purpose strong { display: block; font-size: 17px; }
-    .purpose span { display: block; color: var(--ink-soft); font-size: 15px; margin-top: 2px; }
-    .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-    button, .button {
-      appearance: none;
-      border: 0;
-      border-radius: 14px;
-      min-height: 52px;
-      padding: 14px 20px;
-      font: inherit;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    button.primary { background: var(--pen); color: var(--on-pen); }
-    button.secondary { background: var(--sunken); color: var(--ink); }
-    button.destructive { background: transparent; color: var(--exam); border: 1.5px solid var(--exam); }
-    button.link { background: transparent; color: var(--pen); min-height: 44px; padding: 8px; }
-    button:disabled { opacity: 0.6; cursor: progress; }
-    :focus-visible { outline: 3px solid var(--pen); outline-offset: 3px; }
-    .status {
-      display: flex; gap: 10px; align-items: flex-start;
-      padding: 14px 16px; border-radius: 12px; margin: 16px 0;
-      background: var(--sunken);
-    }
-    .status .icon { font-size: 20px; line-height: 1.3; flex: none; }
-    .status.success { border-left: 4px solid var(--success); }
-    .status.warning { border-left: 4px solid var(--exam); }
-    .version { font-size: 13px; color: var(--ink-soft); margin-top: 28px; }
-    [hidden] { display: none !important; }
-    @media (min-width: 560px) {
-      .actions { flex-direction: row; flex-wrap: wrap; }
-      .actions button { flex: 1 1 auto; }
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .view { animation: fade 160ms ease-out; }
-      @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-    }
-  </style>
 </head>
 <body>
-<main>
-  <div class="brand" aria-hidden="true">
-    <span class="bubbles"><span class="filled"></span><span class="filled"></span><span></span><span></span><span></span></span>
-    StudyFlow
-  </div>
-
+<!-- @site-header -->
+<main id="main">
   <!-- Screen readers hear every state change here. -->
-  <div id="live" class="visually-hidden" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></div>
+  <div id="live" class="visually-hidden" aria-live="polite"></div>
 
   <section id="view-loading" class="view">
     <h1 tabindex="-1">Bağlantı kontrol ediliyor…</h1>
@@ -235,7 +77,7 @@
     </div>
 
     <div class="card exam">
-      <h2 style="margin-top:0">Kısaca neleri işliyoruz?</h2>
+      <h2>Kısaca neleri işliyoruz?</h2>
       <ul class="facts">
         <li><strong>Hesap bilgileri:</strong> rumuz, e-posta, doğum yılı ve sınıf. Ad-soyad, okul, telefon ve konum istemiyoruz.</li>
         <li><strong>Çalışma bilgileri:</strong> dersler, sınav ve ödev tarihleri, çalışma planı, süreler, quiz ve kart sonuçları. Yalnızca plan ve ilerleme için kullanılır.</li>
@@ -243,7 +85,7 @@
         <li><strong>Nerede:</strong> Avrupa Birliği'ndeki sunucularda. Reklam yok, veri satışı yok.</li>
         <li><strong>Ne kadar süre:</strong> hesap silinince belgeler hemen, diğer veriler en geç 30 gün içinde silinir. Onay kayıtları yasal süre boyunca saklanır.</li>
       </ul>
-      <details>
+      <details class="more">
         <summary>Haklarınız ve iletişim</summary>
         <p>6698 sayılı KVKK'nın 11. maddesi kapsamında verilere erişme, düzeltme, silme ve itiraz haklarınız vardır. Başvuru için <a id="support-link" href="#">destek adresimize</a> yazabilirsiniz.</p>
         <p><a id="privacy-link" href="#" rel="noopener">Aydınlatma metninin tamamını okuyun</a></p>
@@ -307,6 +149,7 @@
     <p class="muted">Bu sayfayı kapatabilirsiniz.</p>
   </section>
 </main>
+<!-- @site-footer -->
 
 <script>
 (function () {

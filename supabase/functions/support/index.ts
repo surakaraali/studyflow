@@ -22,6 +22,7 @@ import { handlePreflight } from '../_shared/cors.ts';
 import { sendEmail } from '../_shared/email.ts';
 import { supportTicketEmail } from '../_shared/email-templates.ts';
 import { errorResponse, HttpError, json, normalizeEmail, readJson, requireMethod } from '../_shared/http.ts';
+import { withMetrics } from '../_shared/metrics.ts';
 
 const TOPICS = ['account', 'subscription', 'ai', 'plan', 'bug', 'other', 'account_deletion', 'privacy', 'parent'] as const;
 type Topic = (typeof TOPICS)[number];
@@ -35,7 +36,7 @@ function shortText(value: unknown, max: number): string | null {
   return text ? text.slice(0, max) : null;
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMetrics('support', async (req) => {
   const preflight = handlePreflight(req);
   if (preflight) return preflight;
 
@@ -108,4 +109,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return errorResponse(error);
   }
-});
+}));

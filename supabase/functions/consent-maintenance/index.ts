@@ -24,6 +24,7 @@ import { addDays, CONSENT_DEADLINE_DAYS, consentPageUrl, issueConsentToken } fro
 import { sendEmail } from '../_shared/email.ts';
 import { accountDeletedEmail, consentReminderEmail, inactivityWarningEmail } from '../_shared/email-templates.ts';
 import { errorResponse, json, readJson, requireMethod } from '../_shared/http.ts';
+import { withMetrics } from '../_shared/metrics.ts';
 
 type DueRow = {
   user_id: string;
@@ -88,7 +89,7 @@ async function runTask(admin: SupabaseClient, row: DueRow, now: Date): Promise<v
   }
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMetrics('consent-maintenance', async (req) => {
   try {
     requireMethod(req, 'POST');
     requireSecret(req, Deno.env.get('CRON_SECRET'));
@@ -145,4 +146,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return errorResponse(error);
   }
-});
+}));

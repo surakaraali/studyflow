@@ -1,0 +1,92 @@
+# Public web pages on GitHub Pages: landing, privacy, terms, support (FAQ), parent consent and
+# account deletion. Built from the app's own legal texts and FAQ (scripts/web), so they never drift.
+#
+# Skipped (not failed) until the site is set up (analysis/go_live.md, web step):
+#   1. Settings → Pages → Build and deployment → Source: "GitHub Actions".
+#   2. Repository variable WEB_DEPLOY=true (Settings → Secrets and variables → Actions → Variables).
+# Repository variables read here (public values only):
+#   WEB_FUNCTIONS_URL          https://<prod-ref>.supabase.co/functions/v1 (required)
+#   WEB_STAGING_FUNCTIONS_URL  https://<staging-ref>.supabase.co/functions/v1 (optional, adds /staging/…)
+#   WEB_BASE_URL               https://studyflow.app/ once the custom domain works (optional)
+#   EXPO_PUBLIC_SUPPORT_EMAIL  support address (optional, default destek@studyflow.app)
+#   WEB_APP_STORE_URL          App Store link once the app is live (optional)
+# The custom domain is set in Settings → Pages (a CNAME file is ignored by this kind of deploy).
+name: Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'scripts/web/**'
+      - 'src/features/legal/**'
+      - 'src/i18n/tr/**'
+      - 'src/constants/theme.ts'
+      - 'assets/images/icon.png'
+      - 'assets/images/favicon.png'
+      - '.github/workflows/web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build pages
+    if: vars.WEB_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      WEB_FUNCTIONS_URL: ${{ vars.WEB_FUNCTIONS_URL }}
+      WEB_STAGING_FUNCTIONS_URL: ${{ vars.WEB_STAGING_FUNCTIONS_URL }}
+      EXPO_PUBLIC_SUPPORT_EMAIL: ${{ vars.EXPO_PUBLIC_SUPPORT_EMAIL }}
+      WEB_APP_STORE_URL: ${{ vars.WEB_APP_STORE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Fails if Pages is not set to "GitHub Actions" yet; it does not change any setting.
+      - name: Pages settings
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build (fails on placeholder or local URLs)
+        env:
+          WEB_BASE_URL: ${{ vars.WEB_BASE_URL || steps.pages.outputs.base_url }}
+        run: npm run web:build -- --strict
+
+      - name: Check every legal section and FAQ item is on the site
+        env:
+          WEB_BASE_URL: ${{ vars.WEB_BASE_URL || steps.pages.outputs.base_url }}
+        run: npm run web:check
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -17,6 +17,7 @@ import 'jsr:@supabase/functions-js@2.118.0/edge-runtime.d.ts';
 import { adminClient, type SupabaseClient } from '../_shared/admin.ts';
 import { requireSecret } from '../_shared/auth.ts';
 import { errorResponse, HttpError, json, readJson, requireMethod } from '../_shared/http.ts';
+import { withMetrics } from '../_shared/metrics.ts';
 
 type RevenueCatEvent = {
   id?: string;
@@ -89,7 +90,7 @@ async function handleTransfer(admin: SupabaseClient, event: RevenueCatEvent) {
   await refreshPlan(admin, to);
 }
 
-Deno.serve(async (req) => {
+Deno.serve(withMetrics('revenuecat-webhook', async (req) => {
   try {
     requireMethod(req, 'POST');
     requireSecret(req, Deno.env.get('REVENUECAT_WEBHOOK_SECRET'));
@@ -123,7 +124,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     return errorResponse(error);
   }
-});
+}));
 
 async function applyEvent(
   admin: SupabaseClient,

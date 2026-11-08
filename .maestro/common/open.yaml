@@ -1,0 +1,21 @@
+# Starts Expo Go cold, waits for the app, then opens a dev-seed account (MODE: full | limited |
+# locked) reset to the same sample data, and waits for LANDING to show. The seed link is sent
+# once the app is up: Expo Go does not always pass a link it was cold-started with.
+appId: host.exp.Exponent
+env:
+  APP_URL: exp://127.0.0.1:8081
+---
+- stopApp
+- openLink: ${APP_URL}
+- extendedWaitUntil:
+    visible: "Bugünün planı|Velinin onayı gerekiyor|E-posta ile kayıt ol|Kaçıncı sınıftasın\\?|Derslerini seç|Velinin e-postası"
+    timeout: 120000
+- openLink: ${APP_URL}/--/dev-seed?mode=${MODE}&reset=1
+- extendedWaitUntil:
+    notVisible: "Demo verisi hazırlanıyor…"
+    timeout: 60000
+- extendedWaitUntil:
+    visible: ${LANDING}
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000

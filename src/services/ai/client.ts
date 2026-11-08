@@ -62,6 +62,8 @@ function sleep(ms: number, signal: AbortSignal): Promise<void> {
 
 const localBackend: AiBackend = {
   async run({ doc, profile, course, signal }) {
+    // Release builds have no development server (see config.aiDevUrl).
+    if (!config.aiDevUrl) return error('server_config', false);
     const file = pdfFile(doc);
     if (!file) return error('file_missing', false);
 

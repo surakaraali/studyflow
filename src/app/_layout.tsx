@@ -11,11 +11,15 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useStackOptions } from '@/hooks/use-stack-options';
 import '@/services/boot';
 
+import { AppGate } from '@/features/app-gate';
+import { ReleaseGuard } from '@/features/release/release-guard';
+import { currentReleaseIssue } from '@/features/release/state';
 import { startAppServices } from '@/services/app-services';
 import { bootstrapSession, homeHref, profileAccess, useSession } from '@/stores/session';
 
 SplashScreen.preventAutoHideAsync();
-startAppServices();
+// A blocked release build (see ReleaseGuard) starts nothing.
+if (!currentReleaseIssue) startAppServices();
 
 function navigationTheme(scheme: 'light' | 'dark'): Theme {
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
@@ -36,6 +40,14 @@ function navigationTheme(scheme: 'light' | 'dark'): Theme {
 }
 
 export default function RootLayout() {
+  return (
+    <ReleaseGuard>
+      <AppRoot />
+    </ReleaseGuard>
+  );
+}
+
+function AppRoot() {
   const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const [fontsLoaded, fontError] = useFonts({ Literata_600SemiBold, Literata_700Bold });
   const status = useSession((s) => s.status);
@@ -74,24 +86,27 @@ export default function RootLayout() {
     <ThemeProvider value={navigationTheme(scheme)}>
       {/* Follows the app's own theme (Ayarlar > Görünüm), not only the system's. */}
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <Stack screenOptions={{ ...stackOptions, headerShown: false }}>
-        <Stack.Protected guard={!signedIn} redirectTo={home}>
-          <Stack.Screen name="(auth)" />
-        </Stack.Protected>
-        <Stack.Protected guard={signedIn && !onboarded} redirectTo={home}>
-          <Stack.Screen name="onboarding" />
-        </Stack.Protected>
-        <Stack.Protected guard={locked} redirectTo={home}>
-          <Stack.Screen name="(locked)" />
-        </Stack.Protected>
-        <Stack.Protected guard={onboarded && !locked} redirectTo={home}>
-          <Stack.Screen name="(app)" />
-        </Stack.Protected>
-        {/* "/" only redirects to the right group (see app/index.tsx). */}
-        <Stack.Screen name="index" />
-        {/* Local mode stand-in for the parent's web consent page (US-16). */}
-        <Stack.Screen name="parent-consent" options={{ presentation: 'modal' }} />
-      </Stack>
+      {/* Forced update and maintenance from the server's app_config (local mode: no gate). */}
+      <AppGate>
+        <Stack screenOptions={{ ...stackOptions, headerShown: false }}>
+          <Stack.Protected guard={!signedIn} redirectTo={home}>
+            <Stack.Screen name="(auth)" />
+          </Stack.Protected>
+          <Stack.Protected guard={signedIn && !onboarded} redirectTo={home}>
+            <Stack.Screen name="onboarding" />
+          </Stack.Protected>
+          <Stack.Protected guard={locked} redirectTo={home}>
+            <Stack.Screen name="(locked)" />
+          </Stack.Protected>
+          <Stack.Protected guard={onboarded && !locked} redirectTo={home}>
+            <Stack.Screen name="(app)" />
+          </Stack.Protected>
+          {/* "/" only redirects to the right group (see app/index.tsx). */}
+          <Stack.Screen name="index" />
+          {/* Local mode stand-in for the parent's web consent page (US-16). */}
+          <Stack.Screen name="parent-consent" options={{ presentation: 'modal' }} />
+        </Stack>
+      </AppGate>
     </ThemeProvider>
   );
 }

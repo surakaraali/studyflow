@@ -18,6 +18,7 @@ import { saveHomework } from '@/features/homework/repo';
 import { schedulePlanRegeneration } from '@/features/plan/regenerate';
 import { saveTimetable } from '@/features/timetable/repo';
 import { addTopic } from '@/features/topics/repo';
+import { markCoursesOffered } from '@/features/setup/repo';
 import { addDays, todayString } from '@/lib/dates';
 import { auth, markEmailVerifiedLocally } from '@/services/auth';
 import { isLocalMode } from '@/services/config';
@@ -61,6 +62,8 @@ async function seedProfile(userId: string, mode: SeedMode) {
     wake_time: '07:00',
     notif_permission_asked: 1,
     ai_notice_accepted_at: now,
+    // Each seed starts with the one birth-year correction unused (US-75).
+    birth_year_corrected_at: null,
   };
 
   if (mode === 'locked') {
@@ -393,13 +396,35 @@ async function seedHistory(courseIds: string[]) {
   }
 }
 
-/** Creates (or reuses) the demo account for `mode` and fills it with sample data. */
-export async function runSeed(mode: SeedMode): Promise<void> {
+/**
+ * Empties the account's data so the next seed starts clean. The profile and the device flags
+ * in `kv` (first-run guide seen, reminders asked…) stay, so the demo opens on Today.
+ */
+async function clearDemoData() {
+  const db = getDb();
+  const tables = await db.getAllAsync<{ name: string }>(
+    "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name NOT IN ('profile', 'kv')",
+  );
+  // One batch without BEGIN: the app may be inside its own transaction on this connection
+  // (sync, plan runner), and SQLite can't nest them.
+  await db.execAsync(tables.map(({ name }) => `DELETE FROM "${name}";`).join('\n'));
+}
+
+/**
+ * Creates (or reuses) the demo account for `mode` and fills it with sample data.
+ * `reset` clears the account first (used by the end-to-end tests, so every run starts the same).
+ */
+export async function runSeed(mode: SeedMode, { reset = false }: { reset?: boolean } = {}): Promise<void> {
   if (!seedAvailable()) throw new Error('Demo data is only available in local development mode');
 
   const user = await signInDemo(mode);
   if (mode === 'fresh') return;
-  if (await alreadySeeded()) return;
+  if (reset) {
+    // Today may be open under this screen: without the flag, the empty course list for a
+    // moment would open the first-run course picker (US-74).
+    if (mode !== 'locked') await markCoursesOffered();
+    await clearDemoData();
+  } else if (await alreadySeeded()) return;
 
   await seedProfile(user.id, mode);
   if (mode === 'locked') {

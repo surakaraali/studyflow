@@ -3,11 +3,11 @@
 | Alan | Değer |
 |---|---|
 | Doküman | Google Play Console: Aile Politikası, kapalı test, Veri güvenliği, içerik derecelendirmesi, mağaza girişi |
-| Sürüm | 0.1 (taslak) |
-| Tarih | 4 Kasım 2026 |
+| Sürüm | 0.2 (taslak) |
+| Tarih | 7 Kasım 2026 |
 | Hazırlayan | İş Analisti ve Tech Lead |
 | Durum | Taslak; R2a (Mayıs 2027) öncesi güncellenecek |
-| İlgili | [App Store taslağı](app-store.md) · [Güvenlik incelemesi](../analysis/security_review.md) §6 · [01_brd.md](../analysis/01_brd.md) §12 · [02_nfr.md](../analysis/02_nfr.md) §13 |
+| İlgili | [App Store taslağı](app-store.md) · [Güvenlik incelemesi](../analysis/security_review.md) §6 · [ADR-006](../analysis/adr/ADR-006-birinci-taraf-telemetri.md) · [Yayına çıkış runbook'u](../analysis/go_live.md) · [01_brd.md](../analysis/01_brd.md) §12 · [02_nfr.md](../analysis/02_nfr.md) §13 |
 
 Bu doküman R1'de kullanılmaz; veri envanteri ve metinler App Store taslağıyla aynı kaynaktan türetildiği için
 şimdiden yazıldı (STORE-02). Android'e özgü kod henüz yok; aşağıdaki teknik maddeler R2a'da kontrol edilir.
@@ -26,7 +26,7 @@ Politikası şartları geçerlidir.
 
 | Şart | StudyFlow | Durum |
 |---|---|---|
-| Gizlilik politikası Play Console'da ve uygulamada | Uygulama içi metinler var (`src/features/legal/texts.ts`); hukuk onayı bekliyor (H-01) | ❌ |
+| Gizlilik politikası Play Console'da ve uygulamada | Uygulama içi metinler var (`src/features/legal/texts.ts`); aynı metin `https://studyflow.app/gizlilik/` sayfasına üretiliyor (`npm run web:build`); hukuk onayı bekliyor (H-01) | ❌ |
 | Reklam | Yok. Reklam beyanı "Hayır"; Families Self-Certified Ads SDK şartı bu yüzden uygulanmaz | ✅ |
 | Çocuklardan cihaz kimliği (AAID, IMEI, MAC, SSID vb.) iletilmez | Kod toplamıyor. Bağımlılıklar `AD_ID` iznini manifest'e ekleyebilir: `app.json`'da `android.blockedPermissions` ile engellenir, birleşik manifest kontrol edilir | 🔍 |
 | Konum izni yok | Yok | ✅ |
@@ -52,34 +52,43 @@ Giriş yöntemleri: Android'de e-posta + şifre ve Google ile giriş (US-10, R2a
 Beklenen sonuç: PEGI 3 / ESRB Everyone (🔍 anket sonucu). Anket her önemli özellik değişikliğinde yenilenir.
 
 ## 4. Veri güvenliği formu
-Kaynak: [güvenlik incelemesi §6](../analysis/security_review.md#6-sdk-ve-servis-veri-envanteri-priv-05-store-02);
-Apple gizlilik etiketiyle ([app-store.md](app-store.md) §8) aynı kararlar.
+Kaynak: [güvenlik incelemesi §6](../analysis/security_review.md#6-sdk-ve-servis-veri-envanteri-priv-05-store-02),
+[ADR-006](../analysis/adr/ADR-006-birinci-taraf-telemetri.md) (telemetri) ve Apple gizlilik etiketi
+([app-store.md](app-store.md) §8). Aynı veri iki formda kendi tanımlarıyla beyan edilir; App Store §8'deki
+"manifest sahibiyle karar verilecek" türler kapanınca bu tablo da gözden geçirilir.
 
-| Google veri türü | Toplanıyor | Paylaşılıyor | Zorunlu mu | Amaç | StudyFlow'daki karşılığı |
-|---|---|---|---|---|---|
-| Kişisel bilgiler → E-posta adresi | Evet | Hayır | Zorunlu | Uygulama işlevselliği, hesap yönetimi | Hesap e-postası, veli e-postası, destek yanıt adresi |
-| Kişisel bilgiler → Ad | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Rumuz |
-| Kişisel bilgiler → Kullanıcı kimlikleri | Evet | Hayır | Zorunlu | Uygulama işlevselliği, hesap yönetimi | Hesap UUID'si (RevenueCat'te de aynı) |
-| Kişisel bilgiler → Diğer bilgiler | Evet | Hayır | Zorunlu | Uygulama işlevselliği | Doğum yılı, sınıf, hedef sınav |
-| Finansal bilgiler → Satın alma geçmişi | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Abonelik durumu ve işlem kimliği |
-| Uygulama etkinliği → Kullanıcının oluşturduğu diğer içerik | Evet | Hayır | Zorunlu | Uygulama işlevselliği | Dersler, plan, quiz cevapları, kartlar, oturumlar, içerik bildirimi, destek mesajı |
-| Dosyalar ve dokümanlar | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Yüklenen PDF sayfaları (yapay zekâ işi) |
-| Uygulama bilgileri ve performansı → Teşhis | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Yalnızca destek kaydına eklenen uygulama ve Android sürümü |
-| Cihaz veya diğer kimlikler | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Push token (FCM, Expo); bildirim izni verilirse |
+| Google veri türü | Toplanıyor | Paylaşılıyor | Zorunlu mu | Amaç | StudyFlow'daki karşılığı | Apple §8 karşılığı |
+|---|---|---|---|---|---|---|
+| Kişisel bilgiler → E-posta adresi | Evet | Hayır | Zorunlu | Uygulama işlevselliği, hesap yönetimi | Hesap e-postası, veli e-postası, destek yanıt adresi | E-posta Adresi |
+| Kişisel bilgiler → Ad | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Rumuz (Google "takma ad"ı bu türde sayar) | Kullanıcı Kimliği (rumuz) |
+| Kişisel bilgiler → Kullanıcı kimlikleri | Evet | Hayır | Zorunlu | Uygulama işlevselliği, hesap yönetimi | Hesap UUID'si (RevenueCat'te de aynı) | Kullanıcı Kimliği |
+| Kişisel bilgiler → Diğer bilgiler | Evet | Hayır | Zorunlu | Uygulama işlevselliği | Doğum yılı, sınıf, hedef sınav, uyku saatleri | Diğer Veri Türleri |
+| Finansal bilgiler → Satın alma geçmişi | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Abonelik durumu ve işlem kimliği | Satın Alma Geçmişi |
+| Uygulama etkinliği → Kullanıcının oluşturduğu diğer içerik | Evet | Hayır | Zorunlu | Uygulama işlevselliği | Dersler, plan, quiz cevapları, kartlar, oturumlar, içerik bildirimi, destek mesajı | Diğer Kullanıcı İçeriği |
+| Uygulama etkinliği → Uygulama etkileşimleri | Evet | Hayır | Zorunlu (kapatma ayarı yok) 🔍 | Analiz | Kimliksiz ürün olayları: olay adı, izinli özellikler, uygulama sürümü, platform, OS ana sürümü (ADR-006) | Ürün Etkileşimi (ilişkilendirilmeyen) |
+| Dosyalar ve dokümanlar | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Yüklenen PDF sayfaları (yapay zekâ işi) | Diğer Kullanıcı İçeriği |
+| Uygulama bilgileri ve performansı → Kilitlenme günlükleri | Evet | Hayır | Zorunlu (kapatma ayarı yok) 🔍 | Uygulama işlevselliği, analiz | Kimliksiz JavaScript çökme raporları (ADR-006); yerel çökmeler Play Console Android vitals'tan | Çökme Verileri (ilişkilendirilmeyen) |
+| Uygulama bilgileri ve performansı → Diğer uygulama performansı verileri | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Yalnızca destek kaydına eklenen uygulama ve Android sürümü | App Store §8 açık maddesi (Diğer Teşhis Verileri) |
+| Cihaz veya diğer kimlikler | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Push token (FCM, Expo); bildirim izni verilirse | App Store §8: Cihaz Kimliği olarak beyan edildi |
 
 - **Toplanmayanlar:** konum, kişiler, fotoğraf ve video, ses, sağlık, mesajlar, takvim, web geçmişi, yüklü
-  uygulamalar, uygulama etkileşimleri ve kilitlenme günlükleri (analitik yok; Q-04 kararıyla güncellenir).
+  uygulamalar, reklam kimliği.
+- **Kimliksiz telemetri yine "toplanıyor" sayılır:** Google'ın tanımında cihazdan çıkan her veri toplanmış
+  sayılır; "ilişkilendirilmeyen" ayrımı yalnızca Apple formunda vardır. Kayıtlarda kullanıcı, cihaz, kurulum
+  kimliği ve IP yoktur (ADR-006); bu bilgi Play'in "Veri işleme" açıklamasına da yazılır.
 - **"Paylaşılıyor: Hayır" koşulu:** Google, hizmet sağlayıcıya (veri işleyene) aktarımı paylaşım saymaz. Supabase,
   Anthropic, Resend, RevenueCat ve Expo için veri işleme sözleşmesi şarttır (H-10); sözleşme yoksa ilgili tür
-  "paylaşılıyor" işaretlenir.
+  "paylaşılıyor" işaretlenir. Telemetri kendi Supabase projemizde kalır, yeni bir veri işleyen eklemez.
 - **Güvenlik uygulamaları:** aktarım sırasında şifreleme **Evet** (SEC-01); silme talebi **Evet**, uygulama içi ve
   web; Aile Politikasına uyum taahhüdü **Evet**; bağımsız güvenlik incelemesi (MASA) **Hayır** (isteğe bağlı).
 
 ## 5. Hesap silme URL'si
 Play Console, uygulamayı yeniden kurmadan silme talebi yapılabilen bir web adresi ister (STORE-03):
-`https://studyflow.app/hesap-silme` (yer tutucu; form `web/delete-account/index.html`, barındırılınca bu adres verilir, güvenlik incelemesi T-16). Sayfada uygulama ve
-geliştirici adı, adımlar, silinen ve saklanan veriler (veli onay ve ödeme kayıtları yasal süre, H-03) ve süre
-(en geç 30 gün, PRIV-07) yazmalıdır.
+`https://studyflow.app/hesap-silme/` (alan adı Q-08 ile kesinleşir; form `web/delete-account/index.html`,
+`npm run web:build` ile bu adrese üretilir ve `.github/workflows/web.yml` ile GitHub Pages'te yayımlanır).
+Sayfada uygulama ve geliştirici adı, adımlar, silinen ve saklanan veriler (veli onay ve ödeme kayıtları yasal
+süre, H-03) ve süre (en geç 30 gün, PRIV-07) yazar. Açık kalan: hesap sahipliğini doğrulama süreci (T-16, H-12).
+Gizlilik politikası alanına `https://studyflow.app/gizlilik/`, web sitesi alanına `https://studyflow.app/` girilir.
 
 ## 6. Mağaza girişi
 

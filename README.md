@@ -17,7 +17,7 @@ indirdiği andan ilk günlerine kadarki yolculuğu tamamlandı (E19, US-71–US-
 [agile/backlog.md](agile/backlog.md)). Uygulama **yerel modda** uçtan uca
 çalışır: hesap, veri ve veli onayı cihazda tutulur, yapay zekâ işleri geliştirme sunucusuna
 gider. Supabase, App Store, RevenueCat ve e-posta hesapları açılınca aynı kod sunucuya bağlanır
-(adımlar: [analysis/adr/](analysis/adr/) ve [store/app-store.md](store/app-store.md)).
+(adımlar: [analysis/go_live.md](analysis/go_live.md)).
 
 | Alan | İçerik |
 |---|---|
@@ -30,7 +30,7 @@ gider. Supabase, App Store, RevenueCat ve e-posta hesapları açılınca aynı k
 | İlerleme | Haftalık süre, plan uyumu, ders ve konu bazında doğru oranı, optik form ızgarası |
 | Abonelik ve destek | Ücretsiz/Pro karşılaştırma, satın alma ve geri yükleme (RevenueCat), SSS, destek formu, beta geri bildirimi ve SUS anketi |
 | Backend | Supabase şeması ve RLS, Edge Functions (belge işleme, veli onayı, hesap silme, abonelik, bakım, destek), eşitleme, veli onay web sayfası |
-| Teslim | CI (lint, tip, test, bağımlılık ve gizli anahtar taraması), EAS profilleri, güvenlik incelemesi, mağaza metinleri |
+| Teslim | CI (lint, tip, test, bağımlılık ve gizli anahtar taraması), EAS profilleri, güvenlik incelemesi, mağaza metinleri, web sayfaları (GitHub Pages), yayına çıkış runbook'u ve betikleri |
 
 Bilinen hata: [BUG-01](agile/backlog.md#9-bilinen-hatalar) (ilk açılışta sekme adları kesik).
 
@@ -57,6 +57,10 @@ npm install
 ```bash
 npm start
 ```
+
+`npm start` Expo Go'yu açar. Geliştirme derlemesi (Apple ile giriş, gerçek bildirimler) için
+`npm run start:dev-client` kullanılır; bu derlemeyi yerelde yapmak Xcode 26.4 ya da üstünü ister
+(Expo SDK 58). Daha eski Xcode'da derleme EAS ile bulutta yapılır ([analysis/go_live.md](analysis/go_live.md)).
 
 Simülatörde Expo Go ile açın (`i` tuşu ya da `xcrun simctl openurl booted exp://127.0.0.1:8081`).
 
@@ -86,15 +90,44 @@ geçmiş), `limited` (veli onayı bekleyen 16 yaş), `locked` (veli onayı bekle
 
 `.env.example` dosyasını `.env.local` olarak kopyalayıp Supabase adresini ve anon anahtarını
 girin. Anahtarlar girilince uygulama yerel moddan çıkar; girişler, veriler ve yapay zekâ işleri
-Supabase üzerinden yürür. Supabase kurulumu, gizli anahtarlar ve mağaza adımları
-[analysis/adr/](analysis/adr/) altındaki kararlarda ve [store/](store/) klasöründe anlatılır.
+Supabase üzerinden yürür.
+
+### Yayına çıkış
+
+Hesapların açılması, anahtarlar, Supabase kurulumu, web sayfaları, EAS derlemeleri ve App Store gönderimi
+sırasıyla [analysis/go_live.md](analysis/go_live.md)'de. Yardımcı betikler:
+
+```bash
+npm run go-live:check-env -- --list
+```
+
+`go-live:check-env` bir env dosyasında eksik ya da hatalı anahtarları listeler, `go-live:supabase`
+Supabase projesini kurar (varsayılan olarak yalnızca gösterir, `--apply` ile uygular),
+`go-live:seed-review` App Review deneme hesabını demo verisiyle açar. Mağaza metinleri [store/](store/)
+klasöründe.
+
+### Web sayfaları
+
+Tanıtım, gizlilik politikası, kullanım koşulları, aydınlatma metni, destek (SSS), veli onayı ve hesap silme
+sayfaları `web/` ve uygulamadaki metinlerden üretilir; yasal metinler ve SSS uygulamayla aynı kaynaktan gelir.
+
+```bash
+npm run web:build
+```
+
+```bash
+python3 -m http.server 8099 -d web/dist
+```
+
+Çıktı `web/dist/` klasörüne yazılır (git dışı). `npm run web:check` çıktı eskiyse ya da bir bölüm eksikse
+hata verir.
 
 ### GitHub Actions
 
-`CI` her push'ta çalışır. `Supabase` (staging/production dağıtımı) ve `Preview` (EAS güncellemesi)
-hesaplar kurulana kadar atlanır. Açmak için GitHub'da Settings → Secrets and variables → Actions →
-Variables altına `SUPABASE_DEPLOY=true` ve `EAS_PREVIEW=true` ekleyin (gereken anahtarlar
-iş akışı dosyalarının başında yazılı).
+`CI` her push'ta çalışır. `Supabase` (staging/production dağıtımı), `Preview` (EAS güncellemesi) ve `Web`
+(GitHub Pages) hesaplar kurulana kadar atlanır. Açmak için GitHub'da Settings → Secrets and variables →
+Actions → Variables altına `SUPABASE_DEPLOY=true`, `EAS_PREVIEW=true` ve `WEB_DEPLOY=true` ekleyin; gereken
+anahtarlar iş akışı dosyalarının başında ve [analysis/go_live.md](analysis/go_live.md) adım 10'da yazılı.
 
 ## Kontroller
 
@@ -109,6 +142,21 @@ npx eslint .
 ```bash
 npm test
 ```
+
+### Uçtan uca testler (Maestro)
+
+`.maestro/` altındaki akışlar uygulamayı simülatördeki Expo Go'da gerçek bir kullanıcı gibi dolaşır:
+kayıt ve onboarding, Bugün planı, ders ve sınav ekleme, kilitli hesapta doğum yılı düzeltme, ayarlar.
+Her akış demo hesabı aynı verilerle sıfırdan açar (`/dev-seed?mode=…&reset=1`, yalnızca geliştirme
+modunda). Gerekenler: [Maestro](https://maestro.mobile.dev) ve Java 17 (Homebrew: `openjdk@17`),
+`npm start` ile açık geliştirme sunucusu ve açık bir iOS simülatörü.
+
+```bash
+JAVA_HOME=/opt/homebrew/opt/openjdk@17 npm run e2e
+```
+
+Expo Go'da ilk dokunuşlar ve klavye zaman zaman kaybolduğu için kayıt ve sınav akışları kararsızdır;
+geliştirme derlemesinde (`appId: com.cobanov.studyflow`) çalıştırılması planlanıyor.
 
 ### Yerel Supabase ile entegrasyon testleri
 
@@ -127,7 +175,8 @@ supabase functions serve --env-file <dosya>
 ```
 
 Fonksiyon sunucusu için dosyada `EMAIL_PROVIDER=console`, `EMAIL_CONSOLE_BODY=1`,
-`CONSENT_WEB_URL=http://localhost:8099/consent/` ve `CRON_SECRET=<herhangi>` olmalı. Sunucunun
+`CONSENT_WEB_URL=http://localhost:8099/veli-onayi/` (web sayfaları yukarıdaki gibi sunulurken) ve
+`CRON_SECRET=<herhangi>` olmalı. Sunucunun
 çıktısını bir dosyaya yönlendirip o dosyayla testi çalıştırın:
 
 ```bash
@@ -159,7 +208,8 @@ src/
   stores/       Oturum durumu
 server/         Yerel modda yapay zekâ işlerini yapan geliştirme sunucusu
 supabase/       Postgres şeması, RLS testleri, Edge Functions
-web/            Veli onay sayfası
+web/            Web sayfaları: veli onayı, hesap silme, ortak stil (scripts/web üretir)
+scripts/        Web derlemesi, yayına çıkış betikleri (go-live), entegrasyon testleri
 evals/          Model değerlendirme seti iskeleti
 store/          App Store ve Google Play metinleri
 ```

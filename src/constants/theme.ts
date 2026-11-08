@@ -48,8 +48,8 @@ export const Colors: Record<'light' | 'dark', ThemeColors> = {
     onPen: '#FFFFFF',
     highlight: '#FFE650',
     onHighlight: '#161C3A',
-    exam: '#C92A63',
-    success: '#1F9D6B',
+    exam: '#C72A62',
+    success: '#187952',
   },
   dark: {
     paper: '#0E1226',

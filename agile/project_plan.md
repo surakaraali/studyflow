@@ -190,8 +190,8 @@ Mimari ve teknoloji seçimleri [PLAN.md](../PLAN.md)'dedir. Bu bölüm ekibin **
 | [003](../analysis/adr/ADR-003-icerik-denetimi.md) | Uygunsuz içerik denetimi (SP-02) | Yazıldı |
 | [004](../analysis/adr/ADR-004-e-posta-saglayicisi.md) | E-posta sağlayıcısı (Q-06) | Yazıldı |
 | [005](../analysis/adr/ADR-005-yerel-mod.md) | Hesapsız geliştirme için yerel mod | Yazıldı |
-| 006 | Plan motoru algoritması | Planlı (kod: `src/domain/plan-engine.ts`) |
-| 007 | Hata/analitik araçları ve çocuk politikaları (Q-04) | Planlı (olay sözlüğü: `analysis/analytics_events.md`) |
+| [006](../analysis/adr/ADR-006-birinci-taraf-telemetri.md) | Hata ve analitik: üçüncü taraf araç yerine kendi Supabase'imiz (Q-04) | Yazıldı |
+| 007 | Plan motoru algoritması | Planlı (kod: `src/domain/plan-engine.ts`) |
 
 ### 7.4 Yapay zekâ geliştirme döngüsü
 1. İstem (prompt) ve JSON şeması sürüm kontrolünde tutulur.
@@ -331,7 +331,7 @@ iPhone SE (3. nesil, iOS 17), iPhone 13 (iOS 18), iPhone 15 (iOS 26), iPhone 17 
 | R-03 | Yapay zekâ maliyetinin gelirden hızlı artması | O | O | Kota, model seçimi (SP-01), prompt caching, maliyet alarmı | Backend |
 | R-04 | Velilerin onay vermemesi | O | O | Onaysız kısıtlı mod, sade aydınlatma metni, hatırlatmalar, haftalık özeti öne çekmek | PO |
 | R-05 | Planın gerçekçi bulunmaması ve öğrencinin bırakması | O | Y | Eğitim danışmanıyla kurallar, kolay erteleme, S5 kullanılabilirlik testi, beta ölçümü | BA |
-| R-06 | Plan motorunun tahmini aşması | Y | O | S4'te tasarım ve ADR-006, hikâyeyi bölmek, Should hikâyeleri tampon olarak kullanmak | Tech lead |
+| R-06 | Plan motorunun tahmini aşması | Y | O | S4'te tasarım ve ADR-007, hikâyeyi bölmek, Should hikâyeleri tampon olarak kullanmak | Tech lead |
 | R-07 | Hukuki belirsizlik (veli onayı yaş eşiği, yurt dışına aktarım) | O | Y | S0'da danışmanla kararlar (Q-02, Q-03), kararların ADR ve BRD'ye işlenmesi | PO |
 | R-08 | Ekip kapasitesinin düşmesi (hastalık, ayrılma, tatil) | O | O | Eşli inceleme, dokümantasyon, kritik bilginin en az iki kişide olması | Tech lead |
 | R-09 | Beta için yeterli öğrenci bulunamaması | O | O | Okul ve dershane iş birlikleri S3'te başlar; yarıyıl tatilinde test | PO |
@@ -369,7 +369,7 @@ Risk kaydı her sprint gözden geçirmesinde güncellenir. Skoru yüksek (Y/Y, Y
 | Expo EAS | Ücretsiz katmanla başla; derleme kuyruğu yetmezse ücretli plan | |
 | RevenueCat | Belirli aylık gelire kadar ücretsiz, sonrası gelirden küçük pay | |
 | Claude API | Beta ≈ $25–50 toplam; yayın sonrası 1.000 aylık aktif kullanıcıda ≈ $150–250 / ay | AIQ-07 hedefi ve SP-01 sonucuna göre güncellenir |
-| İşlem e-postası, hata izleme, analitik | Başlangıçta ücretsiz katmanlar | Q-04, Q-06 |
+| İşlem e-postası, hata izleme, analitik | E-posta ücretsiz katmanda; hata ve analitik kendi Supabase'imizde (ADR-006), ek araç maliyeti yok | Q-06 |
 | Alan adı ve gizlilik sayfası barındırma | ≈ $15 / yıl | |
 | Hukuk danışmanlığı | Teklif alınacak | Aydınlatma, rıza, koşullar |
 

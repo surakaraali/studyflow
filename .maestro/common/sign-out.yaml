@@ -1,0 +1,19 @@
+appId: host.exp.Exponent
+---
+- tapOn:
+    text: "Ayarlar"
+    retryTapIfNoChange: true
+- scrollUntilVisible:
+    element: "Çıkış yap"
+    direction: DOWN
+- tapOn: "Çıkış yap"
+- extendedWaitUntil:
+    visible: "Çıkış yapılsın mı?"
+    timeout: 10000
+# The alert button comes first in the hierarchy, before the settings row.
+- tapOn:
+    text: "Çıkış yap"
+    index: 0
+- extendedWaitUntil:
+    visible: "E-posta ile kayıt ol"
+    timeout: 20000

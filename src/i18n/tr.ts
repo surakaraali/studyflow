@@ -1,9 +1,11 @@
 import account from './tr/account';
+import appGate from './tr/app-gate';
 import common from './tr/common';
 import courses from './tr/courses';
 import plan from './tr/plan';
 import progress from './tr/progress';
 import quiz from './tr/quiz';
+import release from './tr/release';
 import settings from './tr/settings';
 import setup from './tr/setup';
 import study from './tr/study';
@@ -22,6 +24,8 @@ const tr = {
   ...progress,
   ...settings,
   ...setup,
+  ...appGate,
+  ...release,
 };
 
 export type Translation = typeof tr;

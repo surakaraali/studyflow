@@ -50,7 +50,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 | STORAGE-1 · Oturum bilgisi güvenli depoda (SEC-05) | Supabase modunda supabase-js oturumu `expo-sqlite/localStorage` ile SQLite dosyasında tutuyor (`src/services/supabase.ts`); Keychain kullanılmıyor. Yerel (geliştirme) modunda yalnızca hesap kimliği `expo-secure-store`'da (`src/services/auth/local.ts`). | ⚠️ T-01 |
 | STORAGE-1 · Cihazdaki kullanıcı verisi | Her hesap için ayrı `user-<id>.db` (`src/db/client.ts`); PDF'ler `Documents/documents/<id>/` altında. Uygulama düzeyinde şifreleme yok; yalnızca iOS Veri Koruması (varsayılan sınıf: ilk kilit açılışından sonra erişilebilir). | ⚠️ T-02 |
 | STORAGE-1 · Pakette sunucu sırrı yok (SEC-02) | Pakete yalnızca `EXPO_PUBLIC_*` değerleri girer (`src/services/config.ts`): Supabase URL ve anon anahtarı, RevenueCat genel SDK anahtarları, onay sayfası ve destek adresi. `scripts/check-secrets.mjs`, başka bir ortam değişkeni okunursa ya da servis rolü, Anthropic, Resend, özel anahtar desenleri bulunursa CI'ı durdurur. | ✅ |
-| STORAGE-2 · Loglarda kişisel veri yok | Analitik ve çökme raporları yayın derlemesinde sessiz; metinler `scrubText`/`scrubStack` ile temizlenir (`src/services/analytics.ts`). Uygulamadaki `console.warn` çağrıları (hata nesneleriyle) yayın derlemesinde de çalışır. | 🔍 T-20 |
+| STORAGE-2 · Loglarda kişisel veri yok | Analitik ve çökme raporları kimliksizdir; metinler cihazda `scrubText`/`scrubStack` (`src/services/analytics.ts`), sunucuda yeniden `_shared/telemetry.ts` ile temizlenir (ADR-006). Cihazdaki gönderim kuyruğu (`expo-sqlite/kv-store`) yalnızca bu temizlenmiş kayıtları tutar. Uygulamadaki `console.warn` çağrıları (hata nesneleriyle) yayın derlemesinde de çalışır. | 🔍 T-20 |
 | STORAGE-2 · Çıkışta ve yedeklerde veri | Çıkışta veritabanı kapanır ama dosya cihazda kalır (`endSession`, `src/stores/session.ts`); hesap silmede DB ve PDF'ler silinir (`src/features/account/service.ts`). DB, oturum deposu ve PDF'ler cihaz yedeğine (iCloud/bilgisayar) dahil. | 🔍 T-03, T-24 |
 | STORAGE-2 · Klavye önbelleği | Şifre alanı `secureTextEntry` (`src/features/account/components/password-field.tsx`). | ✅ |
 
@@ -83,9 +83,9 @@ kapatıldı (aşağıda ✅ ile işaretli).
 |---|---|---|
 | NETWORK-1 · Tüm trafik HTTPS (SEC-01) | Uygulama yalnızca Supabase, RevenueCat, Expo (push token) ve Apple ile konuşur. Resend, Anthropic ve Expo Push Service'e yalnızca Edge Functions HTTPS ile gider. | ✅ |
 | NETWORK-1 · ATS istisnası yok | `app.json`'da `NSAppTransportSecurity` istisnası yok. Prebuild'in eklediği değerler (ör. `NSAllowsLocalNetworking`) yayın derlemesinin `Info.plist`'inde kontrol edilecek. | 🔍 T-05 |
-| NETWORK-1 · Geliştirme sunucusu yayına çıkmaz | Yerel modda yapay zekâ isteği `http://127.0.0.1:8787`'ye gider (`src/services/config.ts`). Yerel mod, Supabase değişkenleri eksikse kendiliğinden açılır; yayın derlemesinde bunu durduran bir kontrol yok. | ⚠️ T-05 |
+| NETWORK-1 · Geliştirme sunucusu yayına çıkmaz | Yerel modda yapay zekâ isteği geliştirme sunucusuna gider. 7 Kasım 2026: yayın derlemesinde (`!__DEV__`) bu adres boş; yerel modda ya da `https://` olmayan Supabase adresiyle açılan yayın derlemesi yalnızca "Bu sürüm eksik" ekranını gösterir (`src/features/release/`); EAS preview/production derlemesi bu değişkenler yoksa `app.config.ts`'de durur. | ✅ T-05 |
 | NETWORK-1 · TLS 1.2+ | Supabase uç noktaları ve onay sayfası barındırması SSL Labs ile kontrol edilecek. | 🔍 |
-| NETWORK-1 · Veli onay sayfası | `no-referrer`, `noindex`, sıkı CSP, `form-action 'none'`; token yalnızca kendi API'sine gider. Ancak CSP'de geliştirme adresleri (`127.0.0.1`, `localhost`) var, yazı tipi Google Fonts'tan yükleniyor (velinin IP adresi Google'a gider), `frame-ancestors` meta etiketinde etkisiz. | ⚠️ T-15 |
+| NETWORK-1 · Veli onay sayfası | `no-referrer`, `noindex`, sıkı CSP, `form-action 'none'`; token yalnızca kendi API'sine gider. 7 Kasım 2026: Literata sayfayla birlikte barındırılıyor (Google Fonts isteği yok); prod CSP'nin `connect-src`'si derlemede yalnızca fonksiyon adresine daraltılıyor (`npm run web:build -- --strict`); çerçeve içinde açılınca sayfa kendini gizliyor. Kalan: GitHub Pages HTTP başlığı (`frame-ancestors`, HSTS) gönderemez; `CORS_ALLOWED_ORIGIN` canlıda tanımlanacak. | ⚠️ T-15 |
 | NETWORK-2 · Sertifika sabitleme | Planlanmıyor; L2 kontrolü (gerekçe T-04). | — |
 
 ### 3.5 MASVS-PLATFORM
@@ -104,7 +104,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 | Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | CODE-1 · Güncel platform | COMP-01 iOS 17+. `app.json`'da dağıtım hedefi ayarlı değil; Expo SDK 58 varsayılanı geçerli. | 🔍 |
-| CODE-2 · Güncelleme zorlaması | FR-ADM-04 (zorunlu güncelleme uyarısı) kodda yok. `expo-updates` yüklü değil; `eas.json` kanalları ve `preview.yml`'deki `eas update` derlemeye bağlanmamış (proje planı §11.3 geri alma buna dayanıyor). | ❌ T-25 |
+| CODE-2 · Güncelleme zorlaması | FR-ADM-04: `public.app_config` (en düşük ve en yeni sürüm, bakım modu) ve `src/features/app-gate` (`AppGate`: zorunlu güncelleme ve bakım ekranı, bir kerelik "yeni sürüm" sorusu) yazıldı; kök düzene bağlanması bekleniyor. `expo-updates` yüklü değil; `eas.json` kanalları ve `preview.yml`'deki `eas update` derlemeye bağlanmamış (proje planı §11.3 geri alma buna dayanıyor). | ❌ T-25 |
 | CODE-3 · Bilinen açığı olan bileşen yok (SEC-07) | Her PR'da `npm audit --audit-level=high` ve gitleaks. Edge Functions bağımlılıkları (`supabase/functions/deno.json`) denetlenmiyor; Actions sürüm etiketiyle, Supabase CLI ve EAS CLI `latest` ile çalışıyor. | ⚠️ T-07 |
 | CODE-4 · Sunucuda girdi doğrulama (SEC-06) | `readJson` boyut sınırı (16 KB; webhook 64 KB), e-posta normalizasyonu, UUID ve token desenleri, konu ve amaç izin listeleri, mesaj uzunluğu; tablolarda CHECK kısıtları; e-posta şablonlarında HTML kaçışı (`_shared/email-templates.ts`). | ✅ |
 | CODE-4 · Yüklenen dosya doğrulaması (SEC-10) | Bucket yalnızca `application/pdf` (istemcinin bildirdiği tür) ve ≤ 25 MiB kabul eder. `process-document` boyutu yeniden kontrol eder; sayfa sayısını PDF'ten değil satırdaki `page_from`/`page_to`'dan alır; dosya imzası kontrolü görülmedi. | ⚠️ T-14 |
@@ -125,7 +125,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 |---|---|---|
 | PRIVACY-1 · Veri en aza indirme (PRIV-01) | Ad-soyad, okul, telefon, konum istenmez; doğum yılı alınır, rumuz isteğe bağlı. Apple ile girişte yalnızca e-posta kapsamı istenir. | ✅ |
 | PRIVACY-1 · Yapay zekâya kişisel veri gitmez (PRIV-02, BR-05) | Sistem istemi yalnızca sınıf, segment ve ders adını alır (`_shared/ai/prompts.ts`); istek gövdeleri ve belge metni loglanmaz. İstemci istek testi e-posta ve ad alanlarını arar (`src/services/ai/__tests__/request.test.ts`); sunucu istemi için otomatik test yok. Belgenin kendisi kişisel veri içerebilir (H-11). | ⚠️ |
-| PRIVACY-2 · Tanımlamayı önleme (PRIV-04) | IDFA/AAID ve ATT yok; analitik hiçbir kimlik taşımaz. RevenueCat'te kullanıcı kimliği rastgele hesap UUID'si, `automaticDeviceIdentifierCollectionEnabled: false`, `diagnosticsEnabled: false` (`src/services/purchases.ts`). | ✅ |
+| PRIVACY-2 · Tanımlamayı önleme (PRIV-04) | IDFA/AAID ve ATT yok; analitik hiçbir kimlik taşımaz ve üçüncü tarafa gitmez (ADR-006): sunucu kullanıcı kimliği ve IP saklamaz, olay zamanını saate yuvarlar. RevenueCat'te kullanıcı kimliği rastgele hesap UUID'si, `automaticDeviceIdentifierCollectionEnabled: false`, `diagnosticsEnabled: false` (`src/services/purchases.ts`). | ✅ |
 | PRIVACY-3 · Yasal metinler (PRIV-09) | Aydınlatma, gizlilik, koşullar uygulama içinde ve sürümlü (`src/features/legal/texts.ts`); hâlâ taslak (`LEGAL_DRAFT = true`, yer tutucular). | ❌ H-01 |
 | PRIVACY-3 · Yapay zekâ bilgilendirmesi (FR-CON-05, US-18) | İlk yüklemeden önce gönderilen ve gönderilmeyen veriler gösterilip onay alınır (`src/app/(app)/ai-notice.tsx`); 18 yaş altında velinin "yapay zekâ" amacı ayrıca gerekir. Metin sağlayıcının üçüncü taraf olduğunu ve adını söylemiyor (Apple 5.1.2(i)). | ⚠️ T-21 |
 | PRIVACY-3 · Mağaza etiketleri SDK listesiyle tutarlı (PRIV-05, STORE-02) | §6 envanteri; [app-store.md](../store/app-store.md) ve [play-store.md](../store/play-store.md) bu tablodan türetildi. RevenueCat'in topladığı cihaz bilgisi teyit bekliyor. | 🔍 |
@@ -147,12 +147,26 @@ kapatıldı (aşağıda ✅ ile işaretli).
   (`protect_report`). Onboarding sonrası doğum yılı değişikliği onay durumunu değiştirmez.
 - **Özel şema:** `private.account_activity`, `subscription_events`, `retained_consent_records`,
   `retained_subscriptions`. API yalnızca `public` ve `graphql_public` şemalarını açar (`supabase/config.toml`).
+- **Telemetri ve izleme (`20261107000001_telemetry_and_ops.sql`, ADR-006):** `private.telemetry_events`,
+  `crash_reports`, `telemetry_daily`, `crash_daily`, `telemetry_rate`, `function_requests`, `ops_alerts`.
+  Hiçbirinde kullanıcı, cihaz, kurulum, oturum kimliği veya IP sütunu yok (pgTAP bunu denetler). Yazma
+  yalnızca servis rolüne açık RPC'lerle (`telemetry_ingest`, `ops_record_request`, `ops_alert_save`);
+  `anon` ve `authenticated` için çalıştırma yetkisi geri alındı. Hız sınırı sayacının anahtarı
+  kullanıcı kimliği + saatin HMAC özetidir, 2 saat sonra silinir. İzleme görünümleri ayrı `ops`
+  şemasında (API'ye kapalı, `security_invoker`), yalnızca SQL editöründen okunur. Sütun kısıtları
+  (ad deseni, platform listesi, `props` ≤ 1 KB, metin uzunlukları) fonksiyondaki doğrulamanın ikinci hattı.
+- **Uzak uygulama ayarı (`20261107000002_app_config.sql`):** `public.app_config` tek satır (`id = 1`);
+  `anon` ve `authenticated` yalnızca okur (RLS + yalnızca `select` yetkisi), yazma yalnızca servis rolü.
+  Sürümler desenle, mağaza bağlantıları `https://` ile sınırlı; bakım mesajı ≤ 300 karakter. Kişisel veri yok.
 - **Depolama:** özel `documents` bucket'ı, `<user id>/` klasörüne sahip politikaları, 25 MiB ve yalnızca PDF.
   Uygulama PDF indirmez, imzalı bağlantı (SEC-04) şu an kullanılmıyor. Başka cihazda PDF görüntüleme gelirse
   ≤ 10 dk imzalı bağlantı şart.
 - **Servis rolü yalnızca Edge Functions'ta** (`_shared/admin.ts`); `check-secrets.mjs` uygulama kodunda
   `SUPABASE_SERVICE_ROLE` geçerse CI'ı durdurur.
-- **Testler:** `supabase/tests/rls.test.sql` (pgTAP, 196 kontrol): her tabloda başka kullanıcının okuma, ekleme,
+- **Testler:** `supabase/tests/telemetry_ops.test.sql` (pgTAP, 62 kontrol): telemetri, izleme ve
+  `app_config` tablolarına kullanıcı ve `anon` erişimi, sunucu RPC yetkileri, saatlik sınır, saklama
+  süreleri, kimlik sütunu olmaması, izleme görünümleri ve pg_cron işleri.
+  `supabase/tests/rls.test.sql` (pgTAP, 203 kontrol): her tabloda başka kullanıcının okuma, ekleme,
   güncelleme, silme denemesi; depolama klasörleri; sunucuya ait tablolar; yalnızca ekleme; sunucu sütunları;
   BR-14 kotası; BR-18 saklama kopyası. CI'da Supabase CLI ile her PR'da çalışır. Eksik: `anon` rolüyle
   erişim testi ve doğum yılı değişikliği testi.
@@ -168,6 +182,11 @@ kapatıldı (aşağıda ✅ ile işaretli).
 | `consent-maintenance` | `CRON_SECRET` (pg_cron, Vault) | — | `dryRun` destekler; hatalar diğer işleri durdurmaz. |
 | `support` | İsteğe bağlı JWT; herkese açık web formu | E-posta, 5–5000 karakter, konu izin listesi, UUID | Ekibe e-posta, Reply-To kullanıcı adresi. |
 | `process-document` | Öğrenci, JWT (anon istemci + `getUser`); belge RLS ile okunur | UUID, kota, sayfa sınırı | Sahibi başka ekip (yalnızca okundu). Onay ve "yapay zekâ" amacı sunucuda kontrol edilir. |
+| `telemetry` | Giriş yapmış kullanıcı, JWT (`verify_jwt = true` + `requireUser`); kimlik kayda yazılmaz | 64 KB, en çok 50 kayıt, olay sözlüğü izin listesi (`_shared/telemetry.ts`, `EVENTS` ile Jest testiyle eşit), çökme metni yeniden temizlenir | Bilinmeyen olay ve özellik atlanır; saatte 300 kayıt sınırı (429). |
+| `ops-alerts` | `CRON_SECRET` (pg_cron, 5 dakikada bir, Vault) | — | `dryRun` destekler; ekibe yalnızca sayılar gider. Durum `private.ops_alerts`'ta; aynı uyarı tekrar e-posta atmaz. |
+
+Her fonksiyon `withMetrics` (`_shared/metrics.ts`) ile sarılır: yanıtlar dakika ve durum sınıfına göre
+sayılır (`private.function_requests`, istek içeriği yok); `ops-alerts` OBS-03 hata oranını buradan hesaplar.
 
 CORS, `CORS_ALLOWED_ORIGIN` ile onay sayfasının kökenine daraltılmalı; tanımsızsa `*` (çerez kullanılmadığı için
 kabul edilebilir, yine de staging ve prod'da tanımlanır).
@@ -179,6 +198,7 @@ kabul edilebilir, yine de staging ve prod'da tanımlanır).
 | `consent-request` | İlk bağlantı serbest, sonra İstanbul gününe 3 gönderim, hesap başına | ✅ |
 | `support` | Adres başına 24 saatte 5 | ⚠️ IP sınırı yok; farklı adreslerle ekip posta kutusu doldurulabilir (T-13) |
 | `consent` (açık) | Yok; 256 bit token tahmin edilemez | ✅ |
+| `telemetry` | Kullanıcı başına saatte 300 kayıt; sayaç kimliksiz (HMAC anahtar, 2 saat) | ✅ |
 | `process-document` | Aylık kota (BR-14, `document_quota` + `guard_document`). SEC-06'daki "saatte 10 yükleme" kodda görülmedi | 🔍 T-13 |
 | Supabase Auth | E-posta gönderimi en sık dakikada bir (`max_frequency`); panel hız sınırları | 🔍 |
 
@@ -204,7 +224,8 @@ Kural: uygulamada sır yoktur (SEC-02). `EXPO_PUBLIC_*` değerleri herkese açı
 | `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Edge Functions | Edge runtime'ın kendisi sağlar; depoda ve uygulamada yok |
 | `ANTHROPIC_API_KEY` | `process-document`; yerelde `server/dev-ai.ts` | `supabase secrets set`; yerelde `.env.local` (git dışı) |
 | `RESEND_API_KEY` | `_shared/email.ts`; Auth SMTP parolası | `supabase secrets set`; Supabase Auth SMTP ayarı |
-| `CRON_SECRET` | `consent-maintenance` | `supabase secrets set` + Vault `cron_secret` (aynı değer) |
+| `CRON_SECRET` | `consent-maintenance`, `ops-alerts` | `supabase secrets set` + Vault `cron_secret` (aynı değer) |
+| `TELEMETRY_HASH_SALT` | `telemetry` (hız sınırı anahtarı, en az 16 karakter) | `supabase secrets set`; yoksa fonksiyon 500 döner. Değiştirmek yalnızca o saatin sayaçlarını sıfırlar |
 | `REVENUECAT_WEBHOOK_SECRET` | `revenuecat-webhook` | `supabase secrets set` + RevenueCat panelindeki Authorization değeri |
 | `EXPO_ACCESS_TOKEN` (isteğe bağlı) | `_shared/push.ts` | `supabase secrets set`; Expo'da "push güvenliği" açılırsa zorunlu |
 | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD` | `supabase.yml` | GitHub ortamları `staging` ve `production` (prod onaylı) |
@@ -214,7 +235,9 @@ Kural: uygulamada sır yoktur (SEC-02). `EXPO_PUBLIC_*` değerleri herkese açı
 | Apple Sign in secret (yalnızca web akışı) | Supabase Auth | Gerekmiyor (yerel akış); kullanılırsa panelde |
 
 Gizli olmayan yapılandırma: `EMAIL_FROM`, `EMAIL_REPLY_TO`, `SUPPORT_TEAM_EMAIL`, `CONSENT_WEB_URL`,
-`CONSENT_TEXT_VERSION`, `CORS_ALLOWED_ORIGIN`, `EMAIL_PROVIDER`, `AI_MODEL`, `AI_MONTHLY_BUDGET_USD`.
+`CONSENT_TEXT_VERSION`, `CORS_ALLOWED_ORIGIN`, `EMAIL_PROVIDER`, `AI_MODEL`, `AI_MONTHLY_BUDGET_USD`
+(`process-document` uyarısı ve `ops-alerts` bütçe eşiği, varsayılan 250), `OPS_ALERT_EMAIL` (`ops-alerts`
+alıcısı; yoksa uyarılar yalnızca fonksiyon loguna yazılır). Bunlar da `supabase secrets set` ile girilir.
 Not: `.gitignore` yalnızca `.env*.local` dosyalarını dışlıyor; `.env` dışlanmıyor (T-22).
 
 ## 6. SDK ve servis veri envanteri (PRIV-05, STORE-02)
@@ -225,7 +248,7 @@ türetilir. Yeni SDK veya veri alanı eklenince önce bu tablo, sonra iki form g
 | SDK / servis | Ne için | Gönderilen / alınan veri | Nereye | Kimlikle ilişkili | Takip |
 |---|---|---|---|---|---|
 | `@supabase/supabase-js` (Auth, Postgres, Storage, Functions) | Hesap, eşitleme, belge deposu | E-posta, şifre (Auth), rumuz, doğum yılı, sınıf, hedef sınav, uyku saatleri, veli e-postası, tüm çalışma verisi, seçilen PDF sayfaları, içerik bildirimleri, destek mesajı | Supabase, AB (Frankfurt) | Evet | Hayır |
-| `expo-sqlite` (+ `expo-sqlite/localStorage`) | Cihazda veri ve oturum | Dışarı göndermez | Cihaz | — | Hayır |
+| `expo-sqlite` (+ `expo-sqlite/localStorage`, `expo-sqlite/kv-store`) | Cihazda veri ve oturum; telemetri kuyruğu ve uzak ayar önbelleği (cihaz geneli, kimliksiz) | Dışarı göndermez | Cihaz | — | Hayır |
 | `expo-secure-store` | Yerel modda oturum | Dışarı göndermez | Cihaz (Keychain) | — | Hayır |
 | `expo-notifications` | Yerel hatırlatmalar; push token | Expo push token alınır ve `push_tokens` tablosuna yazılır | Expo → Supabase | Evet (token hesaba bağlı) | Hayır |
 | Expo Push Service (sunucu) | "Velin onayladı", "Belgen hazır" | Push token, bildirim başlığı ve metni (belge adı olabilir) | Expo (ABD) → APNs | Token üzerinden | Hayır |
@@ -239,8 +262,8 @@ türetilir. Yeni SDK veya veri alanı eklenince önce bu tablo, sonra iki form g
 | RevenueCat webhook (sunucu) | Abonelik durumu | App user id, ürün, durum, mağaza işlem kimliği, bitiş tarihi | Supabase (`subscriptions`, `private.subscription_events`) | Evet | Hayır |
 | Resend (sunucu) | İşlem e-postası | Veli onayı ve hatırlatma: veli e-postası + rumuz; onay sonucu: veli e-postası; hesap silindi ve hareketsizlik: hesap e-postası; destek: ekibe mesaj, Reply-To kullanıcı adresi, sürüm bilgisi; Auth e-postaları (SMTP) | Resend (bölge teyit edilecek) | Evet | Hayır |
 | Anthropic Claude API (sunucu) | Özet, quiz, kart | Seçilen PDF sayfaları, sınıf, segment, ders adı. Kullanıcı kimliği gönderilmez | Anthropic (ABD) | Hayır | Hayır |
-| Google Fonts (veli onay sayfası) | Yazı tipi | Velinin IP adresi ve tarayıcı bilgisi | Google | Hayır | Hayır (T-15) |
-| Analitik / çökme raporu | — | Gönderilmiyor: sink yayında sessiz; PostHog/Sentry kurulu değil (Q-04) | — | — | — |
+| Analitik / çökme raporu (kendi sunucumuz, ADR-006) | Ürün analitiği (KPI), JS çökme ve hata raporları | Olay adı, sözlükteki özellikler, uygulama sürümü, platform, OS ana sürümü; çökmede temizlenmiş hata türü, mesajı ve stack. JWT yalnızca hız sınırı için doğrulanır; kimlik, IP ve zaman damgası saklanmaz | Supabase, AB (Frankfurt) | Hayır | Hayır |
+| Apple çökme raporları (Xcode Organizer, App Store Connect) | Yerel (native) çökmeler | Kullanıcının cihaz ayarında paylaşmayı seçtiği çökme ve teşhis verisi | Apple | Hayır | Hayır |
 
 Veri işlemeyen modüller: `expo-haptics`, `expo-font` ve `@expo-google-fonts/literata` (yazı tipi pakete gömülü),
 `expo-router`, `expo-symbols`, `expo-glass-effect`, `@expo/ui`, `ts-fsrs`, `i18next`, `zustand`. `expo-sharing`
@@ -263,6 +286,8 @@ Veri işlemeyen modüller: `expo-haptics`, `expo-font` ve `@expo-google-fonts/li
 | Cihaz verisi | Hesap silmede DB ve PDF'ler silinir | Çıkışta silinmez | ⚠️ T-03 |
 | Yedekler | Supabase günlük yedekleri sağlayıcı takvimiyle düşer (plana göre ~7 gün; teyit) | Silinen veri bu süre boyunca yedekte kalır | 🔍 H-07 |
 | Üçüncü taraf kopyaları | RevenueCat müşteri kaydı, Resend gönderim logları, Expo push makbuzları, Anthropic API saklaması | Hesap silmede bunlara silme isteği gitmiyor | ⚠️ H-10, T-17 |
+| Telemetri (ADR-006) | Çökme raporları 30 gün (PRIV-08); ham olaylar 180 gün (bir okul dönemi); günlük sayımlar 2 yıl; hız sınırı sayaçları 2 saat; fonksiyon yanıt sayaçları 30 gün; uyarı durumu son değişiklikten 90 gün | `private.telemetry_housekeeping`, pg_cron saatte bir. Kimlik olmadığı için hesap silmede ayrıca silinecek kayıt yoktur | ✅ |
+| Cihazdaki telemetri kuyruğu | En çok 500 kayıt (50 çökme), gönderilince silinir | Cihaz geneli; çıkışta kalır ama kimlik içermez | ✅ |
 
 ## 8. Loglama (PRIV-08)
 - **Edge Functions:** e-posta adresleri `maskEmail` ile (`a***@alan.com`) loglanır; Resend hata gövdesi
@@ -270,7 +295,11 @@ Veri işlemeyen modüller: `expo-haptics`, `expo-font` ve `@expo-google-fonts/li
   loglamaz, yalnızca belge kimliği ve hata kodunu yazar; `ai_usage` yalnızca token, süre ve maliyet tutar.
 - `errorResponse` beklenmeyen hatanın mesajını loglarken içindeki e-posta adreslerini `maskEmails` ile
   maskeler (Postgres hata mesajları değer içerebilir).
-- **Uygulama:** yayın derlemesinde analitik ve çökme sink'i sessiz; `console.warn` çağrıları kalıyor (T-20).
+- **Uygulama:** Supabase modunda analitik ve çökme raporları kimliksiz olarak kendi sunucumuza gider
+  (ADR-006); yerel modun yayın derlemesinde sink sessiz. `console.warn` çağrıları kalıyor (T-20).
+- **Telemetri:** çökme raporları log sayılır ve 30 gün tutulur; mesaj ve stack cihazda ve sunucuda iki kez
+  temizlenir (e-posta, UUID, IP, 6+ haneli sayı, dosya yolu). `ops-alerts` e-postaları yalnızca sayı,
+  hata türü ve uygulama sürümü içerir.
 - **Saklama:** Supabase fonksiyon ve API loglarının süresi plana bağlı; ≤ 30 gün olduğu panelde teyit edilecek.
   Resend ve Expo log süreleri sözleşmeyle teyit edilecek (H-10).
 
@@ -284,7 +313,7 @@ Veri işlemeyen modüller: `expo-haptics`, `expo-font` ve `@expo-google-fonts/li
 | Geçmiş sır taraması | gitleaks (`secrets` işi, tüm geçmiş) | Her PR ve `main` | ✅ |
 | RLS testleri | `supabase test db` (`database` işi) | Her PR ve `main` | ✅ |
 | SQL lint | `supabase db lint --fail-on error` | Her PR ve `main` | ✅ |
-| Edge Function testleri | — | Proje planı §10.1'de her PR | ❌ T-27 |
+| Edge Function testleri | Jest: `telemetry` doğrulaması ve `ops-alerts` kuralları; diğerleri yok | Proje planı §10.1'de her PR | ⚠️ T-27 |
 | Prod dağıtım onayı | `supabase.yml`, `production` ortamı | Tech lead onayı | 🔍 GitHub'da zorunlu gözden geçiren ayarı |
 | Dal koruması | `checks`, `secrets`, `database` zorunlu | — | 🔍 GitHub ayarı |
 | Otomatik bağımlılık güncellemesi | — | — | ❌ T-07 |
@@ -332,7 +361,7 @@ mağaza materyallerinden (12 Mart) önce.
 | T-02 | Cihaz veritabanı şifresiz | `expo-sqlite`'ın SQLCipher seçeneği değerlendirilir (anahtar SecureStore'da; PERF-04 ölçülür). Seçilmezse iOS Veri Koruması'na dayanıldığı ADR ile kaydedilir. | Tech lead | R1 kararı S6 |
 | T-03 | Çıkışta cihaz verisi kalıyor | Çıkışta `user-<id>.db` ve PDF'lerin silinmesi ya da "bu cihazdan verilerimi sil" seçeneği; eşitlenmemiş değişiklik varsa uyarı. | Tech lead + Ürün sahibi | S8 |
 | T-04 | Sertifika sabitleme | L1'de planlanmıyor. Gerekçe: L2 kontrolü; Supabase ve RevenueCat sertifikalarını biz yönetmiyoruz, rotasyonda uygulama tümden kesilebilir; ATS + TLS 1.2 yeterli. L2 hedeflenirse yeniden değerlendirilir. | Tech lead | — |
-| T-05 | Yayın derlemesinde yerel mod ve ATS | `production` EAS ortamında Supabase değişkenleri yoksa derleme başarısız olsun (ör. `app.config` kontrolü); prebuild sonrası `Info.plist`'te `NSAllowsArbitraryLoads` yok/false olduğu ve `NSAllowsLocalNetworking`'in yayında gerekip gerekmediği kontrol edilir. | Tech lead | S8 |
+| T-05 | Yayın derlemesinde yerel mod ve ATS | Yapıldı (7 Kasım 2026): `app.config.ts` preview/production EAS derlemesini Supabase değişkenleri ya da `https://` adres yoksa durdurur; yayın derlemesi yerel modda açılmaz (`src/features/release/`). Kalan: ilk EAS derlemesinin `Info.plist`'inde `NSAllowsArbitraryLoads` olmadığı ve `NSAllowsLocalNetworking`'in yalnızca debug'da kaldığı kontrol edilir. | Tech lead | İlk TestFlight derlemesi |
 | T-06 | Jailbreak tespiti | L1'de yok (RESILIENCE, R profili). Kurallar sunucuda; istemci tespiti kolay atlatılır. | Tech lead | — |
 | T-07 | Bağımlılık denetimi (SEC-07) | Haftalık Dependabot/Renovate; `deno.json` npm bağımlılıkları için denetim; Actions'ı commit SHA ile, Supabase ve EAS CLI'ı sürümle sabitleme. Kritik 7 gün, yüksek 30 gün; takip sorumlusu tech lead. | Tech lead | S6 |
 | T-08 | E-posta bağlantısı akışı | `flowType: 'pkce'`, `auth/callback` rotası (`exchangeCodeForSession`), yeni şifre ekranı; evrensel bağlantı (associated domains) ile özel şema yerine `https` bağlantısı. | Tech lead | Yayın öncesi |
@@ -342,8 +371,8 @@ mağaza materyallerinden (12 Mart) önce.
 | T-12 | ✅ Push token çıkışta silinmiyor | Kapandı: eşitleme servisi çıkışta (oturum kapanmadan önce) bu cihazın token'ını `push_tokens`'tan siler (`src/services/sync/index.ts`). | Tech lead | — |
 | T-13 | Genel hız sınırı (SEC-06) | `process-document` için saatte 10 sınırını doğrula (C1 kapsamı); `support` için IP başına sınır veya basit bot koruması; Auth hız sınırlarını panelde kaydet. | Tech lead | S8 |
 | T-14 | Sunucuda PDF doğrulaması (SEC-10) | `process-document`: `%PDF` imzası, gerçek sayfa sayısı ve `page_from`/`page_to` tutarlılığı (C1 kapsamı). | Tech lead | S8 |
-| T-15 | Veli onay sayfası | Literata'yı sayfayla birlikte barındır; prod CSP'den yerel adresleri çıkar; CSP ve `frame-ancestors`'ı HTTP başlığıyla ver; `CORS_ALLOWED_ORIGIN` tanımla. | Tech lead | Yayın öncesi |
-| T-16 | Web'den hesap silme (STORE-03) | Form yazıldı (`web/delete-account/index.html` → `support`, `account_deletion`). Kalan: barındırma adresi (Google Play'e verilecek URL) ve hesap sahipliğini doğrulama süreci (H-12). | Tech lead + Ürün sahibi | Yayın öncesi |
+| T-15 | Veli onay sayfası | Yapıldı: Literata sayfayla birlikte, prod CSP'de yerel adres yok, çerçeve koruması. Kalan: `CORS_ALLOWED_ORIGIN` tanımla; `frame-ancestors`/HSTS başlığı gerekiyorsa sayfaları başlık gönderebilen bir barındırmaya (ör. Cloudflare Pages) taşı. | Tech lead | Yayın öncesi |
+| T-16 | Web'den hesap silme (STORE-03) | Form yazıldı ve `web.yml` ile `/hesap-silme/` adresinde yayımlanacak (`analysis/go_live.md`). Kalan: hesap sahipliğini doğrulama süreci (H-12). | Tech lead + Ürün sahibi | Yayın öncesi |
 | T-17 | RevenueCat kaydı silinmiyor | `delete-account` içinde RevenueCat REST API ile müşteri silme ya da saklamanın H-10 ile belgelenmesi. | Tech lead | S8 |
 | T-18 | ✅ Silinen satırlar sunucuda kalıyor | Kapandı: `public.purge_expired_data` (`consent-maintenance` her gün çağırır) 90 günü geçen `deleted_at` satırlarını siler. | Tech lead | — |
 | T-19 | Saklama süresi dolanları silme | Silme işi eklendi (`purge_expired_data`: `retained_*`, `subscription_events`, kapanmış destek talepleri 2 yıl). Kalan: iki tablonun `retain_until` başlangıcını H-03 kararına göre eşitlemek. | Tech lead | R1.1 |
@@ -352,9 +381,9 @@ mağaza materyallerinden (12 Mart) önce.
 | T-22 | `.env` git'e girebilir | `.gitignore`'a `.env` ekle (gitleaks ikinci savunma). | Tech lead | Hemen |
 | T-23 | Privacy manifest | Yayın derlemesinde `PrivacyInfo.xcprivacy` ve Xcode gizlilik raporu kontrolü; gerekirse `ios.privacyManifests`. | Tech lead | S8 |
 | T-24 | Cihaz yedeği | DB ve PDF'lerin iCloud yedeğine girmesi kabul mü, dışlansın mı (yedekten dönen cihazda oturum da gelir; T-01 ile `THIS_DEVICE_ONLY` çözer). | Tech lead | S8 |
-| T-25 | Güncelleme zorlaması ve OTA | `expo-updates` kurulumu ve kanal bağlantısı (STORE-05, §11.3); FR-ADM-04 zorunlu güncelleme uyarısı. | Tech lead | S7 |
+| T-25 | Güncelleme zorlaması ve OTA | `expo-updates` kurulumu ve kanal bağlantısı (STORE-05, §11.3). FR-ADM-04 zorunlu güncelleme ve bakım: `app_config` + `AppGate` hazır; `ios_store_url` App Store kimliği alınınca doldurulur. | Tech lead | S7 |
 | T-26 | Kullanılmayan bağımlılıklar | `expo-sharing` eklentisi, `expo-device`, `expo-web-browser`, `expo-image` gerçekten gerekmiyorsa kaldırılır (saldırı yüzeyi ve envanter sadeleşir). | Tech lead | S8 |
-| T-27 | Edge Function testleri | Yetki, girdi doğrulama, hız sınırı ve hata yanıtları için Deno testleri; CI'a iş olarak eklenir. | Tech lead | S6 |
+| T-27 | Edge Function testleri | Yetki, girdi doğrulama, hız sınırı ve hata yanıtları için Deno testleri; CI'a iş olarak eklenir. Kısmen: `telemetry` doğrulaması ve `ops-alerts` kuralları saf modüllerde, Jest'te test ediliyor (`src/services/telemetry/__tests__`); `scripts/integration/functions-smoke.ts` ikisini yerel yığında dener. | Tech lead | S6 |
 
 ## 12. Onay
 

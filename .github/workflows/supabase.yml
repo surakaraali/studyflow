@@ -43,10 +43,12 @@ jobs:
         run: supabase link --project-ref "$PROJECT_ID"
 
       - name: Apply migrations and reference data
-        run: supabase db push --include-seed
+        # CLI 3 targets the local database unless --remote is given; hosted changes need --yes.
+        run: supabase db push --remote --include-seed --yes
 
       - name: Deploy Edge Functions
-        run: supabase functions deploy --project-ref "$PROJECT_ID"
+        # Deploys every function to the linked project.
+        run: supabase functions deploy --yes
 
   production:
     name: Deploy to production
@@ -70,10 +72,12 @@ jobs:
         run: supabase link --project-ref "$PROJECT_ID"
 
       - name: Show pending migrations
-        run: supabase migration list
+        run: supabase migration list --remote
 
       - name: Apply migrations and reference data
-        run: supabase db push --include-seed
+        # CLI 3 targets the local database unless --remote is given; hosted changes need --yes.
+        run: supabase db push --remote --include-seed --yes
 
       - name: Deploy Edge Functions
-        run: supabase functions deploy --project-ref "$PROJECT_ID"
+        # Deploys every function to the linked project.
+        run: supabase functions deploy --yes

@@ -26,9 +26,10 @@ import { handlePreflight } from '../_shared/cors.ts';
 import { sendEmail } from '../_shared/email.ts';
 import { accountDeletedEmail } from '../_shared/email-templates.ts';
 import { errorResponse, json, readJson, requireMethod } from '../_shared/http.ts';
+import { withMetrics } from '../_shared/metrics.ts';
 import { revokeAppleSignIn, type RevokeResult } from './apple.ts';
 
-Deno.serve(async (req) => {
+Deno.serve(withMetrics('delete-account', async (req) => {
   const preflight = handlePreflight(req);
   if (preflight) return preflight;
 
@@ -63,4 +64,4 @@ Deno.serve(async (req) => {
   } catch (error) {
     return errorResponse(error);
   }
-});
+}));

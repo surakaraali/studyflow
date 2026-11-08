@@ -109,7 +109,7 @@ Senaryo: Çevrimdışı kayıtların eşitlenmesi
 
 #### US-06 · Hata izleme ve ürün analitiği
 Bir **ürün ekibi** olarak çökmeleri ve temel kullanım verisini görmek istiyorum, böylece sorunları ve KPI'ları takip edebilirim.
-`Must · 5 SP · S3 · NFR: OBS-01, OBS-04, PRIV-04, PRIV-05 · Açık soru: Q-04`
+`Must · 5 SP · S3 · NFR: OBS-01, OBS-04, PRIV-04, PRIV-05 · Karar: ADR-006 (Q-04)`
 - [ ] Çökme raporları kişisel veri ve cihaz kimliği olmadan gönderilir.
 - [ ] Olay sözlüğü yazılı; her olay bir KPI'ya bağlı (G-01–G-05).
 - [ ] Reklam kimliği toplanmaz; ATT izni istenmez.
@@ -767,7 +767,7 @@ kontrol için bkz. §8.
 - **Olası neden:** iOS 26 sekme çubuğunun ilk yerleşimiyle ilgili bir sorun. react-native-bottom-tabs kütüphanesinde benzer bir kayıt var (iOS 26'da ilk açılışta kesik sekme adları). Expo Go'nun uygulamayı kendi ekranı içinde çalıştırması da etkili olabilir.
 - **Sonraki adım:** US-02'deki ilk geliştirme derlemesinde test et. Orada da görülürse react-native-screens / expo-router güncellemelerini izle ve sorunu üst projeye bildir. Yayın engeli değildir, ama R1 öncesi kapanmalıdır.
 
-## 10. Uygulama durumu (4 Kasım 2026)
+## 10. Uygulama durumu (8 Kasım 2026)
 
 S0–S8'in bütün "Must" hikâyeleri kodlandı. Doğrulama düzeyleri:
 
@@ -790,5 +790,6 @@ S0–S8'in bütün "Must" hikâyeleri kodlandı. Doğrulama düzeyleri:
 | S7 | US-12, US-13, US-19, US-38, US-57, US-63, US-64, US-70 | İlerleme ekranı simülatörde. Profil, hesap silme, veli kapısı, kota ve abonelik ekranları yazıldı; gerçek satın alma RevenueCat ve App Store Connect hesabı bekliyor. |
 | S8 | US-66, US-67, US-68, US-69 | SSS ve destek formu yazıldı. Güvenlik incelemesi `analysis/security_review.md`, mağaza metinleri `store/`. Erişilebilirlik: bileşenler etiketli ve büyük yazıya uygun; VoiceOver ile baştan sona test ve kontrast raporu ekipçe yapılacak. |
 | E19 | US-71 … US-80 | 5 Kasım 2026'da eklendi. Simülatörde yerel modda baştan sona denendi: kayıt → doğrulama → onboarding (yarıda kapatıp kaldığı yerden devam, 10. sınıfa isteğe bağlı YKS adımı) → ders seçimi → Bugün'de kurulum listesi ve kısayollar; veli onayı beklerken bildirimlerin kapalı olması; kilitli ekranda doğum yılı düzeltme (yetişkin yılı reddedilir) ve "Hesabı sil" seçeneği; görünüm (açık/koyu), Hakkında, eşitleme satırı, bulunamadı ekranı. Test: taslak, doğum yılı kuralları, bağlantı ayrıştırma, kontrol listesi, yeni yıl tarihleri, plan geçişi, bildirim izni, 401 sınıflandırması. Yerel Supabase: doğum yılı migration'ı ve 6 yeni RLS testi. E-posta bağlantıları, oturum sona ermesi ve Apple belirteci iptali canlı Supabase/Apple hesabı bekliyor. |
+| Yayın hazırlığı | — | 7–8 Kasım 2026. Uygulama simgesi ve açılış ekranı (Expo varsayılanı yerine). Açık temada iki renk WCAG AA için koyulaştırıldı (kontrast testi, ACC-01). Yayın derlemesi yerel modda ya da `https://` olmayan sunucuyla açılmaz; EAS preview/production derlemesi Supabase değişkenleri yoksa durur. `app.config.ts`, `expo-updates` (fingerprint), `expo-dev-client`, iOS gizlilik bildirimi (10 veri türü, takip yok). İlk taraf telemetri, işletim uyarıları ve zorunlu güncelleme/bakım kapısı (ADR-006; 62 yeni pgTAP testi, 17 yeni fonksiyon kontrolü). Web sayfaları (gizlilik, koşullar, aydınlatma, destek, veli onayı, hesap silme) uygulamadaki metinlerden üretilir. Mağaza gizlilik etiketi, yaş derecelendirmesi, App Review notları ve `analysis/go_live.md` yayın kılavuzu; `scripts/go-live/` (değişken kontrolü, Supabase kurulumu, inceleme hesabı). Maestro uçtan uca akışları (`.maestro/`): Bugün planı ve kilitli hesap kararlı; kayıt, sınav ve ayarlar akışları Expo Go'da kararsız. Yerel iOS derlemesi Xcode 26.4 bekliyor (bu Mac'te 26.0.1); `react-native-purchases` 10.16.0'da sabit (11.x'in iOS paketi CocoaPods'ta yok). |
 
 Simülatörde yerel demo verisiyle denemek için: `exp://127.0.0.1:8081/--/dev-seed?mode=full` (README).
