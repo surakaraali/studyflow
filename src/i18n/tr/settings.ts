@@ -309,7 +309,7 @@ const settings = {
     textHint: 'Kişisel bilgi ya da belge içeriği yazma.',
     textError: 'En az {{min}} karakter yaz.',
     send: 'Gönder',
-    sentTitle: 'Teşekkürler!',
+    sentTitle: 'Teşekkürler',
     sentBody: 'Görüşün kaydedildi. Ekip her hafta beta görüşlerini okuyor.',
     again: 'Bir görüş daha yaz',
     back: 'Ayarlara dön',
@@ -332,7 +332,7 @@ const settings = {
     progress: '10 cümleden {{answered}} tanesi cevaplandı',
     missing: 'Göndermek için 10 cümlenin hepsini cevapla.',
     send: 'Anketi gönder',
-    sentTitle: 'Teşekkürler!',
+    sentTitle: 'Teşekkürler',
     sentBody: 'Anketin kaydedildi.',
     items: {
       q1: 'Bu uygulamayı sık sık kullanmak isterim.',

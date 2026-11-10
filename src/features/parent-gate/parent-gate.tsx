@@ -164,7 +164,7 @@ function GateBody({ onPass, onCancel }: { onPass: () => void; onCancel: () => vo
           <SymbolView
             name={{ ios: 'person.2.fill', android: 'family_restroom', web: 'family_restroom' }}
             size={28}
-            tintColor={colors.pen}
+            tintColor={colors.inkSoft}
           />
           <AppText variant="display" accessibilityRole="header">
             {t('parentGate.title')}

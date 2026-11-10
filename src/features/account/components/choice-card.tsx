@@ -50,7 +50,7 @@ export function ChoiceCard({
         style={[
           kind === 'radio' ? styles.bubble : styles.box,
           {
-            borderColor: selected ? colors.pen : colors.exam,
+            borderColor: selected ? colors.pen : colors.bubble,
             backgroundColor: selected ? colors.pen : 'transparent',
           },
         ]}>

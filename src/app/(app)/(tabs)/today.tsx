@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BubbleRow } from '@/components/bubble-row';
+import { blockBubbleLetter, BubbleRow } from '@/components/bubble-row';
 import { Banner } from '@/components/ui/banner';
 import { Button } from '@/components/ui/button';
 import { TopEdge, useScrolled } from '@/components/ui/top-edge';
@@ -34,7 +34,7 @@ import { GoalStreak } from '@/features/streak/components/goal-streak';
 import { loadStreak, STREAK_TABLES } from '@/features/streak/repo';
 import { loadTimer } from '@/features/timer/timer-store';
 import { useTheme } from '@/hooks/use-theme';
-import { formatDate, formatLongDate, greetingKey, localeTag } from '@/lib/dates';
+import { formatDate, formatLongDate, localeTag } from '@/lib/dates';
 import { useProfile } from '@/stores/session';
 
 export default function TodayScreen() {
@@ -96,7 +96,7 @@ export default function TodayScreen() {
       <View style={styles.header}>
         <View style={styles.headerText}>
           <AppText variant="display" accessibilityRole="header">
-            {t(`greeting.${greetingKey(now)}`)}
+            {t('tabs.today')}
           </AppText>
           <AppText variant="callout" color="inkSoft">
             {formatLongDate(now, localeTag(i18n.language))}
@@ -156,9 +156,14 @@ export default function TodayScreen() {
           <>
             {items.length > 0 ? (
               <>
-                <DayBubbles total={items.length} done={done} size="large" />
+                <DayBubbles
+                  total={items.length}
+                  done={done}
+                  doneMask={items.map((i) => i.status === 'done')}
+                  size="large"
+                />
                 <View style={styles.rows}>
-                  {items.map((item) => {
+                  {items.map((item, index) => {
                     const course = courseOf(item.course_id);
                     const isNext = next?.id === item.id;
                     return (
@@ -169,6 +174,7 @@ export default function TodayScreen() {
                         courseColor={course?.color}
                         topicName={item.topic_id ? data.topics.get(item.topic_id) : null}
                         isNext={isNext}
+                        letter={blockBubbleLetter(index, items.length)}
                         onPress={() => router.push(`/block/${item.id}`)}
                         onStart={
                           isNext && !timerActive

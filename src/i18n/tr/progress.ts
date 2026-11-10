@@ -29,7 +29,7 @@ const progress = {
       more: '+{{count}}',
       dayA11y_one: '{{day}}: {{count}} blok tamamlandı',
       dayA11y_other: '{{day}}: {{count}} blok tamamlandı',
-      footnote: 'Her dolu baloncuk tamamlanan bir plan bloğu.',
+      footnote: 'Her dolu baloncuk tamamlanan bir plan bloğu',
     },
 
     time: {

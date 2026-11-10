@@ -1,4 +1,3 @@
-import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
@@ -10,25 +9,22 @@ import { localeTag } from '@/lib/dates';
 import type { Adherence } from '../stats';
 
 type TileProps = {
-  icon: SymbolViewProps['name'];
   label: string;
   value: string;
   a11y: string;
 };
 
-function Tile({ icon, label, value, a11y }: TileProps) {
+/** A label and its figure: the number is the content, so the tile carries no icon. */
+function Tile({ label, value, a11y }: TileProps) {
   const { colors } = useTheme();
   return (
     <View
       accessible
       accessibilityLabel={a11y}
       style={[styles.tile, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-      <View style={styles.tileHead}>
-        <SymbolView name={icon} size={16} tintColor={colors.pen} />
-        <AppText variant="footnote" color="inkSoft" style={styles.flex}>
-          {label}
-        </AppText>
-      </View>
+      <AppText variant="footnote" color="inkSoft">
+        {label}
+      </AppText>
       <AppText variant="title">{value}</AppText>
     </View>
   );
@@ -49,19 +45,16 @@ export function StatTiles({ streak, weekMinutes, adherence }: StatTilesProps) {
     <View style={styles.wrap}>
       <View style={styles.row}>
         <Tile
-          icon={{ ios: 'flame', android: 'local_fire_department', web: 'local_fire_department' }}
           label={t('progress.tiles.streak')}
           value={t('progress.tiles.streakValue', { count: streak })}
           a11y={t('progress.tiles.streakA11y', { count: streak })}
         />
         <Tile
-          icon={{ ios: 'clock', android: 'schedule', web: 'schedule' }}
           label={t('progress.tiles.minutes')}
           value={t('common.minutes', { count: weekMinutes })}
           a11y={t('progress.tiles.minutesA11y', { minutes: weekMinutes })}
         />
         <Tile
-          icon={{ ios: 'checkmark.circle', android: 'task_alt', web: 'task_alt' }}
           label={t('progress.tiles.adherence')}
           value={adherence.ratio == null ? t('progress.tiles.adherenceNone') : percent.format(adherence.ratio)}
           a11y={
@@ -96,13 +89,5 @@ const styles = StyleSheet.create({
     padding: Space.md,
     borderRadius: Radius.md,
     borderWidth: StyleSheet.hairlineWidth,
-  },
-  tileHead: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Space.xs,
-  },
-  flex: {
-    flex: 1,
   },
 });

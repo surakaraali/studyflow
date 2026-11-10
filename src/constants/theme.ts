@@ -30,8 +30,10 @@ export type ThemeColors = {
   highlight: string;
   /** Text on top of `highlight` */
   onHighlight: string;
-  /** Exams and deadlines; also the optik bubble outline */
+  /** Exams, deadlines and errors; also the letters in empty optik bubbles */
   exam: string;
+  /** Empty optik bubble outline: a soft tint of the exam ink, so empty reads quieter than filled */
+  bubble: string;
   success: string;
 };
 
@@ -49,6 +51,7 @@ export const Colors: Record<'light' | 'dark', ThemeColors> = {
     highlight: '#FFE650',
     onHighlight: '#161C3A',
     exam: '#C72A62',
+    bubble: '#E69FB8',
     success: '#187952',
   },
   dark: {
@@ -64,6 +67,7 @@ export const Colors: Record<'light' | 'dark', ThemeColors> = {
     highlight: '#F5DC3C',
     onHighlight: '#161C3A',
     exam: '#FF6B98',
+    bubble: '#7F4062',
     success: '#3CCB8F',
   },
 };

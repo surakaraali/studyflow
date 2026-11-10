@@ -8,11 +8,12 @@ type IconButtonProps = {
   /** Required: icon-only buttons need a spoken name. */
   label: string;
   onPress: () => void;
+  /** inkSoft by default: header and toolbar icons stay quiet; pen for controls like a stepper. */
   tone?: 'pen' | 'inkSoft' | 'exam';
   size?: number;
 };
 
-export function IconButton({ icon, label, onPress, tone = 'pen', size = 22 }: IconButtonProps) {
+export function IconButton({ icon, label, onPress, tone = 'inkSoft', size = 22 }: IconButtonProps) {
   const { colors } = useTheme();
 
   return (

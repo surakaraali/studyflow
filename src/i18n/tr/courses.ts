@@ -5,7 +5,6 @@ const courses = {
     emptyBody:
       'Derslerini ekle. Her derse sınav tarihlerini, ödevlerini ve konu listesini bağlayabilirsin.',
     add: 'Ders ekle',
-    listTitle: 'Derslerin',
     summaryExams_one: '{{count}} sınav',
     summaryExams_other: '{{count}} sınav',
     summaryHomework_one: '{{count}} ödev',

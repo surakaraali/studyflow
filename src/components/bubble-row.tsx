@@ -6,16 +6,58 @@ import { AppText } from '@/components/ui/text';
 import { Space } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-const LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
+export const BUBBLE_LETTERS = ['A', 'B', 'C', 'D', 'E'] as const;
 
 const SIZES = {
+  small: { bubble: 24, letter: 11, gap: Space.sm },
   regular: { bubble: 26, letter: 11, gap: Space.sm },
   large: { bubble: 44, letter: 16, gap: Space.md },
 } as const;
 
+type BubbleProps = {
+  letter: string;
+  filled?: boolean;
+  size?: keyof typeof SIZES;
+};
+
+/**
+ * One answer-sheet (optik form) bubble. Empty: a soft pink ring with the letter in exam ink.
+ * Filled: ballpoint blue. Decorative for screen readers; the row around it says the state.
+ */
+export function Bubble({ letter, filled = false, size = 'regular' }: BubbleProps) {
+  const { colors } = useTheme();
+  const dims = SIZES[size];
+
+  return (
+    <View
+      importantForAccessibility="no-hide-descendants"
+      accessibilityElementsHidden
+      style={[
+        styles.bubble,
+        {
+          width: dims.bubble,
+          height: dims.bubble,
+          borderRadius: dims.bubble / 2,
+          borderColor: filled ? colors.pen : colors.bubble,
+          backgroundColor: filled ? colors.pen : 'transparent',
+        },
+      ]}>
+      <AppText
+        variant="bubble"
+        color={filled ? 'onPen' : 'exam'}
+        maxFontSizeMultiplier={1}
+        style={{ fontSize: dims.letter, lineHeight: dims.letter + 3 }}>
+        {letter}
+      </AppText>
+    </View>
+  );
+}
+
 type BubbleRowProps = {
   /** How many bubbles are filled, counting from the left. */
   filled?: number;
+  /** Which bubbles are filled, by position. Wins over `filled`, so bubble C can be filled while B is not. */
+  filledMask?: readonly boolean[];
   size?: keyof typeof SIZES;
   /** Leading label, like the question number on an answer sheet. */
   label?: string;
@@ -31,17 +73,19 @@ type BubbleRowProps = {
  */
 export function BubbleRow({
   filled = 0,
+  filledMask,
   size = 'regular',
   label,
   highlightLabel = false,
-  count = LETTERS.length,
+  count = BUBBLE_LETTERS.length,
 }: BubbleRowProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const dims = SIZES[size];
-  const letters = LETTERS.slice(0, Math.max(1, Math.min(count, LETTERS.length)));
+  const letters = BUBBLE_LETTERS.slice(0, Math.max(1, Math.min(count, BUBBLE_LETTERS.length)));
   const total = letters.length;
-  const done = Math.max(0, Math.min(filled, total));
+  const isFilled = (index: number) =>
+    filledMask ? filledMask[index] === true : index < Math.max(0, Math.min(filled, total));
+  const done = letters.filter((_, index) => isFilled(index)).length;
   const summary = t('bubbles.a11y', { done, total });
 
   return (
@@ -59,33 +103,20 @@ export function BubbleRow({
         </View>
       ) : null}
 
-      {letters.map((letter, index) => {
-        const isFilled = index < done;
-        return (
-          <View
-            key={letter}
-            style={[
-              styles.bubble,
-              {
-                width: dims.bubble,
-                height: dims.bubble,
-                borderRadius: dims.bubble / 2,
-                borderColor: isFilled ? colors.pen : colors.exam,
-                backgroundColor: isFilled ? colors.pen : 'transparent',
-              },
-            ]}>
-            <AppText
-              variant="bubble"
-              color={isFilled ? 'onPen' : 'exam'}
-              maxFontSizeMultiplier={1}
-              style={{ fontSize: dims.letter, lineHeight: dims.letter + 3 }}>
-              {letter}
-            </AppText>
-          </View>
-        );
-      })}
+      {letters.map((letter, index) => (
+        <Bubble key={letter} letter={letter} filled={isFilled(index)} size={size} />
+      ))}
     </View>
   );
+}
+
+/**
+ * The bubble a block carries in the day's answer sheet: A–E, and from the sixth block on the row
+ * number in front (2A, 2B …), matching DayBubbles.
+ */
+export function blockBubbleLetter(index: number, total: number): string {
+  const letter = BUBBLE_LETTERS[index % BUBBLE_LETTERS.length];
+  return total > BUBBLE_LETTERS.length ? `${Math.floor(index / BUBBLE_LETTERS.length) + 1}${letter}` : letter;
 }
 
 const styles = StyleSheet.create({

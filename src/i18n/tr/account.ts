@@ -39,7 +39,7 @@ const account = {
     },
     signIn: {
       title: 'Giriş yap',
-      intro: 'Tekrar hoş geldin!',
+      intro: 'Tekrar hoş geldin',
       submit: 'Giriş yap',
       forgot: 'Şifremi unuttum',
       noAccount: 'Hesabın yok mu? Kayıt ol',
@@ -247,7 +247,7 @@ const account = {
     devHint: 'Geliştirme modunda e-posta gönderilmez. Velinin e-postadaki bağlantıyla göreceği sayfayı buradan açabilirsin.',
     bannerMore: 'Ayrıntılar',
     locked: {
-      greeting: 'Merhaba!',
+      greeting: 'Merhaba',
       title: 'Velinin onayı gerekiyor',
       body: 'StudyFlow’u kullanmaya başlamak için velinin onay vermesi gerekiyor. Ona bir e-posta gönderdik; onaylayınca hemen başlayabilirsin.',
       deadline_one: 'Velin {{count}} gün içinde onaylamazsa hesabın ve bilgilerin silinir.',

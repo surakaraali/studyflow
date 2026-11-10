@@ -124,7 +124,7 @@ function StepRow({
         style={[
           styles.bubble,
           {
-            borderColor: step.done ? colors.pen : colors.exam,
+            borderColor: step.done ? colors.pen : colors.bubble,
             backgroundColor: step.done ? colors.pen : 'transparent',
           },
         ]}>

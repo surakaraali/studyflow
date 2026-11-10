@@ -36,7 +36,7 @@ export function StepBubbles({ current, total }: StepBubblesProps) {
             style={[
               styles.bubble,
               {
-                borderColor: done ? colors.pen : colors.exam,
+                borderColor: done ? colors.pen : colors.bubble,
                 backgroundColor: done ? colors.pen : active ? colors.highlight : 'transparent',
               },
             ]}>

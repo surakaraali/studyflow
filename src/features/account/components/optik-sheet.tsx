@@ -39,7 +39,7 @@ export function OptikSheet() {
                   style={[
                     styles.bubble,
                     {
-                      borderColor: filled ? colors.pen : colors.exam,
+                      borderColor: filled ? colors.pen : colors.bubble,
                       backgroundColor: filled ? colors.pen : 'transparent',
                     },
                   ]}>

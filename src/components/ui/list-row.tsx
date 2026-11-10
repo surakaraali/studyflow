@@ -49,7 +49,7 @@ export function ListRow({
         <SymbolView
           name={icon}
           size={20}
-          tintColor={destructive ? colors.exam : colors.pen}
+          tintColor={destructive ? colors.exam : colors.inkSoft}
           style={styles.icon}
         />
       ) : null}

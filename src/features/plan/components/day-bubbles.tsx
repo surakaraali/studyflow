@@ -9,6 +9,11 @@ const PER_ROW = 5;
 type DayBubblesProps = {
   total: number;
   done: number;
+  /**
+   * Which blocks are done, in the day's order. With it, a block's own bubble fills (the same letter
+   * its row shows); without it, `done` bubbles fill from the left.
+   */
+  doneMask?: readonly boolean[];
   size?: 'regular' | 'large';
 };
 
@@ -16,7 +21,7 @@ type DayBubblesProps = {
  * A day's blocks as optik form rows: one bubble per block, filled when done.
  * More than five blocks continue on the next numbered row, like the next question.
  */
-export function DayBubbles({ total, done, size = 'regular' }: DayBubblesProps) {
+export function DayBubbles({ total, done, doneMask, size = 'regular' }: DayBubblesProps) {
   const { t } = useTranslation();
   const rows = Math.max(1, Math.ceil(total / PER_ROW));
 
@@ -30,6 +35,7 @@ export function DayBubbles({ total, done, size = 'regular' }: DayBubblesProps) {
           key={row}
           size={size}
           filled={Math.max(0, Math.min(PER_ROW, done - row * PER_ROW))}
+          filledMask={doneMask?.slice(row * PER_ROW, row * PER_ROW + PER_ROW)}
           // An empty day keeps a full blank row; otherwise one bubble per block.
           count={total === 0 ? PER_ROW : Math.min(PER_ROW, total - row * PER_ROW)}
           label={rows > 1 ? String(row + 1) : undefined}

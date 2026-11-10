@@ -19,8 +19,9 @@ type WeekPickerProps = {
 };
 
 /**
- * The week strip of the calendar tab: today under the highlighter, the chosen day outlined
- * in ink. Each day shows how many blocks it has and a pink mark when there is an exam.
+ * The week strip of the calendar tab: today under the highlighter, the chosen day raised onto the
+ * surface with a hairline (one emphasis each, no blue frame on top of the yellow). Each day shows
+ * how many blocks it has and a pink mark when there is an exam.
  */
 export function WeekPicker({ days, today, selected, onSelect, info }: WeekPickerProps) {
   const { t, i18n } = useTranslation();
@@ -51,7 +52,7 @@ export function WeekPicker({ days, today, selected, onSelect, info }: WeekPicker
             style={({ pressed }) => [
               styles.day,
               {
-                borderColor: isSelected ? colors.pen : 'transparent',
+                borderColor: isSelected ? colors.line : 'transparent',
                 backgroundColor: isSelected ? colors.surface : 'transparent',
               },
               pressed && { opacity: 0.6 },

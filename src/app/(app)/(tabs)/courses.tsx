@@ -61,7 +61,7 @@ export default function CoursesScreen() {
             />
           </View>
           {courses.length > 0 ? (
-            <Section title={t('courses.listTitle')}>
+            <Section>
               {courses.map((course) => (
                 <CourseRow key={course.id} course={course} />
               ))}

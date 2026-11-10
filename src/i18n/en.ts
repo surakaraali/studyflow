@@ -11,12 +11,6 @@ const en: DeepPartial<Translation> = {
     study: 'Study',
     progress: 'Progress',
   },
-  greeting: {
-    morning: 'Good morning',
-    day: 'Good afternoon',
-    evening: 'Good evening',
-    night: 'Good night',
-  },
   actions: {
     addCourse: 'Add subject',
     uploadPdf: 'Upload PDF',

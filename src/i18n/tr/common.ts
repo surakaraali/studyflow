@@ -7,12 +7,6 @@ const common = {
     study: 'Çalış',
     progress: 'İlerleme',
   },
-  greeting: {
-    morning: 'Günaydın',
-    day: 'İyi günler',
-    evening: 'İyi akşamlar',
-    night: 'İyi geceler',
-  },
   actions: {
     addCourse: 'Ders ekle',
     uploadPdf: 'PDF yükle',

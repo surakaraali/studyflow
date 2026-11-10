@@ -12,6 +12,7 @@ import { Section } from '@/components/ui/section';
 import { AppText } from '@/components/ui/text';
 import { Space } from '@/constants/theme';
 import { useDbQuery } from '@/db/use-query';
+import { blockBubbleLetter } from '@/components/bubble-row';
 import { DayBubbles } from '@/features/plan/components/day-bubbles';
 import { PlanBlockRow } from '@/features/plan/components/plan-block-row';
 import { WeekPicker, type DayInfo } from '@/features/plan/components/week-picker';
@@ -112,6 +113,7 @@ export default function CalendarScreen() {
               <DayBubbles
                 total={dayItems.length}
                 done={dayItems.filter((i) => i.status === 'done').length}
+                doneMask={dayItems.map((i) => i.status === 'done')}
               />
             ) : null}
           </View>
@@ -135,7 +137,7 @@ export default function CalendarScreen() {
 
           {dayItems.length > 0 ? (
             <Section title={t('calendar.blocksTitle')}>
-              {dayItems.map((item) => {
+              {dayItems.map((item, index) => {
                 const course = item.course_id ? data.courses.get(item.course_id) : undefined;
                 return (
                   <View key={item.id} style={styles.blockRow}>
@@ -144,6 +146,7 @@ export default function CalendarScreen() {
                       courseName={course?.name ?? t('plan.generalReview')}
                       courseColor={course?.color}
                       topicName={item.topic_id ? data.topics.get(item.topic_id) : null}
+                      letter={blockBubbleLetter(index, dayItems.length)}
                       onPress={() => router.push(`/block/${item.id}`)}
                     />
                   </View>

@@ -62,7 +62,7 @@ export function DueCardsSummary() {
         <SymbolView
           name={{ ios: 'rectangle.stack', android: 'style', web: 'style' }}
           size={22}
-          tintColor={colors.pen}
+          tintColor={colors.inkSoft}
         />
         <HighlightMark active style={styles.mark}>
           <AppText variant="heading" color="onHighlight">

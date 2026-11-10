@@ -2,6 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { Bubble } from '@/components/bubble-row';
 import { HighlightMark } from '@/components/highlight-mark';
 import { Button } from '@/components/ui/button';
 import { AppText } from '@/components/ui/text';
@@ -16,6 +17,8 @@ type PlanBlockRowProps = {
   topicName?: string | null;
   /** The next block of the day: highlighted time and a "Başla" button. */
   isNext?: boolean;
+  /** The block's bubble in the day's answer sheet (A, B …): shown as its status, filled when done. */
+  letter?: string;
   onPress: () => void;
   onStart?: () => void;
 };
@@ -33,6 +36,7 @@ export function PlanBlockRow({
   courseColor,
   topicName,
   isNext = false,
+  letter,
   onPress,
   onStart,
 }: PlanBlockRowProps) {
@@ -76,15 +80,15 @@ export function PlanBlockRow({
             {detail}
           </AppText>
         </View>
-        {!isNext || !onStart ? (
+        {isNext && onStart ? null : letter && item.status !== 'skipped' ? (
+          <Bubble letter={letter} filled={item.status === 'done'} size="small" />
+        ) : (
           <SymbolView
             name={STATUS_ICON[item.status]}
             size={22}
-            tintColor={
-              item.status === 'done' ? colors.success : item.status === 'skipped' ? colors.inkSoft : colors.exam
-            }
+            tintColor={item.status === 'done' ? colors.success : colors.inkSoft}
           />
-        ) : null}
+        )}
       </Pressable>
       {isNext && onStart ? (
         <Button

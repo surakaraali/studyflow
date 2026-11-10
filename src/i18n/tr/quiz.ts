@@ -206,7 +206,7 @@ const quiz = {
       action: 'Destelere git',
     },
     done: {
-      title: 'Bugünlük bitti!',
+      title: 'Bugünlük bitti',
       body_one: '{{count}} kez kart tekrar ettin. Beynin teşekkür ediyor.',
       body_other: '{{count}} kez kart tekrar ettin. Beynin teşekkür ediyor.',
       learned: 'Yeni kart',

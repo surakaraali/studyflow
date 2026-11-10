@@ -29,7 +29,7 @@ name: Kayıt ve onboarding
     text: "Şifre"
     index: 1
 - inputText: "e2e-Deneme-2026"
-- tapOn: "Tekrar hoş geldin!"
+- tapOn: "Tekrar hoş geldin"
 - tapOn:
     text: "Giriş yap"
     index: -1

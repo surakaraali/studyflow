@@ -16,9 +16,12 @@ import { aiGate } from '@/features/documents/gate';
 import { listDocuments } from '@/features/documents/repo';
 import { displayStatus } from '@/features/documents/status';
 import { DueCardsSummary } from '@/features/flashcards/components/due-cards-summary';
+import { dueSummary } from '@/features/flashcards/repo';
+import { useSegment } from '@/features/flashcards/use-segment';
 import { QuotaMeter } from '@/features/quota/quota-meter';
 import { PlanChangeBanner } from '@/features/setup/components/plan-change-banner';
 import { useQuota } from '@/features/quota/use-quota';
+import { todayString } from '@/lib/dates';
 import { track } from '@/services/analytics';
 import { useAiAllowed } from '@/features/consent/ai-allowed';
 import { useProfile } from '@/stores/session';
@@ -32,6 +35,14 @@ export default function StudyScreen() {
   const gate = aiGate(profile, ai, quota);
   const aiAllowed = ai.allowed && profile?.ai_notice_accepted_at != null;
   const { data: documents } = useDbQuery('study:documents', () => listDocuments(), ['documents', 'courses']);
+  // Same query as DueCardsSummary: when cards are due today, "Tekrara başla" is the one blue button.
+  const segment = useSegment();
+  const { data: due } = useDbQuery(
+    `due-summary:${segment}:${todayString()}`,
+    () => dueSummary(segment),
+    ['cards', 'decks', 'card_reviews', 'content_reports'],
+  );
+  const reviewDue = (due?.today ?? 0) > 0;
 
   const upload = () => {
     if (gate.kind === 'notice') router.push({ pathname: '/ai-notice', params: { next: 'upload' } });
@@ -61,7 +72,7 @@ export default function StudyScreen() {
       {quota && gate.kind !== 'consent' ? (
         <Card>
           <QuotaMeter quota={quota} />
-          {!quota.full && documents && documents.length > 0 ? <Button {...uploadAction} block /> : null}
+          {!quota.full && documents && documents.length > 0 ? <Button {...uploadAction} variant={reviewDue ? 'secondary' : 'primary'} block /> : null}
         </Card>
       ) : null}
 

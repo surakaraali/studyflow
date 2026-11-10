@@ -9,16 +9,6 @@ export function localeTag(language: string): string {
   return LOCALE_TAGS[language as Language] ?? LOCALE_TAGS.tr;
 }
 
-export type GreetingKey = 'morning' | 'day' | 'evening' | 'night';
-
-export function greetingKey(date: Date = new Date()): GreetingKey {
-  const hour = date.getHours();
-  if (hour >= 5 && hour < 12) return 'morning';
-  if (hour >= 12 && hour < 18) return 'day';
-  if (hour >= 18 && hour < 22) return 'evening';
-  return 'night';
-}
-
 /** "3 Kasım Salı" */
 export function formatLongDate(date: Date, tag: string): string {
   return new Intl.DateTimeFormat(tag, { weekday: 'long', day: 'numeric', month: 'long' }).format(

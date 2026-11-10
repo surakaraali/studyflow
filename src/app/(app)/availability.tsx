@@ -154,7 +154,7 @@ export default function AvailabilityScreen() {
             <SymbolView
               name={{ ios: 'moon.zzz', android: 'bedtime', web: 'bedtime' }}
               size={22}
-              tintColor={colors.pen}
+              tintColor={colors.inkSoft}
             />
             <AppText variant="heading" accessibilityRole="header" style={styles.flex}>
               {t('availability.sleepTitle')}

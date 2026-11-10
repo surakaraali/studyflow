@@ -31,11 +31,13 @@ export function Button({
   const { colors } = useTheme();
   const inactive = disabled || loading;
 
+  // The ballpoint blue marks the one main action (and plain links); a secondary button stays ink on
+  // paper, so a screen with several of them still has a single blue thing to look at.
   const palette = {
-    primary: { bg: colors.pen, border: colors.pen, fg: colors.onPen },
-    secondary: { bg: colors.surface, border: colors.line, fg: colors.pen },
-    destructive: { bg: colors.exam, border: colors.exam, fg: '#FFFFFF' },
-    plain: { bg: 'transparent', border: 'transparent', fg: colors.pen },
+    primary: { bg: colors.pen, border: colors.pen, fg: colors.onPen, icon: colors.onPen },
+    secondary: { bg: colors.surface, border: colors.line, fg: colors.ink, icon: colors.inkSoft },
+    destructive: { bg: colors.exam, border: colors.exam, fg: '#FFFFFF', icon: '#FFFFFF' },
+    plain: { bg: 'transparent', border: 'transparent', fg: colors.pen, icon: colors.pen },
   }[variant];
 
   return (
@@ -56,7 +58,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={palette.fg} />
       ) : icon ? (
-        <SymbolView name={icon} size={18} weight="semibold" tintColor={palette.fg} />
+        <SymbolView name={icon} size={18} weight="semibold" tintColor={palette.icon} />
       ) : null}
       <AppText variant="heading" style={{ color: palette.fg }}>
         {label}

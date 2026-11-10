@@ -50,7 +50,7 @@ const setup = {
     archive_one: '{{count}} dersi arşive al',
     archive_other: '{{count}} dersi arşive al',
     keepAll: 'Hepsi kalsın',
-    doneTitle: 'Artık {{grade}}. sınıftasın!',
+    doneTitle: 'Artık {{grade}}. sınıftasın',
     doneBody: 'Yeni sınıfının derslerini ekle, planın onlara göre kurulsun.',
     addCourses: 'Yeni derslerimi ekle',
   },
