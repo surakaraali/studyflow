@@ -93,33 +93,47 @@ deno_version = 2
 [analytics]
 enabled = false
 
+# Every function reads the shared import map in functions/deno.json. The local runtime finds it on
+# its own, but the hosted bundler (`functions deploy --use-api`) only reads what is named here.
 # Functions that are not called with a user JWT verify their caller themselves.
 [functions.consent]
 # Public: the parent opens it from the e-mail link; the token is the credential.
 verify_jwt = false
+import_map = "./functions/deno.json"
 
 [functions.revenuecat-webhook]
 # RevenueCat sends the shared secret in the Authorization header.
 verify_jwt = false
+import_map = "./functions/deno.json"
 
 [functions.consent-maintenance]
 # pg_cron sends the CRON_SECRET from Vault.
 verify_jwt = false
+import_map = "./functions/deno.json"
 
 [functions.support]
 # The public web form (account deletion, parent requests) may call it without an account.
 verify_jwt = false
+import_map = "./functions/deno.json"
 
 [functions.consent-request]
 verify_jwt = true
+import_map = "./functions/deno.json"
 
 [functions.delete-account]
 verify_jwt = true
+import_map = "./functions/deno.json"
 
 [functions.ops-alerts]
 # pg_cron sends the CRON_SECRET from Vault (every 5 minutes).
 verify_jwt = false
+import_map = "./functions/deno.json"
 
 [functions.telemetry]
 # Signed-in users only; the JWT feeds the rate limit and is never stored (ADR-006).
 verify_jwt = true
+import_map = "./functions/deno.json"
+
+[functions.process-document]
+verify_jwt = true
+import_map = "./functions/deno.json"

@@ -78,6 +78,7 @@
     "go-live:supabase": "bash scripts/go-live/supabase-setup.sh",
     "go-live:seed-review": "tsx scripts/go-live/seed-review-account.ts",
     "start:dev-client": "expo start --dev-client",
+    "start:staging": "node scripts/start-staging.mjs",
     "e2e": "maestro test .maestro"
   },
   "private": true,

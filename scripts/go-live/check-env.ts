@@ -9,15 +9,18 @@
  *
  * --target  app | supabase | all (default all). github keys are listed with --list only.
  * --strict  warnings fail too.
+ * --allow-missing A,B,PREFIX_*   these required keys may stay empty (they become warnings). For a
+ *           staging project set up before every account exists; a wrong value still fails.
  * Exit code: 0 ready, 1 something is missing or wrong, 2 wrong usage. Values are never printed.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { checkEnv, describeKeys, discoverKeys, parseEnv, type Finding, type Target } from './env-check';
+import { allowMissing, checkEnv, describeKeys, discoverKeys, parseEnv, type Finding, type Target } from './env-check';
 
-const USAGE = 'Usage: check-env [--target app|supabase|all] [--env-file <path>] [--strict] [--list]';
+const USAGE =
+  'Usage: check-env [--target app|supabase|all] [--env-file <path>] [--allow-missing A,B,PREFIX_*] [--strict] [--list]';
 
 function arg(args: string[], name: string): string | undefined {
   const index = args.indexOf(name);
@@ -70,8 +73,13 @@ function main(): number {
     env = parseEnv(fs.readFileSync(full, 'utf8'));
   }
 
-  const result = checkEnv(env, keys, targets);
+  const allowed = (arg(args, '--allow-missing') ?? '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const result = allowMissing(checkEnv(env, keys, targets), allowed);
   console.log(`check-env · target ${targets.join(' + ')} · ${file ? `file ${file}` : 'current environment'}`);
+  if (allowed.length) console.log(`  allowed to stay empty: ${allowed.join(', ')}`);
   const order: Finding['status'][] = ['missing', 'invalid', 'warning', 'ignored', 'ok'];
   for (const status of order) {
     for (const finding of result.findings.filter((f) => f.status === status)) {

@@ -64,6 +64,13 @@ npm start
 
 Simülatörde Expo Go ile açın (`i` tuşu ya da `xcrun simctl openurl booted exp://127.0.0.1:8081`).
 
+Uygulamayı yerel mod yerine barındırılan staging Supabase projesiyle açmak için `npm run start:staging`
+kullanılır. Komut `EXPO_PUBLIC_SUPABASE_URL` ve `EXPO_PUBLIC_SUPABASE_ANON_KEY` değerlerini proje dışındaki
+`../studyflow-secrets/app.staging.env` dosyasından okur; başka bir yol `STAGING_ENV_FILE` ile verilir. Dosya
+proje klasörüne konmaz, çünkü Metro proje kökündeki fazladan `.env` dosyalarını paketlemeye çalışır. Expo Go
+e-posta bağlantısının döndüğü `studyflow://` adresini açamaz: doğrulama bağlantısı hesabı yine doğrular,
+ardından uygulamada şifreyle giriş yapılır.
+
 Yapay zekâ işleri için geliştirme sunucusunu ayrı bir terminalde başlatın. Örnek içerikle
 (anahtar gerekmez):
 

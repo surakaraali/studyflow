@@ -201,6 +201,19 @@ Apple'da da geri alınır (App Store kuralı 5.1.1(v)). Yoksa hesap yine silinir
    `--vault` pg_cron'un okuduğu Vault sırlarını (`project_url`, `cron_secret` = `CRON_SECRET`) yazar. İstersen
    onu atlayıp betiğin yazdırdığı SQL'i (sır maskeli) SQL editöründe gerçek değerle çalıştırabilirsin.
    Docker çalışmıyorsa `--use-api` ekle. Betik tekrar çalıştırılabilir; hiçbir şey silmez.
+
+   **Hesapların hepsi açılmadan staging:** TestFlight iç testi Resend ve Apple anahtarları gelmeden başlayabilir.
+   Eksik bırakılacak anahtarlar `--allow-missing` ile söylenir. Yalnızca boş bırakılanlar geçer; girilmiş ama
+   yanlış bir değer betiği yine durdurur. Bu anahtarlar gelene kadar şunlar çalışmaz: veli onayı, destek ve uyarı
+   e-postaları; Apple ile girişte hesap silinirken Apple bağlantısının kaldırılması. Fonksiyonlar bunlar için hata
+   vermez, olayı günlüğe yazar. Kayıt doğrulama e-postası Supabase'in kendi e-posta servisinden gider; bu servis saatte
+   birkaç e-postayla sınırlıdır ve yalnızca proje ekibindeki adreslere gönderir, bu yüzden testçiler Supabase
+   organizasyonuna eklenir.
+   ```bash
+   npm run go-live:supabase -- --env-file ../studyflow-secrets/supabase.staging.env --use-api \
+     --allow-missing RESEND_API_KEY,EMAIL_FROM,SUPPORT_TEAM_EMAIL,APPLE_TEAM_ID,APPLE_KEY_ID,APPLE_PRIVATE_KEY --apply --vault
+   ```
+   Anahtarlar gelince dosyaya eklenip betik `--allow-missing` olmadan yeniden çalıştırılır.
 7. Panelde elle yapılanlar ([güvenlik incelemesi §4.4](security_review.md#44-supabase-panel-ayarları-her-barındırılan-proje-dev-staging-prod)):
    - **Authentication → Emails → SMTP Settings**: host `smtp.resend.com`, port `465`, kullanıcı `resend`,
      şifre = SMTP için açılan Resend anahtarı, gönderen `no-reply@studyflow.app`, ad `StudyFlow`.

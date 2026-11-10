@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets up a hosted Supabase project (EU) for StudyFlow: analysis/go_live.md, step 2.
+# Sets up a hosted Supabase project (EU) for StudyFlow: analysis/go_live.md, step 4.
 #
 #   npm run go-live:supabase -- --env-file ../studyflow-secrets/supabase.prod.env            # dry run
 #   npm run go-live:supabase -- --env-file ../studyflow-secrets/supabase.prod.env --apply    # do it
@@ -9,6 +9,7 @@
 # --vault     with --apply, also writes the Vault secrets (otherwise the SQL is only printed)
 # --use-api   deploy functions without Docker (bundled by Supabase)
 # --skip-config / --skip-functions / --skip-db   leave that part out
+# --allow-missing A,B,PREFIX_*   required keys that may stay empty (staging before every account)
 #
 # Safe to run again: every step creates or updates, nothing is deleted. Secret values are never
 # printed; the Vault SQL is shown with the secret masked.
@@ -24,6 +25,7 @@ USE_API=0
 SKIP_CONFIG=0
 SKIP_FUNCTIONS=0
 SKIP_DB=0
+ALLOW_MISSING=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -34,7 +36,8 @@ while [[ $# -gt 0 ]]; do
     --skip-config) SKIP_CONFIG=1; shift ;;
     --skip-functions) SKIP_FUNCTIONS=1; shift ;;
     --skip-db) SKIP_DB=1; shift ;;
-    -h|--help) sed -n '2,16p' "$0"; exit 0 ;;
+    --allow-missing) ALLOW_MISSING="${2:-}"; shift 2 ;;
+    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
 done
@@ -67,7 +70,9 @@ run() {
 if [[ $APPLY -eq 1 ]]; then echo "Mode: APPLY (changes the linked project)"; else echo "Mode: dry run (nothing is changed; add --apply)"; fi
 
 step "1. Check the env file"
-if ! "${TSX[@]}" scripts/go-live/check-env.ts --target supabase --env-file "$ENV_FILE"; then
+CHECK_ARGS=(--target supabase --env-file "$ENV_FILE")
+[[ -n "$ALLOW_MISSING" ]] && CHECK_ARGS+=(--allow-missing "$ALLOW_MISSING")
+if ! "${TSX[@]}" scripts/go-live/check-env.ts "${CHECK_ARGS[@]}"; then
   if [[ $APPLY -eq 1 ]]; then
     echo "Fix the env file first." >&2
     exit 1

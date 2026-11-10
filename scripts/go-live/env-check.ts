@@ -448,7 +448,27 @@ export function checkEnv(env: Record<string, string | undefined>, keys: KeyInfo[
     }
   }
 
+  return withCounts(findings);
+}
+
+function withCounts(findings: Finding[]): CheckResult {
   const errors = findings.filter((f) => f.status === 'missing' || f.status === 'invalid').length;
   const warnings = findings.filter((f) => f.status === 'warning').length;
   return { findings, errors, warnings };
+}
+
+/**
+ * Lets chosen required keys stay empty, e.g. a staging project set up before the Resend or Apple
+ * accounts exist. A pattern is a key name or a prefix ending in "*". Only missing keys are let
+ * through: a key that is set but wrong still fails.
+ */
+export function allowMissing(result: CheckResult, patterns: readonly string[]): CheckResult {
+  const matches = (name: string) =>
+    patterns.some((p) => (p.endsWith('*') ? name.startsWith(p.slice(0, -1)) : name === p));
+  const findings = result.findings.map((f): Finding =>
+    f.status === 'missing' && matches(f.name)
+      ? { ...f, status: 'warning', message: `left empty on purpose (--allow-missing): ${f.message}` }
+      : f,
+  );
+  return withCounts(findings);
 }

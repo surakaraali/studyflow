@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { checkEnv, describeKeys, discoverKeys, parseEnv, type KeyInfo } from '../env-check';
+import { allowMissing, checkEnv, describeKeys, discoverKeys, parseEnv, type KeyInfo } from '../env-check';
 import { functionSecrets, scheduledCronJobs, vaultSql } from '../env-tool';
 
 /** A tiny repository with one key in each place the checker reads. */
@@ -110,6 +110,23 @@ describe('env checks', () => {
     );
     expect(result.findings.find((f) => f.name === 'CONSENT_TEXT_VERSION')?.status).toBe('warning');
     for (const message of Object.values(invalid)) expect(message).not.toContain('short-secret-value');
+  });
+
+  it('lets chosen keys stay empty but still fails a wrong value', () => {
+    const env = { APPLE_TEAM_ID: 'too-short', CRON_SECRET: 'c'.repeat(40) };
+    const before = checkEnv(env, keys, ['supabase']);
+    const after = allowMissing(before, ['RESEND_API_KEY', 'APPLE_*']);
+    const status = (name: string) => after.findings.find((f) => f.name === name)?.status;
+
+    expect(before.findings.find((f) => f.name === 'RESEND_API_KEY')?.status).toBe('missing');
+    expect(status('RESEND_API_KEY')).toBe('warning');
+    expect(status('APPLE_KEY_ID')).toBe('warning');
+    // Set but wrong: the pattern does not hide it.
+    expect(status('APPLE_TEAM_ID')).toBe('invalid');
+    // Not in the list: still missing.
+    expect(status('ANTHROPIC_API_KEY')).toBe('missing');
+    expect(after.errors).toBeLessThan(before.errors);
+    expect(after.errors).toBe(after.findings.filter((f) => f.status === 'missing' || f.status === 'invalid').length);
   });
 
   it('refuses a service role key in the app env', () => {
