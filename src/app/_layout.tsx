@@ -18,8 +18,9 @@ import { startAppServices } from '@/services/app-services';
 import { bootstrapSession, homeHref, profileAccess, useSession } from '@/stores/session';
 
 SplashScreen.preventAutoHideAsync();
-// A blocked release build (see ReleaseGuard) starts nothing.
-if (!currentReleaseIssue) startAppServices();
+// A blocked release build (see ReleaseGuard) starts nothing. Neither does server rendering
+// (web output "server"), which imports this file in Node at export time, where there is no window.
+if (!currentReleaseIssue && typeof window !== 'undefined') startAppServices();
 
 function navigationTheme(scheme: 'light' | 'dark'): Theme {
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
