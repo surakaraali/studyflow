@@ -215,9 +215,14 @@ Apple'da da geri alınır (App Store kuralı 5.1.1(v)). Yoksa hesap yine silinir
    ```
    Anahtarlar gelince dosyaya eklenip betik `--allow-missing` olmadan yeniden çalıştırılır.
 7. Panelde elle yapılanlar ([güvenlik incelemesi §4.4](security_review.md#44-supabase-panel-ayarları-her-barındırılan-proje-dev-staging-prod)):
-   - **Authentication → Emails → SMTP Settings**: host `smtp.resend.com`, port `465`, kullanıcı `resend`,
-     şifre = SMTP için açılan Resend anahtarı, gönderen `no-reply@studymark.app`, ad `StudyMark`.
-     (`config.toml`'daki SMTP bölümü yorumda olduğu için `config push` bunu yapmaz.)
+   - **Giriş e-postaları (SMTP):** panelden girilmez. `config.toml`'un sonundaki `[remotes.staging]` ve
+     `[remotes.production]` blokları yalnızca o projelere Resend SMTP'yi verir (host `smtp.resend.com`, port
+     `465`, kullanıcı `resend`); yerel geliştirme ortamı kendi e-posta yakalayıcısını kullanmaya devam eder.
+     Şifre, projenin env dosyasındaki `RESEND_API_KEY`'dir:
+     ```bash
+     SUPABASE_AUTH_SMTP_PASS=$(grep '^RESEND_API_KEY=' ../studyflow-secrets/supabase.<ortam>.env | cut -d= -f2-) supabase config push --yes
+     ```
+     Proje kimliği ya da gönderen adresi değişirse bu bloklar da güncellenir.
    - **Authentication → Providers → Apple**: açık, Client IDs `com.cobanov.studyflow` (config push'tan gelir; kontrol et).
    - Sızdırılmış şifre koruması (planda varsa), `pg_graphql` kullanılmıyorsa kapalı, SSL zorunlu, yedek ve
      PITR, log saklama ≤ 30 gün, ekip üyeleri en az yetkiyle.

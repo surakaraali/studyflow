@@ -137,3 +137,30 @@ import_map = "./functions/deno.json"
 [functions.process-document]
 verify_jwt = true
 import_map = "./functions/deno.json"
+
+# Hosted projects only: auth e-mails (sign-up verification, password reset) go out through Resend
+# SMTP; the local stack keeps its own mail catcher. SUPABASE_AUTH_SMTP_PASS is the project's
+# RESEND_API_KEY, exported from its env file for `supabase config push` (analysis/go_live.md, step 4).
+[remotes.staging]
+project_id = "kwgshggfyxzepbyjzbux"
+
+[remotes.staging.auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(SUPABASE_AUTH_SMTP_PASS)"
+admin_email = "no-reply@studymark.surakaraali.dev"
+sender_name = "StudyMark"
+
+[remotes.production]
+project_id = "ycomjwlnrtloaawzpbyt"
+
+[remotes.production.auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(SUPABASE_AUTH_SMTP_PASS)"
+admin_email = "no-reply@studymark.surakaraali.dev"
+sender_name = "StudyMark"
