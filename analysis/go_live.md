@@ -468,12 +468,10 @@ Gönderimden 1–2 gün önce betik yeniden çalıştırılır (tarihler tazelen
 | `WEB_FUNCTIONS_URL`, `WEB_STAGING_FUNCTIONS_URL`, `WEB_BASE_URL`, `EXPO_PUBLIC_SUPPORT_EMAIL`, `WEB_APP_STORE_URL` | Değişken | adım 5 | `web.yml` |
 | `WEB_DEPLOY` | Değişken | `true` | `web.yml` |
 | `EAS_PREVIEW` | Değişken | `true` (EAS kurulunca) | `preview.yml` |
-| `SUPABASE_DEPLOY` | Değişken | `true` (aşağıdaki not giderilince) | `supabase.yml` |
+| `SUPABASE_DEPLOY` | Değişken | `true` | `supabase.yml` |
 
-**Önce düzeltilmesi gereken (sahip: backend):** Supabase CLI 3.0.0'da `supabase db push` varsayılan olarak
-**yerel** veritabanına gider ve barındırılan projede `--yes` ister; `supabase.yml` hâlâ `db push --include-seed`
-ve `functions deploy --project-ref` kullanıyor. `--remote --yes` (ve fonksiyonlar için bağlı proje ya da
-`--remote`) eklenmeden `SUPABASE_DEPLOY=true` yapılmaz; o zamana kadar adım 4'teki betik kullanılır.
+`supabase.yml`, Supabase CLI 3'ün istediği `db push --remote --include-seed --yes` ve `functions deploy --yes`
+biçimini kullanır. Fonksiyonların ortak içe aktarma haritası `config.toml`'da tanımlıdır.
 
 Ana dal koruması: `checks`, `secrets`, `database`, `functions` zorunlu kontroller (ci.yml'deki not).
 
