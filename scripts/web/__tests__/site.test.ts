@@ -25,7 +25,7 @@ import {
 
 const PROD = 'https://abcdefghijklmnopqrst.supabase.co/functions/v1';
 const options = optionsFromEnv(
-  { WEB_FUNCTIONS_URL: PROD, WEB_BASE_URL: 'https://studyflow.app', EXPO_PUBLIC_SUPPORT_EMAIL: 'destek@studyflow.app' },
+  { WEB_FUNCTIONS_URL: PROD, WEB_BASE_URL: 'https://studymark.app', EXPO_PUBLIC_SUPPORT_EMAIL: 'destek@studymark.app' },
   new Date('2027-03-01T10:00:00Z'),
 );
 const files = buildSite(options);
@@ -79,7 +79,7 @@ describe('public web pages', () => {
       expect(csp).not.toMatch(/127\.0\.0\.1|localhost/);
       expect(built).not.toContain('fonts.googleapis.com');
     }
-    expect(html('veli-onayi/index.html')).toContain("supportEmail: 'destek@studyflow.app'");
+    expect(html('veli-onayi/index.html')).toContain("supportEmail: 'destek@studymark.app'");
   });
 
   it('build staging copies of the forms when a staging URL is given', () => {

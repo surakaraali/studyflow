@@ -1,4 +1,4 @@
-# StudyFlow
+# StudyMark
 
 Ortaokul ve lise öğrencileri için yapay zekâ destekli çalışma planlayıcısı. Öğrenci derslerini,
 okul programını, sınavlarını ve ödevlerini girer; uygulama 14 günlük çalışma planını kendisi

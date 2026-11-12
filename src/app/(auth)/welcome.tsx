@@ -74,7 +74,7 @@ export default function WelcomeScreen() {
         <View style={styles.brand}>
           <HighlightMark active style={styles.brandMark}>
             <AppText variant="display" color="onHighlight" accessibilityRole="header" style={styles.brandText}>
-              StudyFlow
+              StudyMark
             </AppText>
           </HighlightMark>
           <AppText variant="title" style={styles.center}>

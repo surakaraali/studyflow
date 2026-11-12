@@ -105,7 +105,7 @@ const settings = {
       contact: 'Bize yaz',
       licensesTitle: 'Açık kaynak lisanslar',
       licensesFooter:
-        'StudyFlow bu açık kaynak yazılımlarla yapıldı. Her birinin lisans metni kendi paketinde yer alır. Emeği geçen herkese teşekkürler!',
+        'StudyMark bu açık kaynak yazılımlarla yapıldı. Her birinin lisans metni kendi paketinde yer alır. Emeği geçen herkese teşekkürler!',
     },
     signOut: 'Çıkış yap',
     signOutTitle: 'Çıkış yapılsın mı?',
@@ -120,7 +120,7 @@ const settings = {
   },
 
   paywall: {
-    title: 'StudyFlow Pro',
+    title: 'StudyMark Pro',
     intro:
       'Pro ile ayda daha çok belge yükler, daha uzun belgelerle çalışırsın. Plan, quiz, kartlar ve zamanlayıcı iki planda da var.',
     close: 'Kapat',

@@ -1,4 +1,4 @@
-# StudyFlow — Ürün Backlog'u
+# StudyMark — Ürün Backlog'u
 
 | Alan | Değer |
 |---|---|

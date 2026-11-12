@@ -1,5 +1,5 @@
 /**
- * StudyFlow design tokens.
+ * StudyMark design tokens.
  *
  * The palette comes from a student's desk: cool paper, blue ballpoint ink,
  * highlighter yellow, and the pink-red ink of an exam answer sheet (optik form).

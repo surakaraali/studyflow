@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    name: 'StudyFlow',
+    name: 'StudyMark',
     slug: 'studyflow',
     // Expo organization shared by the team: builds, credentials and updates live there.
     owner: 'studyflow-app',

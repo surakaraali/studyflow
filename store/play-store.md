@@ -1,4 +1,4 @@
-# StudyFlow — Google Play Taslağı (R2a'da kullanılacak)
+# StudyMark — Google Play Taslağı (R2a'da kullanılacak)
 
 | Alan | Değer |
 |---|---|
@@ -24,9 +24,9 @@ Bu doküman R1'de kullanılmaz; veri envanteri ve metinler App Store taslağıyl
 Hedef kitle: ortaokul ve lise (Play yaş grupları **9–12, 13–15, 16–17**). 13 yaş altı dahil olduğu için Aile
 Politikası şartları geçerlidir.
 
-| Şart | StudyFlow | Durum |
+| Şart | StudyMark | Durum |
 |---|---|---|
-| Gizlilik politikası Play Console'da ve uygulamada | Uygulama içi metinler var (`src/features/legal/texts.ts`); aynı metin `https://studyflow.app/gizlilik/` sayfasına üretiliyor (`npm run web:build`); hukuk onayı bekliyor (H-01) | ❌ |
+| Gizlilik politikası Play Console'da ve uygulamada | Uygulama içi metinler var (`src/features/legal/texts.ts`); aynı metin `https://studymark.app/gizlilik/` sayfasına üretiliyor (`npm run web:build`); hukuk onayı bekliyor (H-01) | ❌ |
 | Reklam | Yok. Reklam beyanı "Hayır"; Families Self-Certified Ads SDK şartı bu yüzden uygulanmaz | ✅ |
 | Çocuklardan cihaz kimliği (AAID, IMEI, MAC, SSID vb.) iletilmez | Kod toplamıyor. Bağımlılıklar `AD_ID` iznini manifest'e ekleyebilir: `app.json`'da `android.blockedPermissions` ile engellenir, birleşik manifest kontrol edilir | 🔍 |
 | Konum izni yok | Yok | ✅ |
@@ -57,7 +57,7 @@ Kaynak: [güvenlik incelemesi §6](../analysis/security_review.md#6-sdk-ve-servi
 ([app-store.md](app-store.md) §8). Aynı veri iki formda kendi tanımlarıyla beyan edilir; App Store §8'deki
 "manifest sahibiyle karar verilecek" türler kapanınca bu tablo da gözden geçirilir.
 
-| Google veri türü | Toplanıyor | Paylaşılıyor | Zorunlu mu | Amaç | StudyFlow'daki karşılığı | Apple §8 karşılığı |
+| Google veri türü | Toplanıyor | Paylaşılıyor | Zorunlu mu | Amaç | StudyMark'daki karşılığı | Apple §8 karşılığı |
 |---|---|---|---|---|---|---|
 | Kişisel bilgiler → E-posta adresi | Evet | Hayır | Zorunlu | Uygulama işlevselliği, hesap yönetimi | Hesap e-postası, veli e-postası, destek yanıt adresi | E-posta Adresi |
 | Kişisel bilgiler → Ad | Evet | Hayır | İsteğe bağlı | Uygulama işlevselliği | Rumuz (Google "takma ad"ı bu türde sayar) | Kullanıcı Kimliği (rumuz) |
@@ -84,21 +84,21 @@ Kaynak: [güvenlik incelemesi §6](../analysis/security_review.md#6-sdk-ve-servi
 
 ## 5. Hesap silme URL'si
 Play Console, uygulamayı yeniden kurmadan silme talebi yapılabilen bir web adresi ister (STORE-03):
-`https://studyflow.app/hesap-silme/` (alan adı Q-08 ile kesinleşir; form `web/delete-account/index.html`,
+`https://studymark.app/hesap-silme/` (alan adı Q-08 ile kesinleşir; form `web/delete-account/index.html`,
 `npm run web:build` ile bu adrese üretilir ve `.github/workflows/web.yml` ile GitHub Pages'te yayımlanır).
 Sayfada uygulama ve geliştirici adı, adımlar, silinen ve saklanan veriler (veli onay ve ödeme kayıtları yasal
 süre, H-03) ve süre (en geç 30 gün, PRIV-07) yazar. Açık kalan: hesap sahipliğini doğrulama süreci (T-16, H-12).
-Gizlilik politikası alanına `https://studyflow.app/gizlilik/`, web sitesi alanına `https://studyflow.app/` girilir.
+Gizlilik politikası alanına `https://studymark.app/gizlilik/`, web sitesi alanına `https://studymark.app/` girilir.
 
 ## 6. Mağaza girişi
 
 | Alan | Değer | Not |
 |---|---|---|
-| Uygulama adı (≤ 30) | StudyFlow | Q-08; yedekler App Store §1'de |
+| Uygulama adı (≤ 30) | StudyMark | Q-08; yedekler App Store §1'de |
 | Kısa açıklama (≤ 80) | Sınavına göre plan, notundan özet ve quiz, internetsiz kart tekrarı. | 68 karakter |
 | Tam açıklama (≤ 4000) | App Store §4 metni | Değişiklikler aşağıda |
 | Kategori | Eğitim | — |
-| İletişim e-postası | `destek@studyflow.app` | Zorunlu alan |
+| İletişim e-postası | `destek@studymark.app` | Zorunlu alan |
 | Grafikler | Simge 512×512, öne çıkan görsel 1024×500, telefon ekran görüntüleri | App Store §10 listesi Android cihazda yeniden çekilir |
 
 Tam açıklamadaki değişiklikler: "Ödeme Apple Kimliği hesabından alınır" → "Ödeme Google Play hesabından alınır";

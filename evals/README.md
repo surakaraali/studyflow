@@ -68,7 +68,7 @@ toplar (project_plan §17, 4. madde, 20 Kasım).
 ### Belgeler nerede durur
 
 - PDF'ler **git'e girmez**. Ekibin erişimi kısıtlı, paylaşılan özel klasöründe durur (ör. Google
-  Drive'da "StudyFlow / SP-01 değerlendirme seti"). Çalıştırırken klasörü `--docs` ile gösterin ya
+  Drive'da "StudyMark / SP-01 değerlendirme seti"). Çalıştırırken klasörü `--docs` ile gösterin ya
   da dosyaları `evals/documents/` altına kopyalayın.
 - Kök `.gitignore` dosyasına şu satırları ekleyin (bu klasör eklemez):
 

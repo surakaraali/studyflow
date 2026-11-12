@@ -1,4 +1,4 @@
--- StudyFlow R1 data model (US-04).
+-- StudyMark R1 data model (US-04).
 --
 -- Mirrors the on-device schema in src/db/schema.ts so the sync service (src/services/sync) can
 -- copy rows as they are. Conventions (see analysis/adr/ADR-001):

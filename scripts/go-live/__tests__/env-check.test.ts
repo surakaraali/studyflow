@@ -74,7 +74,7 @@ describe('env file parsing', () => {
         'export PLAIN=value # trailing comment',
         'HASH=a#b',
         'EMPTY=',
-        'FROM="StudyFlow <no-reply@studyflow.app>"',
+        'FROM="StudyMark <no-reply@studymark.app>"',
         "SINGLE='it''s'",
         // Shaped like a .p8 file, but with a label secret scanners don't flag.
         'KEY="-----BEGIN TEST BLOCK-----',
@@ -86,7 +86,7 @@ describe('env file parsing', () => {
     expect(env.PLAIN).toBe('value');
     expect(env.HASH).toBe('a#b');
     expect(env.EMPTY).toBe('');
-    expect(env.FROM).toBe('StudyFlow <no-reply@studyflow.app>');
+    expect(env.FROM).toBe('StudyMark <no-reply@studymark.app>');
     expect(env.KEY).toBe('-----BEGIN TEST BLOCK-----\nabc\n-----END TEST BLOCK-----');
     expect(env.ESCAPED).toBe('line1\nline2');
   });
@@ -98,7 +98,7 @@ describe('env checks', () => {
   it('flags wrong values without printing them', () => {
     const env = {
       CONSENT_WEB_URL: 'http://localhost:8099/consent/',
-      CORS_ALLOWED_ORIGIN: 'https://studyflow.app/',
+      CORS_ALLOWED_ORIGIN: 'https://studymark.app/',
       EMAIL_PROVIDER: 'console',
       CRON_SECRET: 'short-secret-value',
       CONSENT_TEXT_VERSION: '0.9',
@@ -144,12 +144,12 @@ describe('env checks', () => {
       ANTHROPIC_API_KEY: 'sk-ant-x',
       AI_MONTHLY_BUDGET_USD: '250',
       RESEND_API_KEY: 're_x',
-      EMAIL_FROM: 'StudyFlow <no-reply@studyflow.app>',
-      EMAIL_REPLY_TO: 'destek@studyflow.app',
-      SUPPORT_TEAM_EMAIL: 'destek@studyflow.app',
-      OPS_ALERT_EMAIL: 'ops@studyflow.app',
-      CONSENT_WEB_URL: 'https://studyflow.app/veli-onayi/',
-      CORS_ALLOWED_ORIGIN: 'https://studyflow.app',
+      EMAIL_FROM: 'StudyMark <no-reply@studymark.app>',
+      EMAIL_REPLY_TO: 'destek@studymark.app',
+      SUPPORT_TEAM_EMAIL: 'destek@studymark.app',
+      OPS_ALERT_EMAIL: 'ops@studymark.app',
+      CONSENT_WEB_URL: 'https://studymark.app/veli-onayi/',
+      CORS_ALLOWED_ORIGIN: 'https://studymark.app',
       CRON_SECRET: 'c'.repeat(40),
       REVENUECAT_WEBHOOK_SECRET: 'w'.repeat(32),
       TELEMETRY_HASH_SALT: 't'.repeat(40),

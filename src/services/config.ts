@@ -31,8 +31,8 @@ export const config = {
   aiDevUrl: __DEV__ ? (process.env.EXPO_PUBLIC_AI_DEV_URL ?? 'http://127.0.0.1:8787') : '',
   revenueCatIosKey: env.revenueCatIosKey ?? '',
   revenueCatAndroidKey: env.revenueCatAndroidKey ?? '',
-  consentWebUrl: env.consentWebUrl ?? 'https://studyflow.app/veli-onayi/',
-  supportEmail: env.supportEmail ?? 'destek@studyflow.app',
+  consentWebUrl: env.consentWebUrl ?? 'https://studymark.app/veli-onayi/',
+  supportEmail: env.supportEmail ?? 'destek@studymark.app',
 };
 
 export const isLocalMode = backendMode === 'local';

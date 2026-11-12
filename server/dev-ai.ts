@@ -143,5 +143,5 @@ server.requestTimeout = 120_000;
 
 server.listen(PORT, HOST, () => {
   const mode = MOCK ? 'örnek içerik (--mock)' : client ? `canlı · ${MODEL}` : 'anahtar yok (istekler 503 döner)';
-  console.log(`StudyFlow AI geliştirme sunucusu: http://${HOST}:${PORT} · ${mode}`);
+  console.log(`StudyMark AI geliştirme sunucusu: http://${HOST}:${PORT} · ${mode}`);
 });

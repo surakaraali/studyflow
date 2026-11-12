@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets up a hosted Supabase project (EU) for StudyFlow: analysis/go_live.md, step 4.
+# Sets up a hosted Supabase project (EU) for StudyMark: analysis/go_live.md, step 4.
 #
 #   npm run go-live:supabase -- --env-file ../studyflow-secrets/supabase.prod.env            # dry run
 #   npm run go-live:supabase -- --env-file ../studyflow-secrets/supabase.prod.env --apply    # do it

@@ -1,6 +1,6 @@
 /// <reference types="node" />
 /**
- * Which environment variables StudyFlow needs, and whether an env file has them.
+ * Which environment variables StudyMark needs, and whether an env file has them.
  *
  * The list is not kept by hand: it is collected on every run from .env.example, the secrets
  * table in analysis/security_review.md (§5), the Edge Function code (Deno.env.get / env()),
@@ -121,7 +121,7 @@ export const RULES: Record<string, Rule> = {
   EMAIL_FROM: {
     target: 'supabase',
     level: 'required',
-    note: 'Sender on the verified Resend domain, e.g. StudyFlow <no-reply@studyflow.app>.',
+    note: 'Sender on the verified Resend domain, e.g. StudyMark <no-reply@studymark.app>.',
     validate: (v) => (/<[^\s@<>]+@[^\s@<>]+>$/.test(v) || EMAIL_RE.test(v) ? null : 'must be "Name <address>" or an address'),
   },
   EMAIL_REPLY_TO: { target: 'supabase', level: 'recommended', note: 'Reply-To for e-mails (support address).', validate: email },
@@ -147,7 +147,7 @@ export const RULES: Record<string, Rule> = {
   CONSENT_WEB_URL: {
     target: 'supabase',
     level: 'required',
-    note: 'Parent consent page used in consent e-mails, e.g. https://studyflow.app/veli-onayi/.',
+    note: 'Parent consent page used in consent e-mails, e.g. https://studymark.app/veli-onayi/.',
     validate: (v) => httpsUrl(v) ?? (v.endsWith('/') ? null : 'should end with "/" (avoids a redirect on static hosts)'),
   },
   CONSENT_TEXT_VERSION: {
@@ -159,7 +159,7 @@ export const RULES: Record<string, Rule> = {
   CORS_ALLOWED_ORIGIN: {
     target: 'supabase',
     level: 'required',
-    note: 'Origin of the web pages, e.g. https://studyflow.app (no path).',
+    note: 'Origin of the web pages, e.g. https://studymark.app (no path).',
     validate: (v) => httpsUrl(v) ?? (new URL(v).origin === v ? null : 'must be an origin only: https://host, no path or slash'),
   },
   CRON_SECRET: {

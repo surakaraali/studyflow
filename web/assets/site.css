@@ -1,5 +1,5 @@
 /*
- * StudyFlow public pages: one look for the landing, legal, support, consent and deletion pages.
+ * StudyMark public pages: one look for the landing, legal, support, consent and deletion pages.
  * Colors come from src/constants/theme.ts: `npm run web:build` writes them where the marker
  * below is (web/dist/assets/site.css). Literata is served from this site, never from Google.
  */

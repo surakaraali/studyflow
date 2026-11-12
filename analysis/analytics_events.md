@@ -1,4 +1,4 @@
-# StudyFlow — Ürün Analitiği Olay Sözlüğü ve Çökme Raporlama
+# StudyMark — Ürün Analitiği Olay Sözlüğü ve Çökme Raporlama
 
 | Alan | Değer |
 |---|---|

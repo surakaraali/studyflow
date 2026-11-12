@@ -1,4 +1,4 @@
-# StudyFlow — Yayına çıkış runbook'u (R1, iOS)
+# StudyMark — Yayına çıkış runbook'u (R1, iOS)
 
 | Alan | Değer |
 |---|---|
@@ -38,7 +38,7 @@ anahtar eklenirse kontrol onu "eksik" diye gösterir. Değerler hiçbir zaman ek
 fonksiyonlar `--use-api` ile yüklenir), Xcode ve iOS simülatörü, `npx eas-cli@latest`. Başlamadan
 `npm test` ve `npx tsc --noEmit` temiz olmalı.
 
-**Yer tutucular.** Bu dokümanda `https://studyflow.app` alan adı (Q-08 kesinleşene kadar), `<prod-ref>` ve
+**Yer tutucular.** Bu dokümanda `https://studymark.app` alan adı (Q-08 kesinleşene kadar), `<prod-ref>` ve
 `<staging-ref>` (Supabase proje kimlikleri, 20 küçük harf) yer tutucudur. Gerçek değerler §2'deki listede
 tek tek değiştirilir.
 
@@ -53,7 +53,7 @@ kararlar geldikçe ilgili değer güncellenir.
 | Q-03 | Yurt dışına aktarım için KVKK mekanizması (Anthropic, Resend, RevenueCat, Expo; H-02) | Hukuk danışmanı | Aydınlatma metni "Aktarım" bölümü, veri işleme sözleşmeleri (H-10), adım 1–3, 7 | 12 Mart 2027 öncesi |
 | Q-05 | Pro fiyatı ve ücretsiz kota | Ürün sahibi | App Store Connect abonelik fiyatları (adım 6), RevenueCat ürünleri (adım 7), mağaza açıklaması | Adım 6 öncesi |
 | Q-07 | App Store kategorisi: Kids (9–11) mi, Eğitim mi | Ürün sahibi + Hukuk danışmanı | Yaş derecelendirmesi ve kategori ([app-store.md §7](../store/app-store.md#7-kategori-ve-yaş-derecelendirmesi-q-07)), adım 6 ve 11 | Adım 6 öncesi |
-| Q-08 | "StudyFlow" adı ve alan adı müsait mi | Ürün sahibi | §2'deki **bütün** URL'ler, Resend alan adı, `EMAIL_FROM`, uygulama adı (adım 1, 5, 6) | Adım 1 öncesi |
+| Q-08 | Ad ve alan adı. Karar: StudyMark, `studymark.app` (satın alma ve marka kontrolü bekliyor) | Ürün sahibi | §2'deki **bütün** URL'ler, Resend alan adı, `EMAIL_FROM`, uygulama adı (adım 1, 5, 6) | Adım 1 öncesi |
 | H-01 | Yasal metinlerin hukuk onayı (aydınlatma, gizlilik, koşullar, veli rıza sayfası) | Hukuk danışmanı | `src/features/legal/texts.ts` (`LEGAL_DRAFT = false`, gerekirse `LEGAL_VERSION`), web sayfaları, gizlilik URL'si (adım 5, 11) | 12 Mart 2027 öncesi |
 
 Onaylandığında: `texts.ts`'de `LEGAL_DRAFT` `false` yapılır, köşeli parantezli yer tutucular doldurulur,
@@ -66,23 +66,23 @@ Q-06 (e-posta sağlayıcısı) ADR-004 ile geçici olarak Resend kabul edildi; r
 
 Alan adı kesinleşince (Q-08) ya da değişince bu tablodaki her yer güncellenir. Alan adı bağlanana kadar
 site `https://surakaraali.github.io/studyflow/` altında da çalışır (bütün iç bağlantılar göreli); o dönemde
-aşağıdaki değerlerde `https://studyflow.app` yerine bu adres, köken olarak da `https://surakaraali.github.io`
+aşağıdaki değerlerde `https://studymark.app` yerine bu adres, köken olarak da `https://surakaraali.github.io`
 kullanılır.
 
 | Ne | Değer (yer tutucu) | Nerede ayarlanır | Adım |
 |---|---|---|---|
-| Site kökü | `https://studyflow.app/` | GitHub → Settings → Pages → Custom domain; repo değişkeni `WEB_BASE_URL` | 5 |
-| Veli onay sayfası | `https://studyflow.app/veli-onayi/` | Fonksiyon sırrı `CONSENT_WEB_URL` (e-postalardaki bağlantı); EAS değişkeni `EXPO_PUBLIC_CONSENT_WEB_URL`; kod varsayılanları `src/services/config.ts` ve `supabase/functions/_shared/consent.ts` (`/veli-onayi/`) | 4, 8 |
-| Web kökeni (CORS) | `https://studyflow.app` (yol ve `/` yok) | Fonksiyon sırrı `CORS_ALLOWED_ORIGIN` | 4 |
-| Gizlilik politikası | `https://studyflow.app/gizlilik/` | App Store Connect → App Privacy → Privacy Policy URL; mağaza açıklaması (app-store.md §4); Play Console | 6, 11 |
-| Kullanım koşulları | `https://studyflow.app/kosullar/` | Mağaza açıklaması (EULA satırı) ya da App Store Connect → License Agreement | 6, 11 |
-| Destek | `https://studyflow.app/destek/` | App Store Connect → Support URL; Play Console | 6, 11 |
-| Pazarlama | `https://studyflow.app/` | App Store Connect → Marketing URL | 6 |
-| Web'den hesap silme | `https://studyflow.app/hesap-silme/` | Play Console → Veri güvenliği → hesap silme URL'si; inceleme notu; uygulamadaki "web sitemizdeki form" metni (`account.webForm`) | 11 |
-| Aydınlatma metni | `https://studyflow.app/aydinlatma-metni/` | Veli onay ve silme sayfaları göreli bağlantıyla açar; ayar gerekmez | — |
-| Destek e-postası | `destek@studyflow.app` | EAS `EXPO_PUBLIC_SUPPORT_EMAIL`; fonksiyon sırları `SUPPORT_TEAM_EMAIL`, `EMAIL_REPLY_TO`; repo değişkeni `EXPO_PUBLIC_SUPPORT_EMAIL` (web) | 4, 5, 8 |
-| Gönderen adres | `StudyFlow <no-reply@studyflow.app>` | Fonksiyon sırrı `EMAIL_FROM`; Supabase Auth SMTP gönderen adresi; Resend alan adı | 1, 4 |
-| KVKK başvuru adresi | `[kvkk@studyflow.app — kesinleşecek]` | `src/features/legal/texts.ts` (`KVKK_CONTACT`), H-01 ile | H-01 |
+| Site kökü | `https://studymark.app/` | GitHub → Settings → Pages → Custom domain; repo değişkeni `WEB_BASE_URL` | 5 |
+| Veli onay sayfası | `https://studymark.app/veli-onayi/` | Fonksiyon sırrı `CONSENT_WEB_URL` (e-postalardaki bağlantı); EAS değişkeni `EXPO_PUBLIC_CONSENT_WEB_URL`; kod varsayılanları `src/services/config.ts` ve `supabase/functions/_shared/consent.ts` (`/veli-onayi/`) | 4, 8 |
+| Web kökeni (CORS) | `https://studymark.app` (yol ve `/` yok) | Fonksiyon sırrı `CORS_ALLOWED_ORIGIN` | 4 |
+| Gizlilik politikası | `https://studymark.app/gizlilik/` | App Store Connect → App Privacy → Privacy Policy URL; mağaza açıklaması (app-store.md §4); Play Console | 6, 11 |
+| Kullanım koşulları | `https://studymark.app/kosullar/` | Mağaza açıklaması (EULA satırı) ya da App Store Connect → License Agreement | 6, 11 |
+| Destek | `https://studymark.app/destek/` | App Store Connect → Support URL; Play Console | 6, 11 |
+| Pazarlama | `https://studymark.app/` | App Store Connect → Marketing URL | 6 |
+| Web'den hesap silme | `https://studymark.app/hesap-silme/` | Play Console → Veri güvenliği → hesap silme URL'si; inceleme notu; uygulamadaki "web sitemizdeki form" metni (`account.webForm`) | 11 |
+| Aydınlatma metni | `https://studymark.app/aydinlatma-metni/` | Veli onay ve silme sayfaları göreli bağlantıyla açar; ayar gerekmez | — |
+| Destek e-postası | `destek@studymark.app` | EAS `EXPO_PUBLIC_SUPPORT_EMAIL`; fonksiyon sırları `SUPPORT_TEAM_EMAIL`, `EMAIL_REPLY_TO`; repo değişkeni `EXPO_PUBLIC_SUPPORT_EMAIL` (web) | 4, 5, 8 |
+| Gönderen adres | `StudyMark <no-reply@studymark.app>` | Fonksiyon sırrı `EMAIL_FROM`; Supabase Auth SMTP gönderen adresi; Resend alan adı | 1, 4 |
+| KVKK başvuru adresi | `[kvkk@studymark.app — kesinleşecek]` | `src/features/legal/texts.ts` (`KVKK_CONTACT`), H-01 ile | H-01 |
 | Uyarı e-postası | ekip posta kutusu | Fonksiyon sırrı `OPS_ALERT_EMAIL` | 4 |
 | RevenueCat webhook | `https://<prod-ref>.supabase.co/functions/v1/revenuecat-webhook` | RevenueCat → Integrations → Webhooks | 7 |
 | Web sayfalarının API'si | `https://<prod-ref>.supabase.co/functions/v1` | Repo değişkeni `WEB_FUNCTIONS_URL` (staging: `WEB_STAGING_FUNCTIONS_URL`) | 5 |
@@ -101,24 +101,24 @@ giriş yerel akış olduğu için web dönüş adresi gerekmez.
 | Alan adı kayıt firması; resend.com | `dig` ile DNS kontrolü | `RESEND_API_KEY`, `EMAIL_FROM` | Resend'de alan adı "Verified"; kendine test e-postası |
 
 1. Alan adını al (Q-08). `.app` uzantısı yalnızca HTTPS ile açılır; GitHub Pages sertifikayı kendisi verir.
-2. Resend'de hesap aç, **Domains → Add domain**: `studyflow.app`, bölge **EU (Ireland)**.
+2. Resend'de hesap aç, **Domains → Add domain**: `studymark.app`, bölge **EU (Ireland)**.
 3. Resend'in verdiği kayıtları DNS'e gir: `send` alt alan adı için MX ve SPF (TXT), DKIM için
    `resend._domainkey` (TXT). DMARC'ı kendin ekle: `_dmarc` TXT
-   `v=DMARC1; p=none; rua=mailto:destek@studyflow.app` (iki hafta rapor izlenir, sonra `p=quarantine`).
-4. Resend → **API Keys → Create**: izin "Sending access", alan adı `studyflow.app`. Fonksiyonlar için bir,
+   `v=DMARC1; p=none; rua=mailto:destek@studymark.app` (iki hafta rapor izlenir, sonra `p=quarantine`).
+4. Resend → **API Keys → Create**: izin "Sending access", alan adı `studymark.app`. Fonksiyonlar için bir,
    Supabase Auth SMTP için ayrı bir anahtar oluştur (birini değiştirmek diğerini bozmasın).
-5. `supabase.prod.env` dosyasına: `RESEND_API_KEY=re_…`, `EMAIL_FROM="StudyFlow <no-reply@studyflow.app>"`,
-   `EMAIL_REPLY_TO=destek@studyflow.app`, `SUPPORT_TEAM_EMAIL=destek@studyflow.app`.
+5. `supabase.prod.env` dosyasına: `RESEND_API_KEY=re_…`, `EMAIL_FROM="StudyMark <no-reply@studymark.app>"`,
+   `EMAIL_REPLY_TO=destek@studymark.app`, `SUPPORT_TEAM_EMAIL=destek@studymark.app`.
 
 Kontrol:
 ```bash
-dig +short TXT resend._domainkey.studyflow.app
+dig +short TXT resend._domainkey.studymark.app
 ```
 ```bash
-dig +short TXT send.studyflow.app
+dig +short TXT send.studymark.app
 ```
 ```bash
-dig +short TXT _dmarc.studyflow.app
+dig +short TXT _dmarc.studymark.app
 ```
 Üçü de değer döndürmeli ve Resend panelinde alan adı **Verified** görünmeli. Gerçek gönderim adım 4'teki
 SMTP testinde denenir.
@@ -149,7 +149,7 @@ Apple'da da geri alınır (App Store kuralı 5.1.1(v)). Yoksa hesap yine silinir
 2. **Certificates, Identifiers & Profiles → Identifiers → +** → App IDs → App → Explicit Bundle ID
    `com.cobanov.studyflow`; yetenekler: **Sign In with Apple**, **Push Notifications**. (EAS ilk derlemede de
    oluşturur; elle açmak yeteneklerin doğru olduğunu görmeyi kolaylaştırır.)
-3. **Keys → +** → ad "StudyFlow Sign in with Apple" → **Sign in with Apple** → Configure → Primary App ID
+3. **Keys → +** → ad "StudyMark Sign in with Apple" → **Sign in with Apple** → Configure → Primary App ID
    `com.cobanov.studyflow` → Register → **Download**. `.p8` dosyası yalnızca bir kez indirilir; depoya değil
    `../studyflow-secrets/`'a koy (`.gitignore` `*.p8`'i zaten dışlar).
 4. `supabase.prod.env`:
@@ -180,7 +180,7 @@ Apple'da da geri alınır (App Store kuralı 5.1.1(v)). Yoksa hesap yine silinir
    openssl rand -hex 32
    ```
    `CRON_SECRET`, `REVENUECAT_WEBHOOK_SECRET`, `TELEMETRY_HASH_SALT` (en az 16 karakter, 32+ önerilir).
-   Ayrıca: `CONSENT_WEB_URL=https://studyflow.app/veli-onayi/`, `CORS_ALLOWED_ORIGIN=https://studyflow.app`,
+   Ayrıca: `CONSENT_WEB_URL=https://studymark.app/veli-onayi/`, `CORS_ALLOWED_ORIGIN=https://studymark.app`,
    `OPS_ALERT_EMAIL=<ekip posta kutusu>`. `OPS_ALERT_EMAIL` ve `AI_MONTHLY_BUDGET_USD` önerilir: yoksa
    uyarılar yalnızca fonksiyon günlüğüne düşer ve bütçe 250 sayılır. Üçü de staging dosyasına da yazılır
    (staging'de ayrı değerlerle).
@@ -216,7 +216,7 @@ Apple'da da geri alınır (App Store kuralı 5.1.1(v)). Yoksa hesap yine silinir
    Anahtarlar gelince dosyaya eklenip betik `--allow-missing` olmadan yeniden çalıştırılır.
 7. Panelde elle yapılanlar ([güvenlik incelemesi §4.4](security_review.md#44-supabase-panel-ayarları-her-barındırılan-proje-dev-staging-prod)):
    - **Authentication → Emails → SMTP Settings**: host `smtp.resend.com`, port `465`, kullanıcı `resend`,
-     şifre = SMTP için açılan Resend anahtarı, gönderen `no-reply@studyflow.app`, ad `StudyFlow`.
+     şifre = SMTP için açılan Resend anahtarı, gönderen `no-reply@studymark.app`, ad `StudyMark`.
      (`config.toml`'daki SMTP bölümü yorumda olduğu için `config push` bunu yapmaz.)
    - **Authentication → Providers → Apple**: açık, Client IDs `com.cobanov.studyflow` (config push'tan gelir; kontrol et).
    - Sızdırılmış şifre koruması (planda varsa), `pg_graphql` kullanılmıyorsa kapalı, SSL zorunlu, yedek ve
@@ -239,7 +239,7 @@ Kontrol (betik `--apply` ile bunları kendisi çalıştırır):
   ```
 - Onay fonksiyonu yayında: rastgele bir bağlantıya 404 döner (betik bunu `curl` ile dener).
 - SMTP: uygulamadan değil, panelden **Authentication → Users → Invite user** ile kendine bir davet gönder;
-  e-posta `no-reply@studyflow.app`'tan gelmeli ve Gmail'de "SPF/DKIM/DMARC: PASS" görünmeli
+  e-posta `no-reply@studymark.app`'tan gelmeli ve Gmail'de "SPF/DKIM/DMARC: PASS" görünmeli
   ("Orijinali göster").
 
 ### Adım 5 · Web sayfaları (GitHub Pages)
@@ -264,28 +264,28 @@ python3 -m http.server 8099 -d web/dist
    `WEB_FUNCTIONS_URL=https://<prod-ref>.supabase.co/functions/v1`; isteğe bağlı
    `WEB_STAGING_FUNCTIONS_URL=https://<staging-ref>.supabase.co/functions/v1` (staging e-postaları için
    `/staging/veli-onayi/` ve `/staging/hesap-silme/` de üretilir; staging'de `CONSENT_WEB_URL` bu adres olur),
-   `EXPO_PUBLIC_SUPPORT_EMAIL=destek@studyflow.app`, sonra `WEB_DEPLOY=true`.
+   `EXPO_PUBLIC_SUPPORT_EMAIL=destek@studymark.app`, sonra `WEB_DEPLOY=true`.
 3. **Actions → Web → Run workflow.** Derleme yer tutucu ya da yerel adresle dağıtım yapmayı reddeder.
 4. **Özel alan adı.** Önce alan adını hesaba doğrula (ele geçirilmeye karşı): GitHub → profil **Settings →
    Pages → Add a domain** → verilen `_github-pages-challenge-…` TXT kaydını DNS'e gir → Verify. Sonra DNS:
-   - `studyflow.app` için A: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`;
+   - `studymark.app` için A: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`;
      AAAA: `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
    - `www` için CNAME: `surakaraali.github.io`
 
-   Depo **Settings → Pages → Custom domain** `studyflow.app` → Save → DNS kontrolü bitince **Enforce HTTPS**.
-   Bu dağıtım türünde `CNAME` dosyası kullanılmaz; ayar Pages ekranındadır. Sonra `WEB_BASE_URL=https://studyflow.app/`
+   Depo **Settings → Pages → Custom domain** `studymark.app` → Save → DNS kontrolü bitince **Enforce HTTPS**.
+   Bu dağıtım türünde `CNAME` dosyası kullanılmaz; ayar Pages ekranındadır. Sonra `WEB_BASE_URL=https://studymark.app/`
    değişkenini ekleyip iş akışını yeniden çalıştır.
 5. Geçici `github.io` adresiyle başladıysan `CONSENT_WEB_URL`, `CORS_ALLOWED_ORIGIN` (adım 4) ve
    `EXPO_PUBLIC_CONSENT_WEB_URL`'i (adım 8) yeni adrese çevir.
 
 Kontrol:
 ```bash
-curl -sI https://studyflow.app/gizlilik/ | head -1
+curl -sI https://studymark.app/gizlilik/ | head -1
 ```
 ```bash
-curl -s https://studyflow.app/veli-onayi/ | grep -c "functionsUrl: 'https://<prod-ref>.supabase.co/functions/v1'"
+curl -s https://studymark.app/veli-onayi/ | grep -c "functionsUrl: 'https://<prod-ref>.supabase.co/functions/v1'"
 ```
-Tarayıcıda `https://studyflow.app/veli-onayi/?token=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA` açılınca
+Tarayıcıda `https://studymark.app/veli-onayi/?token=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA` açılınca
 "Bu bağlantı geçerli değil" görünmeli: bu, sayfanın production fonksiyonuna ulaştığını (CSP ve CORS doğru)
 gösterir. "Sayfa yüklenemedi" görünürse `CORS_ALLOWED_ORIGIN` ya da `WEB_FUNCTIONS_URL` yanlıştır.
 
@@ -306,7 +306,7 @@ sayfaları çerçeve içinde açılınca kendini gizler; `.app` uzantısı taray
 3. **App Information**: kategori ve yaş derecelendirmesi (Q-07, [app-store.md §7](../store/app-store.md#7-kategori-ve-yaş-derecelendirmesi-q-07));
    **App Privacy**: [app-store.md §8](../store/app-store.md#8-gizlilik-etiketi-app-privacy) ve gizlilik URL'si.
 4. **Pricing and Availability**: ücretsiz; bölge kararı Ürün sahibinde (R1 Türkçe ve KVKK için öneri: Türkiye).
-5. **Monetization → Subscriptions**: grup "StudyFlow Pro"; ürünler `com.cobanov.studyflow.pro.monthly`
+5. **Monetization → Subscriptions**: grup "StudyMark Pro"; ürünler `com.cobanov.studyflow.pro.monthly`
    (1 ay) ve `com.cobanov.studyflow.pro.annual` (1 yıl). Fiyat Q-05; Türkçe görünen ad ve açıklama; inceleme
    için paywall ekran görüntüsü ve not. İlk abonelikler uygulamanın ilk sürümüyle birlikte gönderilir.
 6. **Users and Access → Integrations**:
@@ -322,7 +322,7 @@ sayfaları çerçeve içinde açılınca kendini gizler; `.app` uzantısı taray
 |---|---|---|---|
 | app.revenuecat.com | — | `EXPO_PUBLIC_REVENUECAT_IOS_KEY` (herkese açık), `REVENUECAT_WEBHOOK_SECRET` | Webhook testi 200; sandbox satın alımdan sonra `profiles.plan = 'pro'` |
 
-1. Proje "StudyFlow" → **Apps → + App Store app**: bundle ID `com.cobanov.studyflow`; In-App Purchase
+1. Proje "StudyMark" → **Apps → + App Store app**: bundle ID `com.cobanov.studyflow`; In-App Purchase
    anahtarını (adım 6.6) yükle. RevenueCat'in verdiği **App Store Server Notifications** adresini App Store
    Connect → App Information → App Store Server Notifications'a (Production ve Sandbox, Version 2) gir.
 2. **Products**: iki ürünü içe aktar (`…pro.monthly`, `…pro.annual`).
@@ -369,8 +369,8 @@ Not: `react-native-purchases` 10.16.0'a sabitlendi; 11.x, CocoaPods'ta henüz ol
    npx eas-cli@latest env:create --environment production --name EXPO_PUBLIC_SUPABASE_URL --value https://<prod-ref>.supabase.co --visibility plaintext
    ```
    Aynı biçimde: `EXPO_PUBLIC_SUPABASE_ANON_KEY` (Project settings → API keys → anon/publishable; `sensitive`),
-   `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_CONSENT_WEB_URL=https://studyflow.app/veli-onayi/`,
-   `EXPO_PUBLIC_SUPPORT_EMAIL=destek@studyflow.app`. `preview` ortamına staging değerleri girilir: Preview iş
+   `EXPO_PUBLIC_REVENUECAT_IOS_KEY`, `EXPO_PUBLIC_CONSENT_WEB_URL=https://studymark.app/veli-onayi/`,
+   `EXPO_PUBLIC_SUPPORT_EMAIL=destek@studymark.app`. `preview` ortamına staging değerleri girilir: Preview iş
    akışı `eas update --environment preview` ile değerleri buradan okur (GitHub'dan değil).
 3. Kontrol: preview ve production için çek ve denetle.
    ```bash
@@ -501,7 +501,7 @@ Hepsi tamam değilse gönderim yapılmaz (proje planı §10.3, §11.2).
 | 2 | Testler yeşil | GitHub Actions CI; yerelde `npm test`, `npx tsc --noEmit`, `npx eslint .`, `npm run web:check` |
 | 3 | Web yayında | adım 5'teki `curl` ve sahte bağlantı kontrolü |
 | 4 | Veli onayı uçtan uca (staging) | TestFlight/preview derlemesinde 14 yaş hesap → veli e-postası gelir → bağlantı → "Onaylıyorum" → uygulama birkaç saniyede açılır; geri alma da denenir |
-| 5 | Hesap silme (staging) | Apple ile girilmiş hesabı sil → onay e-postası; fonksiyon günlüğünde Apple geri alma `revoked`; iPhone Ayarlar → Apple Kimliği → Apple ile Giriş listesinden StudyFlow kalkar |
+| 5 | Hesap silme (staging) | Apple ile girilmiş hesabı sil → onay e-postası; fonksiyon günlüğünde Apple geri alma `revoked`; iPhone Ayarlar → Apple Kimliği → Apple ile Giriş listesinden StudyMark kalkar |
 | 6 | Satın alma (sandbox) | Yetişkin hesapla aylık Pro → RevenueCat olayı → webhook 200 → `profiles.plan = 'pro'`; geri yükleme çalışır |
 | 7 | Yapay zekâ | Örnek PDF yüklenir, özet/quiz/kart üretilir; Anthropic konsolunda kullanım görünür |
 | 8 | Uyarılar | `ops-alerts-5min` `succeeded`; ops-alerts kuru çalıştırması: `curl -s -X POST https://<prod-ref>.supabase.co/functions/v1/ops-alerts -H "Authorization: Bearer $CRON_SECRET" -H 'content-type: application/json' -d '{"dryRun":true}'` (değeri kabukta `read -rs CRON_SECRET` ile ver) |

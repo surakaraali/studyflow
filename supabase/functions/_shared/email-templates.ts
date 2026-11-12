@@ -73,17 +73,17 @@ function layout(title: string, blocks: Block[]): string {
 <tr><td align="center" style="padding:24px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFFFF;border-radius:16px;border-top:4px solid ${COLORS.exam}">
 <tr><td style="padding:28px 24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-<p style="margin:0 0 4px;font-size:14px;letter-spacing:0.02em;color:${COLORS.pen};font-weight:600">StudyFlow</p>
+<p style="margin:0 0 4px;font-size:14px;letter-spacing:0.02em;color:${COLORS.pen};font-weight:600">StudyMark</p>
 <h1 style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:24px;line-height:1.3;color:${COLORS.ink}">${escapeHtml(title)}</h1>
 ${body}
-<p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:${COLORS.muted}">Bu e-posta StudyFlow hesabıyla ilgili olduğu için gönderildi. Sorunuz varsa bu e-postayı yanıtlayabilirsiniz.</p>
+<p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:${COLORS.muted}">Bu e-posta StudyMark hesabıyla ilgili olduğu için gönderildi. Sorunuz varsa bu e-postayı yanıtlayabilirsiniz.</p>
 </td></tr></table>
 </td></tr></table>
 </body></html>`;
 }
 
 function textBody(lines: string[]): string {
-  return `${lines.join('\n\n')}\n\nStudyFlow`;
+  return `${lines.join('\n\n')}\n\nStudyMark`;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -98,13 +98,13 @@ export function consentRequestEmail(input: {
   under13: boolean;
 }): EmailMessage {
   const name = childName(input.nickname);
-  const subject = `${plainChildName(input.nickname)} StudyFlow için onayınızı bekliyor`;
+  const subject = `${plainChildName(input.nickname)} StudyMark için onayınızı bekliyor`;
   const expires = formatDateTr(input.expiresAt);
   const blocks: Block[] = [
     { kind: 'p', html: `Merhaba,` },
     {
       kind: 'p',
-      html: `${name}, ders çalışmasını planlamak için StudyFlow uygulamasını kullanmak istiyor ve bu e-posta adresini veli adresi olarak yazdı. 18 yaşından küçükler için sizin onayınız gerekiyor.`,
+      html: `${name}, ders çalışmasını planlamak için StudyMark uygulamasını kullanmak istiyor ve bu e-posta adresini veli adresi olarak yazdı. 18 yaşından küçükler için sizin onayınız gerekiyor.`,
     },
     {
       kind: 'p',
@@ -132,7 +132,7 @@ export function consentRequestEmail(input: {
     html: layout('Veli onayı', blocks),
     text: textBody([
       'Merhaba,',
-      `${plainChildName(input.nickname)}, ders çalışmasını planlamak için StudyFlow uygulamasını kullanmak istiyor ve bu e-posta adresini veli adresi olarak yazdı. 18 yaşından küçükler için sizin onayınız gerekiyor.`,
+      `${plainChildName(input.nickname)}, ders çalışmasını planlamak için StudyMark uygulamasını kullanmak istiyor ve bu e-posta adresini veli adresi olarak yazdı. 18 yaşından küçükler için sizin onayınız gerekiyor.`,
       `Onay sayfası (${expires} tarihine kadar geçerli): ${input.link}`,
       `Ayrı ayrı karar vereceğiniz amaçlar: ${PURPOSE_LABELS.ai}, ${PURPOSE_LABELS.notifications}.`,
       input.under13
@@ -163,14 +163,14 @@ export function consentDecisionEmail(input: {
       subject: 'Onayınız kaydedildi',
       tag: 'consent_granted',
       html: layout('Onayınız kaydedildi', [
-        { kind: 'p', html: `Teşekkürler. ${name} artık StudyFlow'u kullanabilir.` },
+        { kind: 'p', html: `Teşekkürler. ${name} artık StudyMark'u kullanabilir.` },
         ...purposesHtml,
         { kind: 'p', html: 'Tercihlerinizi istediğiniz zaman değiştirebilir ya da onayınızı tamamen geri alabilirsiniz.' },
         { kind: 'button', label: 'Onayımı geri al', href: revokeLink },
         { kind: 'note', html: 'Bu e-postayı saklayın: geri alma bağlantısı süresiz geçerlidir.' },
       ]),
       text: textBody([
-        `Teşekkürler. ${plainChildName(input.nickname)} artık StudyFlow'u kullanabilir.`,
+        `Teşekkürler. ${plainChildName(input.nickname)} artık StudyMark'u kullanabilir.`,
         granted.length ? `İzin verdiğiniz amaçlar: ${granted.join(', ')}.` : 'Ek amaçlar için izin vermediniz.',
         `Onayınızı geri almak için: ${revokeLink}`,
       ]),
@@ -210,7 +210,7 @@ export function consentReminderEmail(input: {
     subject: `Hatırlatma: ${plainChildName(input.nickname)} onayınızı bekliyor`,
     tag: 'consent_reminder',
     html: layout('Onayınızı bekliyoruz', [
-      { kind: 'p', html: `${name} StudyFlow'u kullanmak için hâlâ onayınızı bekliyor.` },
+      { kind: 'p', html: `${name} StudyMark'u kullanmak için hâlâ onayınızı bekliyor.` },
       {
         kind: 'p',
         html: `Onay verilmezse hesap ve tüm verileri <strong>${escapeHtml(deleteOn)}</strong> tarihinde silinecek.`,
@@ -219,7 +219,7 @@ export function consentReminderEmail(input: {
       { kind: 'note', html: `Yeni bağlantı ${escapeHtml(formatDateTr(input.expiresAt))} tarihine kadar geçerlidir.` },
     ]),
     text: textBody([
-      `${plainChildName(input.nickname)} StudyFlow'u kullanmak için hâlâ onayınızı bekliyor.`,
+      `${plainChildName(input.nickname)} StudyMark'u kullanmak için hâlâ onayınızı bekliyor.`,
       `Onay verilmezse hesap ve tüm verileri ${deleteOn} tarihinde silinecek.`,
       `Onay sayfası: ${input.link}`,
     ]),
@@ -234,9 +234,9 @@ export type DeletionReason = 'user' | 'consent' | 'inactivity';
 
 export function accountDeletedEmail(input: { to: string; reason: DeletionReason }): EmailMessage {
   const why = {
-    user: 'İsteğin üzerine StudyFlow hesabını sildik.',
-    consent: 'Velin 30 gün içinde onay vermediği için StudyFlow hesabını sildik.',
-    inactivity: 'Bir yıldan uzun süredir giriş yapılmadığı için StudyFlow hesabını sildik.',
+    user: 'İsteğin üzerine StudyMark hesabını sildik.',
+    consent: 'Velin 30 gün içinde onay vermediği için StudyMark hesabını sildik.',
+    inactivity: 'Bir yıldan uzun süredir giriş yapılmadığı için StudyMark hesabını sildik.',
   }[input.reason];
   const details =
     'Yüklediğin belgeler, derslerin, planın, kartların ve çalışma kayıtların silindi. Yasal olarak saklamamız gereken veli onayı ve ödeme kayıtları, yasal süre dolunca silinir.';
@@ -260,17 +260,17 @@ export function inactivityWarningEmail(input: { to: string; deleteOn: Date }): E
   const deleteOn = formatDateTr(input.deleteOn);
   return {
     to: input.to,
-    subject: 'StudyFlow hesabın silinmek üzere',
+    subject: 'StudyMark hesabın silinmek üzere',
     tag: 'inactivity_warning',
     html: layout('Seni özledik', [
-      { kind: 'p', html: 'Bir yıldır StudyFlow hesabına giriş yapmadın.' },
+      { kind: 'p', html: 'Bir yıldır StudyMark hesabına giriş yapmadın.' },
       {
         kind: 'p',
         html: `Hesabını korumak istiyorsan <strong>${escapeHtml(deleteOn)}</strong> tarihine kadar uygulamayı açman yeterli. Açmazsan hesabın ve verilerin silinecek.`,
       },
     ]),
     text: textBody([
-      'Bir yıldır StudyFlow hesabına giriş yapmadın.',
+      'Bir yıldır StudyMark hesabına giriş yapmadın.',
       `Hesabını korumak istiyorsan ${deleteOn} tarihine kadar uygulamayı açman yeterli. Açmazsan hesabın ve verilerin silinecek.`,
     ]),
   };
@@ -329,8 +329,8 @@ export function opsAlertEmail(input: { to: string; project: string; items: OpsAl
   const first = open[0] ?? input.items[0];
   const subject =
     open.length > 0
-      ? `[StudyFlow ops] ${first.title}${open.length > 1 ? ` (+${open.length - 1})` : ''}`
-      : `[StudyFlow ops] Düzeldi: ${first.title}`;
+      ? `[StudyMark ops] ${first.title}${open.length > 1 ? ` (+${open.length - 1})` : ''}`
+      : `[StudyMark ops] Düzeldi: ${first.title}`;
   const sections = input.items.map((item) => ({
     heading: `${OPS_ACTION_LABELS[item.action]} · ${item.title}`,
     lines: item.lines,

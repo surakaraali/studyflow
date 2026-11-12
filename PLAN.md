@@ -1,4 +1,4 @@
-# StudyFlow – AI Study Planner · Proje Planı
+# StudyMark – AI Study Planner · Proje Planı
 
 Ders programı, sınav ve çalışma takibi yapan, yapay zekâ destekli mobil çalışma asistanı.
 Hedef: önce App Store (iOS), ardından aynı kod tabanıyla Google Play (Android).
@@ -134,7 +134,7 @@ Pomodoro / odak modu · widget · paylaşılan desteler.
 - [ ] Yapay zekâya veri gönderimi için açık izin ekranı
 - [ ] 13 yaş altı kullanıcılar olduğu için: veli onayı, veli kapısı, Apple çocuk kuralları ve Google Aile Politikası (BRD §12)
 - [ ] Hata izleme ve analitikte kişisel veri ve reklam kimliği gönderilmez (NFR PRIV-04)
-- [ ] App Store'da uygulama adının müsait olduğunu kontrol et ("StudyFlow" alınmış olabilir)
+- [ ] App Store'da uygulama adının müsait olduğunu kontrol et ("StudyMark" alınmış olabilir)
 
 ---
 

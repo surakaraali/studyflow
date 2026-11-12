@@ -7,7 +7,7 @@ create extension if not exists pgtap with schema extensions;
 select plan(203);
 
 -- Users (the on_auth_user_created trigger creates their profiles).
-insert into auth.users (id, email) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a@test.studyflow.app'), ('bbbbbbbb-0000-4000-8000-000000000002', 'b@test.studyflow.app');
+insert into auth.users (id, email) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a@test.studymark.app'), ('bbbbbbbb-0000-4000-8000-000000000002', 'b@test.studymark.app');
 
 -- A's rows, written as the table owner (bypasses RLS).
 insert into public.consent_tokens (user_id, id, token_hash, parent_email, expires_at) values ('aaaaaaaa-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-000000000001', 'h1', 'veli@example.com', now() + interval '7 days');
@@ -311,7 +311,7 @@ reset role;
 
 -- 5b. US-75: consent follows the (corrected) age. C is a waiting 12-year-old who tries an adult year;
 -- D was a waiting 17-year-old who has turned 18 since.
-insert into auth.users (id, email) values ('cccccccc-0000-4000-8000-000000000003', 'c@test.studyflow.app'), ('dddddddd-0000-4000-8000-000000000004', 'd@test.studyflow.app');
+insert into auth.users (id, email) values ('cccccccc-0000-4000-8000-000000000003', 'c@test.studymark.app'), ('dddddddd-0000-4000-8000-000000000004', 'd@test.studymark.app');
 update public.profiles set birth_year = extract(year from now())::int - 12, consent_status = 'pending', onboarding_done = 1 where id = 'cccccccc-0000-4000-8000-000000000003';
 update public.profiles set birth_year = extract(year from now())::int - 18, consent_status = 'pending', onboarding_done = 1 where id = 'dddddddd-0000-4000-8000-000000000004';
 set local role authenticated;

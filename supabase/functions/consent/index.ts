@@ -181,7 +181,7 @@ async function handlePost(req: Request): Promise<Response> {
           kind: 'consent' as const,
           title: 'Velin onayladı',
           body: purposes.includes('ai')
-            ? "StudyFlow'un tüm özelliklerini artık kullanabilirsin."
+            ? "StudyMark'un tüm özelliklerini artık kullanabilirsin."
             : 'Hesabın açıldı. Yapay zekâ özellikleri velin izin verene kadar kapalı.',
           url: '/',
         }

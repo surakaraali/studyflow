@@ -1,4 +1,4 @@
-# StudyFlow — App Store Connect Taslağı (R1)
+# StudyMark — App Store Connect Taslağı (R1)
 
 | Alan | Değer |
 |---|---|
@@ -16,13 +16,13 @@ harfler UTF-8'de 2 bayt tuttuğu için bayt sayısı da verildi. Sayılar metin 
 
 | Seçenek | Metin | Karakter |
 |---|---|---|
-| Ana | StudyFlow | 9 |
-| Yedek 1 | StudyFlow: Ders Planlayıcı | 26 |
-| Yedek 2 | Ders Akışı: Çalışma Planı | 25 |
+| Ana | StudyMark | 9 |
+| Yedek 1 | StudyMark: Ders Planlayıcı | 26 |
+| Yedek 2 | Baloncuk: Ders Planı | 20 |
 
-**Açık madde (Q-08, Ürün sahibi):** "StudyFlow" adı App Store'da ve marka tescilinde müsait mi? Yedek 1 aynı
-markayı korur, yalnızca mağazada benzersizlik sağlar; marka sorunu varsa Yedek 2 (Türkçe yeni ad) kullanılır.
-`studyflow.app` alan adı da aynı kararla teyit edilir; aşağıdaki URL'ler buna bağlı ve değişirse güncellenecek
+**Q-08:** **Karar (12 Kasım 2026):** ad StudyMark. StudyFlow'un `.app` ve `.com.tr` alan adları başkasına ait çıktı. Türkiye App Store'unda StudyMark adlı uygulama yok; `studymark.app` ve `studymark.com` için DNS kaydı yok. Alan adının satın alınması ve TÜRKPATENT marka kontrolü bekliyor. Yedek 1 aynı
+markayı korur, yalnızca mağazada benzersizlik sağlar; marka sorunu çıkarsa Yedek 2 (Türkçe ad) kullanılır.
+`studymark.app` alan adı da aynı kararla alınır; aşağıdaki URL'ler buna bağlı ve değişirse güncellenecek
 yerlerin tam listesi [go_live.md §2](../analysis/go_live.md#2-son-adrese-bağlı-yerler)'de.
 
 ## 2. Alt başlık (≤ 30 karakter)
@@ -46,7 +46,7 @@ Yalnızca kodda olan özellikler yazıldı. Android, Google ile giriş, deneme s
 e-postası ve fotoğraftan not okuma **yazılmaz** (R1'de yok). Kota ve abonelik satırları Q-05 kararıyla teyit edilir.
 
 ```text
-StudyFlow, ortaokul ve lise öğrencileri için bir ders çalışma planlayıcısıdır. Derslerini, sınav tarihlerini ve boş saatlerini girersin; StudyFlow her gün ne çalışacağını söyler. Ders notunu yüklersen yapay zekâ özet, quiz ve çalışma kartı hazırlar.
+StudyMark, ortaokul ve lise öğrencileri için bir ders çalışma planlayıcısıdır. Derslerini, sınav tarihlerini ve boş saatlerini girersin; StudyMark her gün ne çalışacağını söyler. Ders notunu yüklersen yapay zekâ özet, quiz ve çalışma kartı hazırlar.
 
 BUGÜN NE ÇALIŞACAĞIN HAZIR
 • Okul ders programını ve müsait saatlerini gir. Plan okul saatlerine ve uyku saatine blok koymaz.
@@ -81,11 +81,11 @@ VELİ ONAYI VE GİZLİLİK
 ÜCRETSİZ VE PRO
 • Plan, quiz, kart tekrarı, zamanlayıcı ve ilerleme iki planda da var.
 • Ücretsiz planda ayda 3 belge işleyebilirsin (belge başına en çok 20 sayfa).
-• StudyFlow Pro ile ayda 40 belge işleyebilirsin (belge başına en çok 100 sayfa). Pro aylık ve yıllık abonelikle alınır.
+• StudyMark Pro ile ayda 40 belge işleyebilirsin (belge başına en çok 100 sayfa). Pro aylık ve yıllık abonelikle alınır.
 • Abonelik, dönem sonundan en az 24 saat önce iptal edilmezse otomatik yenilenir. Ödeme Apple Kimliği hesabından alınır. Aboneliğini App Store hesap ayarlarından yönetebilir ve iptal edebilirsin.
 
-Kullanım koşulları: [https://studyflow.app/kosullar/]
-Gizlilik politikası: [https://studyflow.app/gizlilik/]
+Kullanım koşulları: [https://studymark.app/kosullar/]
+Gizlilik politikası: [https://studymark.app/gizlilik/]
 ```
 
 ## 5. Anahtar kelimeler (≤ 100; 92 karakter, 98 bayt)
@@ -94,31 +94,31 @@ Gizlilik politikası: [https://studyflow.app/gizlilik/]
 lgs,yks,tyt,ayt,ders programı,çalışma,flashcard,özet,ödev,odak,pomodoro,tekrar,ortaokul,lise
 ```
 
-Virgülden sonra boşluk yok. Ad ("StudyFlow") ve alt başlık A'daki kelimeler (sınav, plan, quiz, kart) tekrar
+Virgülden sonra boşluk yok. Ad ("StudyMark") ve alt başlık A'daki kelimeler (sınav, plan, quiz, kart) tekrar
 edilmedi. Sınır App Store Connect'te bayt olarak sayılırsa da 100'ün altında kalır. "deneme", "net" gibi R2a
 özelliklerini çağrıştıran kelimeler kullanılmaz.
 
 ## 6. URL'ler ve diğer alanlar
 
 Sayfalar `web/` ve uygulamanın kendi metinlerinden üretilir (`npm run web:build`, yayın: `.github/workflows/web.yml`,
-GitHub Pages). Alan adı Q-08 ile kesinleşene kadar `https://studyflow.app` **yer tutucudur**; özel alan adı
+GitHub Pages). Alan adı Q-08 ile kesinleşene kadar `https://studymark.app` **yer tutucudur**; özel alan adı
 bağlanmadan önce aynı sayfalar `https://surakaraali.github.io/studyflow/…` altında açılır. Sondaki `/`
 yönlendirmeyi önler; App Store Connect'e bu biçimde girilir.
 
 | App Store Connect alanı | Değer | Durum |
 |---|---|---|
-| Destek URL'si (zorunlu) | `https://studyflow.app/destek/` | Sayfa hazır: SSS (uygulamadaki SSS'nin aynısı), destek e-postası, veli yardımı, hesap silme |
-| Pazarlama URL'si | `https://studyflow.app/` | Sayfa hazır (tanıtım) |
-| Gizlilik politikası URL'si (zorunlu) | `https://studyflow.app/gizlilik/` | Sayfa hazır; metin H-01 onayı bekliyor, sayfada "taslak" uyarısı var ve arama motorlarına kapalı |
-| Kullanım koşulları (EULA) | `https://studyflow.app/kosullar/` (açıklamanın sonunda) ya da Apple standart EULA | Sayfa hazır; hangisinin kullanılacağına Ürün sahibi + Hukuk danışmanı karar verir |
-| Web'den hesap silme | `https://studyflow.app/hesap-silme/` | Form hazır (`web/delete-account/index.html` → `support`); sahiplik doğrulama süreci bekliyor (T-16, H-12) |
+| Destek URL'si (zorunlu) | `https://studymark.app/destek/` | Sayfa hazır: SSS (uygulamadaki SSS'nin aynısı), destek e-postası, veli yardımı, hesap silme |
+| Pazarlama URL'si | `https://studymark.app/` | Sayfa hazır (tanıtım) |
+| Gizlilik politikası URL'si (zorunlu) | `https://studymark.app/gizlilik/` | Sayfa hazır; metin H-01 onayı bekliyor, sayfada "taslak" uyarısı var ve arama motorlarına kapalı |
+| Kullanım koşulları (EULA) | `https://studymark.app/kosullar/` (açıklamanın sonunda) ya da Apple standart EULA | Sayfa hazır; hangisinin kullanılacağına Ürün sahibi + Hukuk danışmanı karar verir |
+| Web'den hesap silme | `https://studymark.app/hesap-silme/` | Form hazır (`web/delete-account/index.html` → `support`); sahiplik doğrulama süreci bekliyor (T-16, H-12) |
 | Telif hakkı | `© 2027 [Şirket unvanı]` | Unvan H-01 ile kesinleşir |
 | Birincil dil | Türkçe | — |
-| Abonelik grubu | "StudyFlow Pro": aylık ve yıllık; görünen ad ve açıklama Türkçe; fiyat Q-05 | İnceleme için paywall ekran görüntüsü yüklenir |
+| Abonelik grubu | "StudyMark Pro": aylık ve yıllık; görünen ad ve açıklama Türkçe; fiyat Q-05 | İnceleme için paywall ekran görüntüsü yüklenir |
 
-Mağazaya girilmeyen ama aynı alan adına bağlı sayfalar: veli onayı `https://studyflow.app/veli-onayi/`
+Mağazaya girilmeyen ama aynı alan adına bağlı sayfalar: veli onayı `https://studymark.app/veli-onayi/`
 (fonksiyon sırrı `CONSENT_WEB_URL` ve EAS değişkeni `EXPO_PUBLIC_CONSENT_WEB_URL`) ve aydınlatma metni
-`https://studyflow.app/aydinlatma-metni/` (onay sayfası buna bağlanır).
+`https://studymark.app/aydinlatma-metni/` (onay sayfası buna bağlanır).
 
 ## 7. Kategori ve yaş derecelendirmesi (Q-07)
 
@@ -259,7 +259,7 @@ adres ve bağlantıyla yeniden ölçülür). Gönderimden önce yapılacaklar (T
 - Yetişkin hesabın planı Ücretsiz bırakılır ki satın alma sandbox'ta denenebilsin.
 
 ```text
-Thank you for reviewing StudyFlow, a study planner for Turkish middle and high school students (grades 5-12). The interface is in Turkish. Key labels: Bugün = Today, Takvim = Calendar, Dersler = Courses, Çalış = Study, İlerleme = Progress, Ayarlar = Settings (gear icon on Today), Hesap ve silme = Account and deletion, Pro'ya geç = Upgrade to Pro.
+Thank you for reviewing StudyMark, a study planner for Turkish middle and high school students (grades 5-12). The interface is in Turkish. Key labels: Bugün = Today, Takvim = Calendar, Dersler = Courses, Çalış = Study, İlerleme = Progress, Ayarlar = Settings (gear icon on Today), Hesap ve silme = Account and deletion, Pro'ya geç = Upgrade to Pro.
 
 DEMO ACCOUNTS
 1) Adult account (18+), every feature available, no parental consent needed:
@@ -271,7 +271,7 @@ DEMO ACCOUNTS
 PARENTAL CONSENT (users under 18)
 - At sign-up the app asks for the birth year. Under 18 it asks for a parent's e-mail address and e-mails the parent a link to a consent web page (Turkish data protection law, KVKK).
 - To act as the parent for the minor account, open this link (valid until [date, 7 days after it was sent]):
-  [https://studyflow.app/veli-onayi/?token=...]
+  [https://studymark.app/veli-onayi/?token=...]
   The page lets the parent allow AI and/or notifications, or revoke consent. Then bring the app to the foreground; the account unlocks within a few seconds.
 - Users under 13 cannot use the app until a parent consents. This is why we provide the adult account for a full review.
 
@@ -287,10 +287,10 @@ PARENTAL GATE
 - There are no other links out of the app; legal texts open inside the app. The only exception is a button that opens iOS Settings for the notification permission.
 
 SUBSCRIPTIONS
-- Auto-renewable monthly and annual "StudyFlow Pro" subscriptions (In-App Purchase, via RevenueCat). Pro only raises the monthly document and page limits. The paywall shows price, period, auto-renewal and cancellation terms, Restore Purchases, Terms of Use and Privacy Policy.
+- Auto-renewable monthly and annual "StudyMark Pro" subscriptions (In-App Purchase, via RevenueCat). Pro only raises the monthly document and page limits. The paywall shows price, period, auto-renewal and cancellation terms, Restore Purchases, Terms of Use and Privacy Policy.
 
 ACCOUNT DELETION
-- In the app: Settings > Hesap ve silme > Hesabımı sil (type SİL to confirm). Documents are removed at once, the account and its data are deleted, and Sign in with Apple is revoked. On the web: https://studyflow.app/hesap-silme/
+- In the app: Settings > Hesap ve silme > Hesabımı sil (type SİL to confirm). Documents are removed at once, the account and its data are deleted, and Sign in with Apple is revoked. On the web: https://studymark.app/hesap-silme/
 
 PRIVACY
 - No ads, no tracking, no App Tracking Transparency prompt. Anonymous usage and crash events go to our own server without any user or device identifier; there is no third-party analytics SDK.

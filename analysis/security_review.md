@@ -1,4 +1,4 @@
-# StudyFlow — Güvenlik ve Gizlilik İncelemesi (MASVS L1)
+# StudyMark — Güvenlik ve Gizlilik İncelemesi (MASVS L1)
 
 | Alan | Değer |
 |---|---|
@@ -45,7 +45,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.1 MASVS-STORAGE
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | STORAGE-1 · Oturum bilgisi güvenli depoda (SEC-05) | Supabase modunda supabase-js oturumu `expo-sqlite/localStorage` ile SQLite dosyasında tutuyor (`src/services/supabase.ts`); Keychain kullanılmıyor. Yerel (geliştirme) modunda yalnızca hesap kimliği `expo-secure-store`'da (`src/services/auth/local.ts`). | ⚠️ T-01 |
 | STORAGE-1 · Cihazdaki kullanıcı verisi | Her hesap için ayrı `user-<id>.db` (`src/db/client.ts`); PDF'ler `Documents/documents/<id>/` altında. Uygulama düzeyinde şifreleme yok; yalnızca iOS Veri Koruması (varsayılan sınıf: ilk kilit açılışından sonra erişilebilir). | ⚠️ T-02 |
@@ -56,7 +56,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.2 MASVS-CRYPTO
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | CRYPTO-1 · Standart kripto, kendi algoritması yok | TLS platformdan. Veli onay bağlantısı 32 bayt `crypto.getRandomValues`, saklanan yalnızca SHA-256 özeti (`supabase/functions/_shared/consent.ts`). Kimlikler `expo-crypto` ile rastgele UUID (`src/db/ids.ts`). | ✅ |
 | CRYPTO-1 · Parola saklama | Üretimde parolaları Supabase Auth saklar (uygulama görmez). Yerel modda tuzlu, tek turlu SHA-256 (`src/services/auth/local.ts`): zayıf ama yalnızca geliştirme modunda, veri cihazdan çıkmaz. Yayın derlemesinin yerel moda düşmemesi gerekir. | ⚠️ T-05 |
@@ -65,7 +65,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.3 MASVS-AUTH
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | AUTH-1 · Kimlik doğrulama | Supabase Auth: e-posta + şifre (e-posta doğrulaması zorunlu, en az 8 karakter, `double_confirm_changes`, `secure_password_change`; `supabase/config.toml`) ve Apple ile giriş (yerel kimlik belirteci, `signInWithIdToken`). Anonim giriş kapalı. Google ile giriş R2a'ya kaldı (US-10). | ✅ |
 | AUTH-1 · Oturum yönetimi | JWT 1 saat; yenileme belirteci rotasyonu açık (10 sn tekrar aralığı); çıkışta `auth.signOut()` (`src/services/auth/supabase.ts`). | ✅ |
@@ -79,7 +79,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.4 MASVS-NETWORK
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | NETWORK-1 · Tüm trafik HTTPS (SEC-01) | Uygulama yalnızca Supabase, RevenueCat, Expo (push token) ve Apple ile konuşur. Resend, Anthropic ve Expo Push Service'e yalnızca Edge Functions HTTPS ile gider. | ✅ |
 | NETWORK-1 · ATS istisnası yok | `app.json`'da `NSAppTransportSecurity` istisnası yok. Prebuild'in eklediği değerler (ör. `NSAllowsLocalNetworking`) yayın derlemesinin `Info.plist`'inde kontrol edilecek. | 🔍 T-05 |
@@ -90,7 +90,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.5 MASVS-PLATFORM
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | PLATFORM-1 · Derin bağlantılar | Şema `studyflow`. `dev-seed` yalnızca `__DEV__` ve yerel modda çalışır (`src/features/dev/seed.ts`); `parent-consent` rotası yalnızca yerel modda (`src/app/parent-consent.tsx`); bildirimden gelen yol yalnızca oturum açıksa açılır (`src/services/notifications.ts`). | ✅ |
 | PLATFORM-1 · Kimlik bağlantısı özel şemada | Bkz. AUTH-1 · E-posta bağlantıları. Evrensel bağlantı (associated domains) önerilir. | ❌ T-08 |
@@ -101,7 +101,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.6 MASVS-CODE
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | CODE-1 · Güncel platform | COMP-01 iOS 17+. `app.json`'da dağıtım hedefi ayarlı değil; Expo SDK 58 varsayılanı geçerli. | 🔍 |
 | CODE-2 · Güncelleme zorlaması | FR-ADM-04: `public.app_config` (en düşük ve en yeni sürüm, bakım modu) ve `src/features/app-gate` (`AppGate`: zorunlu güncelleme ve bakım ekranı, bir kerelik "yeni sürüm" sorusu) yazıldı; kök düzene bağlanması bekleniyor. `expo-updates` yüklü değil; `eas.json` kanalları ve `preview.yml`'deki `eas update` derlemeye bağlanmamış (proje planı §11.3 geri alma buna dayanıyor). | ❌ T-25 |
@@ -121,7 +121,7 @@ kapatıldı (aşağıda ✅ ile işaretli).
 
 ### 3.8 MASVS-PRIVACY
 
-| Kontrol | StudyFlow'da nasıl karşılanıyor | Durum |
+| Kontrol | StudyMark'da nasıl karşılanıyor | Durum |
 |---|---|---|
 | PRIVACY-1 · Veri en aza indirme (PRIV-01) | Ad-soyad, okul, telefon, konum istenmez; doğum yılı alınır, rumuz isteğe bağlı. Apple ile girişte yalnızca e-posta kapsamı istenir. | ✅ |
 | PRIVACY-1 · Yapay zekâya kişisel veri gitmez (PRIV-02, BR-05) | Sistem istemi yalnızca sınıf, segment ve ders adını alır (`_shared/ai/prompts.ts`); istek gövdeleri ve belge metni loglanmaz. İstemci istek testi e-posta ve ad alanlarını arar (`src/services/ai/__tests__/request.test.ts`); sunucu istemi için otomatik test yok. Belgenin kendisi kişisel veri içerebilir (H-11). | ⚠️ |

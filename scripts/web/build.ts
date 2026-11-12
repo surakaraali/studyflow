@@ -11,7 +11,7 @@
  *   WEB_FUNCTIONS_URL          https://<prod-ref>.supabase.co/functions/v1
  *                              (or EXPO_PUBLIC_SUPABASE_URL, + /functions/v1)
  *   WEB_STAGING_FUNCTIONS_URL  also builds /staging/veli-onayi/ and /staging/hesap-silme/
- *   WEB_BASE_URL               https://studyflow.app/ (canonical links and the 404 page)
+ *   WEB_BASE_URL               https://studymark.app/ (canonical links and the 404 page)
  *   EXPO_PUBLIC_SUPPORT_EMAIL  support address shown on the pages
  *   WEB_APP_STORE_URL          App Store link on the landing page once the app is live
  *   WEB_ANON_KEY               optional public anon key for the two forms

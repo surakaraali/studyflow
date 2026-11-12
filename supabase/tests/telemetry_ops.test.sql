@@ -17,7 +17,7 @@ delete from private.ops_alerts;
 delete from public.ai_usage;
 delete from public.documents;
 
-insert into auth.users (id, email) values ('eeeeeeee-0000-4000-8000-000000000005', 'e@test.studyflow.app');
+insert into auth.users (id, email) values ('eeeeeeee-0000-4000-8000-000000000005', 'e@test.studymark.app');
 
 -- 1. Signed-in users can't read or write telemetry, ops views or alert state.
 set local role authenticated;

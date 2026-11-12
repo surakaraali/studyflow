@@ -201,7 +201,7 @@ const account = {
     },
     primary: {
       title: 'İlkokul sürümü yakında',
-      body: 'StudyFlow şimdilik 5–12. sınıflar için. İlkokul sürümü hazır olunca haber verelim mi? Velinin e-posta adresini yazabilirsin.',
+      body: 'StudyMark şimdilik 5–12. sınıflar için. İlkokul sürümü hazır olunca haber verelim mi? Velinin e-posta adresini yazabilirsin.',
       label: 'Velinin e-posta adresi',
       submit: 'Haber ver',
       saved: 'Teşekkürler! İlkokul sürümü çıkınca bu adrese haber vereceğiz.',
@@ -249,7 +249,7 @@ const account = {
     locked: {
       greeting: 'Merhaba',
       title: 'Velinin onayı gerekiyor',
-      body: 'StudyFlow’u kullanmaya başlamak için velinin onay vermesi gerekiyor. Ona bir e-posta gönderdik; onaylayınca hemen başlayabilirsin.',
+      body: 'StudyMark’u kullanmaya başlamak için velinin onay vermesi gerekiyor. Ona bir e-posta gönderdik; onaylayınca hemen başlayabilirsin.',
       deadline_one: 'Velin {{count}} gün içinde onaylamazsa hesabın ve bilgilerin silinir.',
       deadline_other: 'Velin {{count}} gün içinde onaylamazsa hesabın ve bilgilerin silinir.',
       revoked: 'Velin onayını geri aldı. Yeniden onay verene kadar uygulamayı kullanamazsın.',
@@ -276,7 +276,7 @@ const account = {
       title: 'Veli onayı',
       devNote: 'Geliştirme modu: Bu ekran, velinin e-postadaki bağlantıyla açacağı web sayfasının yerine geçer.',
       intro:
-        'Merhaba! Çocuğunuz StudyFlow’u kullanmak için onayınızı istiyor. StudyFlow; derslerini, sınav tarihlerini ve çalışma planını düzenlemesine yardım eden bir uygulamadır.',
+        'Merhaba! Çocuğunuz StudyMark’u kullanmak için onayınızı istiyor. StudyMark; derslerini, sınav tarihlerini ve çalışma planını düzenlemesine yardım eden bir uygulamadır.',
       account: 'Hesap: {{email}}',
       textTitle: 'Aydınlatma metni',
       textVersion: 'Sürüm {{version}} · {{date}}',
@@ -374,7 +374,7 @@ const account = {
     deleteUndo: 'Bu işlem geri alınamaz.',
     proTitle: 'Pro aboneliğin silmeyle iptal olmaz',
     proBody:
-      'Aboneliği App Store’dan iptal etmen gerekiyor: Ayarlar > Apple ID (adın) > Abonelikler > StudyFlow > Aboneliği İptal Et. Hesabı silmek aboneliği iptal etmez.',
+      'Aboneliği App Store’dan iptal etmen gerekiyor: Ayarlar > Apple ID (adın) > Abonelikler > StudyMark > Aboneliği İptal Et. Hesabı silmek aboneliği iptal etmez.',
     webForm:
       'Uygulamaya giremiyorsan silme isteğini web sitemizdeki formdan ya da {{email}} adresine yazarak iletebilirsin.',
     confirmLabel: 'Onaylamak için SİL yaz',

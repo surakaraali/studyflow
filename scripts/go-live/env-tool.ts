@@ -1,7 +1,7 @@
 /// <reference types="node" />
 /**
  * Small helpers for supabase-setup.sh, so the shell never has to parse an env file itself
- * (values such as "StudyFlow <no-reply@…>" or a multi-line .p8 key break `source`).
+ * (values such as "StudyMark <no-reply@…>" or a multi-line .p8 key break `source`).
  *
  *   env-tool.ts exports  <env-file> KEY1,KEY2   → `export KEY='…'` lines for eval (set keys only)
  *   env-tool.ts secrets  <env-file> <out-file>  → function secrets only, for `supabase secrets set`

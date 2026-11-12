@@ -1,4 +1,4 @@
-# StudyFlow — Uçtan Uca Proje Planı
+# StudyMark — Uçtan Uca Proje Planı
 
 | Alan | Değer |
 |---|---|
@@ -13,7 +13,7 @@
 
 ## 1. Özet
 
-StudyFlow, 7 kişilik çekirdek bir ekiple 2 haftalık sprintlerle geliştirilecek. **R1 (iOS, ortaokul +
+StudyMark, 7 kişilik çekirdek bir ekiple 2 haftalık sprintlerle geliştirilecek. **R1 (iOS, ortaokul +
 lise)** 31 Mart 2027'de App Store'da olacak. Böylece LGS ve YKS'ye yaklaşık 2,5 ay kala öğrencilerin
 elinde olur. Android (R2a) Mayıs 2027 sonunda, ilkokul modu ve veli paneli (R2b) yeni eğitim yılının
 başında, Eylül 2027'de çıkar.
@@ -34,7 +34,7 @@ başında, Eylül 2027'de çıkar.
 
 ```mermaid
 gantt
-    title StudyFlow yol haritası
+    title StudyMark yol haritası
     dateFormat YYYY-MM-DD
     axisFormat %d %b
     section R1 (iOS)
@@ -336,7 +336,7 @@ iPhone SE (3. nesil, iOS 17), iPhone 13 (iOS 18), iPhone 15 (iOS 26), iPhone 17 
 | R-08 | Ekip kapasitesinin düşmesi (hastalık, ayrılma, tatil) | O | O | Eşli inceleme, dokümantasyon, kritik bilginin en az iki kişide olması | Tech lead |
 | R-09 | Beta için yeterli öğrenci bulunamaması | O | O | Okul ve dershane iş birlikleri S3'te başlar; yarıyıl tatilinde test | PO |
 | R-10 | Çevrimdışı eşitlemede veri kaybı | D | Y | Yalnızca-ekleme model, ADR-001, E2E senaryoları | Mobil |
-| R-11 | "StudyFlow" adının alınmış olması | O | O | S0'da mağaza ve marka kontrolü, 3 yedek ad | PO |
+| R-11 | "StudyMark" adının alınmış olması | O | O | S0'da mağaza ve marka kontrolü, 3 yedek ad | PO |
 | R-12 | Expo/React Native sürüm değişikliklerinin kırılma yaratması | D | O | R1 boyunca SDK sabit; yükseltme R1 sonrası, ayrı dalda | Tech lead |
 | R-13 | Resmî sınav tarihlerinin değişmesi | D | D | Tarihler yönetim tablosunda, kullanıcıya bildirim (US-27) | BA |
 

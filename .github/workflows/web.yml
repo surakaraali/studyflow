@@ -7,8 +7,8 @@
 # Repository variables read here (public values only):
 #   WEB_FUNCTIONS_URL          https://<prod-ref>.supabase.co/functions/v1 (required)
 #   WEB_STAGING_FUNCTIONS_URL  https://<staging-ref>.supabase.co/functions/v1 (optional, adds /staging/…)
-#   WEB_BASE_URL               https://studyflow.app/ once the custom domain works (optional)
-#   EXPO_PUBLIC_SUPPORT_EMAIL  support address (optional, default destek@studyflow.app)
+#   WEB_BASE_URL               https://studymark.app/ once the custom domain works (optional)
+#   EXPO_PUBLIC_SUPPORT_EMAIL  support address (optional, default destek@studymark.app)
 #   WEB_APP_STORE_URL          App Store link once the app is live (optional)
 # The custom domain is set in Settings → Pages (a CNAME file is ignored by this kind of deploy).
 name: Web

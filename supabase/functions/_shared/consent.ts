@@ -20,7 +20,7 @@ export function consentTextVersion(): string {
 }
 
 export function consentPageUrl(token: string): string {
-  const base = Deno.env.get('CONSENT_WEB_URL') ?? 'https://studyflow.app/veli-onayi/';
+  const base = Deno.env.get('CONSENT_WEB_URL') ?? 'https://studymark.app/veli-onayi/';
   const separator = base.includes('?') ? '&' : '?';
   return `${base}${separator}token=${encodeURIComponent(token)}`;
 }

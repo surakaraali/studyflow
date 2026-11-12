@@ -42,7 +42,7 @@ export default function AboutScreen() {
         <View style={styles.brand}>
           <HighlightMark active>
             <AppText variant="display" color="onHighlight" accessibilityRole="header">
-              StudyFlow
+              StudyMark
             </AppText>
           </HighlightMark>
           <AppText variant="callout" color="inkSoft">

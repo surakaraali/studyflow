@@ -5,8 +5,8 @@
  * Env:
  *   EMAIL_PROVIDER   'resend' (default) | 'console' (logs instead of sending; local dev)
  *   RESEND_API_KEY   Resend API key (server secret)
- *   EMAIL_FROM       e.g. 'StudyFlow <no-reply@studyflow.app>' (domain verified at the provider)
- *   EMAIL_REPLY_TO   optional, e.g. 'destek@studyflow.app'
+ *   EMAIL_FROM       e.g. 'StudyMark <no-reply@studymark.app>' (domain verified at the provider)
+ *   EMAIL_REPLY_TO   optional, e.g. 'destek@studymark.app'
  */
 
 import { maskEmail } from './http.ts';

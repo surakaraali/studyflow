@@ -103,7 +103,7 @@ describe('crash scrubbing (OBS-01)', () => {
       [
         'Error: boom',
         '    at loadSummary (http://192.168.1.20:8081/index.bundle//&platform=ios&dev=true:1234:56)',
-        '    at anonymous (/private/var/containers/Bundle/Application/1A2B/StudyFlow.app/main.jsbundle:1:9876)',
+        '    at anonymous (/private/var/containers/Bundle/Application/1A2B/StudyMark.app/main.jsbundle:1:9876)',
         '    at render (/Users/ayse/Projects/studyflow/src/app/(app)/document/[id].tsx:42:7)',
         '    at open (http://localhost:8081/index.bundle?platform=ios&dev=true:10:2)',
       ].join('\n'),

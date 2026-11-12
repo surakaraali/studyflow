@@ -71,8 +71,8 @@ max_frequency = "1m0s"
 # port = 465
 # user = "resend"
 # pass = "env(RESEND_API_KEY)"
-# admin_email = "no-reply@studyflow.app"
-# sender_name = "StudyFlow"
+# admin_email = "no-reply@studymark.app"
+# sender_name = "StudyMark"
 
 # FR-ACC-02: Sign in with Apple. The app uses the native flow (signInWithIdToken), so client_id
 # must list the iOS bundle id; add the Services ID too if a web flow is ever needed.

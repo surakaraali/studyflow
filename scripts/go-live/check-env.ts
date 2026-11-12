@@ -1,6 +1,6 @@
 /// <reference types="node" />
 /**
- * Checks an env file (or the current environment) against every variable StudyFlow needs.
+ * Checks an env file (or the current environment) against every variable StudyMark needs.
  *
  *   npm run go-live:check-env -- --target supabase --env-file ../studyflow-secrets/supabase.prod.env
  *   npm run go-live:check-env -- --target app --env-file ../studyflow-secrets/app.production.env

@@ -45,7 +45,7 @@ const LEGAL_ROUTES: Record<LegalDocId, string> = {
 
 /** The source still says this until the build fills in a real project. */
 export const FUNCTIONS_PLACEHOLDER = 'https://YOUR-PROJECT-REF.supabase.co/functions/v1';
-const DEFAULT_SUPPORT_EMAIL = 'destek@studyflow.app';
+const DEFAULT_SUPPORT_EMAIL = 'destek@studymark.app';
 
 export type SiteOptions = {
   /** Production functions base, e.g. https://<ref>.supabase.co/functions/v1. Null keeps the placeholder. */
@@ -55,7 +55,7 @@ export type SiteOptions = {
   supportEmail: string;
   /** Public anon key for the two forms. Optional: the functions they call do not verify a JWT. */
   anonKey: string;
-  /** Site address, e.g. https://studyflow.app/ (canonical links, 404 page). Null = relative only. */
+  /** Site address, e.g. https://studymark.app/ (canonical links, 404 page). Null = relative only. */
   baseUrl: string | null;
   /** App Store page once the app is live. */
   appStoreUrl: string | null;
@@ -233,7 +233,7 @@ function header(ctx: Ctx, route: string): string {
   return [
     '<a class="skip" href="#main">İçeriğe geç</a>',
     '<header class="site-header">',
-    `  <a class="brand" href="${link(rel, ROUTES.home)}">${logo(ctx.tokens)}<span>StudyFlow</span></a>`,
+    `  <a class="brand" href="${link(rel, ROUTES.home)}">${logo(ctx.tokens)}<span>StudyMark</span></a>`,
     '  <nav class="site-nav" aria-label="Site">',
     `    <a href="${link(rel, ROUTES.support)}"${current(ROUTES.support)}>Destek</a>`,
     `    <a href="${link(rel, ROUTES.gizlilik)}"${current(ROUTES.gizlilik)}>Gizlilik</a>`,
@@ -258,7 +258,7 @@ function footer(ctx: Ctx, route: string): string {
     ...items.map(([target, label]) => `      <li><a href="${link(rel, target)}">${label}</a></li>`),
     '    </ul>',
     '  </nav>',
-    `  <p>© ${ctx.options.year} StudyFlow · Ortaokul ve lise öğrencileri için ders çalışma planlayıcısı</p>`,
+    `  <p>© ${ctx.options.year} StudyMark · Ortaokul ve lise öğrencileri için ders çalışma planlayıcısı</p>`,
     '</footer>',
   ].join('\n');
 }
@@ -371,7 +371,7 @@ export function legalPage(ctx: Ctx, doc: LegalDocument): string {
     .join('\n');
   return layout(ctx, {
     route,
-    title: `${doc.title} · StudyFlow`,
+    title: `${doc.title} · StudyMark`,
     description: doc.summary,
     body,
     noindex: LEGAL_DRAFT,
@@ -406,7 +406,7 @@ export function supportPage(ctx: Ctx): string {
     '  <h2>Veliler için</h2>',
     '  <ul class="facts">',
     '    <li>Onay bağlantısı gelmediyse ya da süresi dolduysa çocuğunuz uygulamadaki <strong>Bağlantıyı yeniden gönder</strong> düğmesine dokunabilir. Bağlantılar 7 gün geçerlidir.</li>',
-    '    <li>Tercihlerinizi değiştirmek ya da onayınızı geri almak için size gelen StudyFlow e-postasındaki bağlantıyı açın.</li>',
+    '    <li>Tercihlerinizi değiştirmek ya da onayınızı geri almak için size gelen StudyMark e-postasındaki bağlantıyı açın.</li>',
     `    <li>KVKK kapsamındaki başvurularınız için <a href="mailto:${email}">${email}</a> adresine yazabilirsiniz; ayrıntılar <a href="${link(rel, ROUTES.aydinlatma)}">aydınlatma metninde</a>.</li>`,
     '  </ul>',
     '</div>',
@@ -422,8 +422,8 @@ export function supportPage(ctx: Ctx): string {
   ].join('\n');
   return layout(ctx, {
     route,
-    title: 'Destek · StudyFlow',
-    description: 'StudyFlow için sık sorulan sorular, veli onayı yardımı ve destek iletişimi.',
+    title: 'Destek · StudyMark',
+    description: 'StudyMark için sık sorulan sorular, veli onayı yardımı ve destek iletişimi.',
     body,
   });
 }
@@ -455,7 +455,7 @@ export function homePage(ctx: Ctx): string {
   const body = [
     '<section class="hero">',
     '  <h1>Bugün ne çalışacağın <span class="ink-mark">hazır</span>.</h1>',
-    '  <p class="lead">StudyFlow ortaokul ve lise öğrencileri için bir ders çalışma planlayıcısı. Derslerini, sınav tarihlerini ve boş saatlerini gir; planın kendiliğinden kurulsun. Ders notunu yükle; yapay zekâ özet, quiz ve kart hazırlasın.</p>',
+    '  <p class="lead">StudyMark ortaokul ve lise öğrencileri için bir ders çalışma planlayıcısı. Derslerini, sınav tarihlerini ve boş saatlerini gir; planın kendiliğinden kurulsun. Ders notunu yükle; yapay zekâ özet, quiz ve kart hazırlasın.</p>',
     `  ${badge}`,
     '  <p class="muted">iPhone için · Türkçe · Reklam yok</p>',
     '</section>',
@@ -485,7 +485,7 @@ export function homePage(ctx: Ctx): string {
   ].join('\n');
   return layout(ctx, {
     route,
-    title: 'StudyFlow · Ders çalışma planlayıcısı',
+    title: 'StudyMark · Ders çalışma planlayıcısı',
     description:
       'Ortaokul ve lise öğrencileri için sınav tarihine göre çalışma planı, ders notundan özet, quiz ve kart, internetsiz kart tekrarı.',
     body,
@@ -497,7 +497,7 @@ function notFoundPage(ctx: Ctx): string {
   const base = ctx.options.baseUrl ? new URL(ctx.options.baseUrl).pathname : '/';
   const html = layout(ctx, {
     route: ROUTES.home,
-    title: 'Sayfa bulunamadı · StudyFlow',
+    title: 'Sayfa bulunamadı · StudyMark',
     description: 'Aradığın sayfa bulunamadı.',
     body: ['<h1>Sayfa bulunamadı</h1>', '<p class="lead">Bağlantı yanlış ya da sayfa taşınmış olabilir.</p>'].join('\n'),
     noindex: true,

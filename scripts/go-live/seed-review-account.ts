@@ -91,7 +91,7 @@ export function findSimulatorDemoDb(home: string = os.homedir()): string | null 
       const mtime = fs.statSync(file).mtimeMs;
       if (!best || mtime > best.mtime) best = { file, mtime };
     } catch {
-      // Not a StudyFlow database or locked; skip it.
+      // Not a StudyMark database or locked; skip it.
     }
   }
   return best?.file ?? null;

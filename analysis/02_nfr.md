@@ -1,4 +1,4 @@
-# StudyFlow — Fonksiyonel Olmayan Gereksinimler (NFR)
+# StudyMark — Fonksiyonel Olmayan Gereksinimler (NFR)
 
 | Alan | Değer |
 |---|---|

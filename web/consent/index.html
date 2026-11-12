@@ -14,7 +14,7 @@
   <script>if (window.top === window.self) document.getElementById('frame-guard').remove();</script>
   <meta name="theme-color" content="#F4F6FB" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E1226" media="(prefers-color-scheme: dark)">
-  <title>Veli onayı · StudyFlow</title>
+  <title>Veli onayı · StudyMark</title>
   <link rel="icon" href="../assets/favicon.png">
   <link rel="stylesheet" href="../assets/site.css">
 
@@ -30,7 +30,7 @@
       // Optional: the project's public anon key. The consent function does not need it.
       anonKey: '',
       privacyUrl: '../aydinlatma-metni/',
-      supportEmail: 'destek@studyflow.app'
+      supportEmail: 'destek@studymark.app'
     };
   </script>
 </head>
@@ -48,7 +48,7 @@
   <section id="view-invalid" class="view" hidden>
     <h1 tabindex="-1">Bu bağlantı geçerli değil</h1>
     <p class="lead">Bağlantı eksik kopyalanmış ya da yerine daha yeni bir bağlantı gönderilmiş olabilir.</p>
-    <p>Size gelen en son StudyFlow e-postasındaki bağlantıyı açın. Bulamazsanız çocuğunuzdan uygulamadaki <strong>Bağlantıyı yeniden gönder</strong> düğmesine dokunmasını isteyin.</p>
+    <p>Size gelen en son StudyMark e-postasındaki bağlantıyı açın. Bulamazsanız çocuğunuzdan uygulamadaki <strong>Bağlantıyı yeniden gönder</strong> düğmesine dokunmasını isteyin.</p>
   </section>
 
   <section id="view-expired" class="view" hidden>
@@ -201,8 +201,8 @@
     $('form-title').textContent = granted ? 'Onay tercihleriniz' : 'Veli onayı';
     // textContent: the nickname is typed by the student and is never treated as HTML.
     $('form-intro').textContent = granted
-      ? childLabel(true) + ' StudyFlow’u sizin onayınızla kullanıyor.'
-      : childLabel(true) + ', ders çalışmasını planlamak için StudyFlow uygulamasını kullanmak istiyor. 18 yaşından küçükler için sizin onayınız gerekiyor.';
+      ? childLabel(true) + ' StudyMark’u sizin onayınızla kullanıyor.'
+      : childLabel(true) + ', ders çalışmasını planlamak için StudyMark uygulamasını kullanmak istiyor. 18 yaşından küçükler için sizin onayınız gerekiyor.';
     $('already-granted').hidden = !granted;
     $('already-revoked').hidden = !revoked;
     $('revoke-entry').hidden = !granted;
@@ -270,8 +270,8 @@
           $('done-title').textContent = 'Teşekkürler, onayınız kaydedildi';
           var names = purposes.map(function (p) { return LABELS[p]; });
           $('done-text').textContent = names.length
-            ? childLabel(true) + ' artık StudyFlow’u kullanabilir. İzin verdiğiniz amaçlar: ' + names.join(', ') + '.'
-            : childLabel(true) + ' artık StudyFlow’u kullanabilir. Yapay zekâ ve bildirim özellikleri kapalı kalacak.';
+            ? childLabel(true) + ' artık StudyMark’u kullanabilir. İzin verdiğiniz amaçlar: ' + names.join(', ') + '.'
+            : childLabel(true) + ' artık StudyMark’u kullanabilir. Yapay zekâ ve bildirim özellikleri kapalı kalacak.';
         } else {
           $('done-title').textContent = 'Onayınız geri alındı';
           $('done-text').textContent = childLabel(true) + ' için yapay zekâ ve bildirim özellikleri kapatıldı; hesap kısıtlı moda geçti.';

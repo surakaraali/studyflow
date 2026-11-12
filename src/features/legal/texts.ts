@@ -27,7 +27,7 @@ export type LegalDocument = {
 };
 
 const CONTROLLER = '[Şirket unvanı], [adres]';
-const KVKK_CONTACT = '[kvkk@studyflow.app — kesinleşecek]';
+const KVKK_CONTACT = '[kvkk@studymark.app — kesinleşecek]';
 
 const aydinlatma: LegalDocument = {
   id: 'aydinlatma',
@@ -47,7 +47,7 @@ const aydinlatma: LegalDocument = {
     {
       heading: '1. Veri sorumlusu',
       paragraphs: [
-        `6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) uyarınca veri sorumlusu: ${CONTROLLER} ("StudyFlow").`,
+        `6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) uyarınca veri sorumlusu: ${CONTROLLER} ("StudyMark").`,
       ],
     },
     {
@@ -122,7 +122,7 @@ const gizlilik: LegalDocument = {
     {
       heading: 'Kısaca',
       paragraphs: [
-        'StudyFlow bir ders çalışma uygulamasıdır. Yalnızca uygulamanın çalışması için gereken bilgileri toplarız, reklam göstermeyiz ve verilerini satmayız.',
+        'StudyMark bir ders çalışma uygulamasıdır. Yalnızca uygulamanın çalışması için gereken bilgileri toplarız, reklam göstermeyiz ve verilerini satmayız.',
       ],
     },
     {
@@ -185,13 +185,13 @@ const kosullar: LegalDocument = {
     {
       heading: '1. Taraflar ve kabul',
       paragraphs: [
-        `Bu koşullar ${CONTROLLER} ile StudyFlow’u kullanan kişi arasındadır. Hesap oluşturarak bu koşulları kabul etmiş olursun. 18 yaşından küçüksen hesabın velinin onayıyla açılır.`,
+        `Bu koşullar ${CONTROLLER} ile StudyMark’u kullanan kişi arasındadır. Hesap oluşturarak bu koşulları kabul etmiş olursun. 18 yaşından küçüksen hesabın velinin onayıyla açılır.`,
       ],
     },
     {
       heading: '2. Hizmet',
       paragraphs: [
-        'StudyFlow ders, sınav ve ödevlerine göre çalışma planı hazırlar; yüklediğin belgelerden özet, quiz ve tekrar kartları üretir. Plan ve içerikler öneri niteliğindedir; okulunun ve öğretmenlerinin yerine geçmez.',
+        'StudyMark ders, sınav ve ödevlerine göre çalışma planı hazırlar; yüklediğin belgelerden özet, quiz ve tekrar kartları üretir. Plan ve içerikler öneri niteliğindedir; okulunun ve öğretmenlerinin yerine geçmez.',
       ],
     },
     {

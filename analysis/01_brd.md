@@ -1,4 +1,4 @@
-# StudyFlow — İş Gereksinimleri Dokümanı (BRD)
+# StudyMark — İş Gereksinimleri Dokümanı (BRD)
 
 | Alan | Değer |
 |---|---|
@@ -13,7 +13,7 @@
 
 ## 1. Amaç
 
-Bu doküman StudyFlow mobil uygulamasının iş gereksinimlerini tanımlar: hangi problemi çözdüğünü,
+Bu doküman StudyMark mobil uygulamasının iş gereksinimlerini tanımlar: hangi problemi çözdüğünü,
 kimin için yapıldığını, ilk sürümde neleri kapsadığını ve hangi kurallara uyması gerektiğini.
 Ekip (ürün, tasarım, geliştirme, test) için tek referans kaynağıdır. Teknik kararlar
 [PLAN.md](../PLAN.md)'de, fonksiyonel olmayan gereksinimler [02_nfr.md](02_nfr.md)'de yer alır.
@@ -32,7 +32,7 @@ Ekip (ürün, tasarım, geliştirme, test) için tek referans kaynağıdır. Tek
   yapılacaklar listesi (sınav ve müfredat bilgisi yok).
 
 ### 2.2 Çözüm önerisi
-StudyFlow; öğrencinin ders programını, sınavlarını ve ödevlerini bir araya getirir, yüklediği
+StudyMark; öğrencinin ders programını, sınavlarını ve ödevlerini bir araya getirir, yüklediği
 PDF'lerden yapay zekâ ile özet, quiz ve flashcard üretir, yaşına uygun günlük çalışma planını
 otomatik çıkarır ve ilerlemesini ölçerek planı günceller. Veli, çocuğun ilerlemesini
 gizliliğine saygı duyan bir özetle görür.
@@ -135,7 +135,7 @@ _İhtiyaç:_ haftalık kısa özet, açık ve anlaşılır izin ekranları, öde
 - Yapay zekâ ile serbest sohbet (öğretmen modu) — çocuklar için ek moderasyon gerektirir (R3).
 - Fotoğraftan not okuma, takvim senkronu, widget, iPad'e özel arayüz (R2+/R3).
 - Öğrenciler arası paylaşım, sosyal özellikler, sıralamalar.
-- Hazır içerik (soru bankası, konu anlatımı) satışı. StudyFlow kullanıcının kendi materyaliyle çalışır.
+- Hazır içerik (soru bankası, konu anlatımı) satışı. StudyMark kullanıcının kendi materyaliyle çalışır.
 - Web uygulaması ve İngilizce arayüz (altyapı hazır, içerik yok).
 
 ## 7. Süreç
@@ -444,7 +444,7 @@ Ayrıntılı risk kaydı ve sahipleri [proje planı §13](../agile/project_plan.
 | Q-05 | Pro fiyatı ve ücretsiz kota (BR-14) nasıl olacak? | Ürün sahibi | Sprint 3 |
 | Q-06 | İşlem e-postası sağlayıcısı hangisi? | Tech lead | Sprint 1 |
 | Q-07 | Uygulama App Store'da "Kids" kategorisinde mi yer alacak, yoksa genel Eğitim kategorisinde yaş derecelendirmesiyle mi? | Ürün sahibi + hukuk | Sprint 0 sonu |
-| Q-08 | "StudyFlow" adı App Store ve marka tescilinde müsait mi? | Ürün sahibi | Sprint 0 |
+| Q-08 | Uygulamanın adı ve alan adı ne olacak? **Karar (12 Kasım 2026):** ad StudyMark. StudyFlow'un `.app` ve `.com.tr` alan adları başkasına ait çıktı. Türkiye App Store'unda StudyMark adlı uygulama yok; `studymark.app` ve `studymark.com` için DNS kaydı yok. Alan adının satın alınması ve TÜRKPATENT marka kontrolü bekliyor. | Ürün sahibi | Sprint 0 |
 
 ## 18. Sözlük
 
